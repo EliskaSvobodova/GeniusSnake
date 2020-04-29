@@ -1,0 +1,47 @@
+Jako téma semestrální práce jsem si vybrala hada. Využívám
+genetické programování, cílem je program, šlechtící co nejlepší
+řídící funkci hada.
+
+Pravidla hry Snake: Had se v každém kroku může posunout o políčko
+dopředu / vlevo / vpravo ve směru pohybu. Snaží se sbírat (a jíst)
+jablka, která se budou po jednom generovat na náhodných (dosažitelných)
+místech bludiště. Za snědení jablka obdrží body a jeho tělo se protáhne
+o délku jednoho políčka. Pokud po určitou časovou (nastavitelnou) dobu
+žádné jablko nesní, body se mu odečtou a jeho tělo se  zase zkrátí. Hra
+končí, pokud had narazí do stěny bludiště / had narazí do části svého
+těla / had vyhladoví (délka jeho těla se zmenší na 0). Bludiště má vždy
+tvar obdélníku.
+
+Řídící funkce se bude vyvíjet ve formě stromu, z terminálů (informace ze
+senzorů) a funkcí (logické operace). Had se bude v každém kroku
+rozhodovat kam se pohnout podle výsledku této funkce pro konkrétní
+hodnoty okolního prostředí. Šlechtění bude probíhat pomocí operátorů
+inicializace (náhodná populace), selekce, křížení a mutace, vyvíjejících
+další (a pokud možno lepší) podoby stromu řídící funkce. Při modifikaci
+(generování nových) jedinců se budou nové uzly stromu vybírat náhodně z
+poolů pro terminály a funkce.
+
+Plánuji nejdříve zkusit použít pouze senzory na hlavě hada (bude se moct
+kouknout na 1 krok dopředu):
+  *
+HHH*
+  *
+
+Popřípadě zkusit senzory na hlavě pro dva kroky dopředu:
+  *
+ ***
+HHH**
+ ***
+  *
+
+Generace se bude skládat z určitého množství řídících funkcí. Pro
+všechny funkce proběhne simulace hry a úspěšnost jednotlivých funkcí
+(jejich fitness) se bude řídit jejich dosaženým počtem bodů. Průběh
+simulací bude možné sledovat v UI na síti obrazovek s bludišti a ovládat
+(klávesou/myší se posouvat do dalších generací). Pro každého jedince
+bude zobrazitelná řídící funkce. Pro každou generaci se vygeneruje nový
+tvar bludiště (aby byla zaručena nezávislost řídící funkce na konkrétní
+podobě bludiště), všichni jedinci v téže generaci budou testování na
+stejném bludišti.
+
+Hra bude implementována v Pythonu s pomocí knihovny Pyglet.
