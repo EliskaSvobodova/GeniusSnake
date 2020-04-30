@@ -1,3 +1,4 @@
 import Menu
 
-Menu.run_application()
+menu = Menu.Menu()
+menu.run_application()
