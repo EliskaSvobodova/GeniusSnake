@@ -17,4 +17,5 @@ class Game:
         self.ui.draw_boundary()
         self.ui.draw_background()
         self.ui.draw_score(self.score)
+        self.ui.draw_game_field()
         self.ui.draw_snake(self.snake)

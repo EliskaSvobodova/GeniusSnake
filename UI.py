@@ -38,7 +38,7 @@ class AbstractUI(metaclass=ABCMeta):
         raise NotImplementedError()
 
     @abstractmethod
-    def draw_snake(self, snake : Snake):
+    def draw_snake(self, snake: Snake):
         raise NotImplementedError()
 
 
@@ -58,8 +58,8 @@ class NiceUI(AbstractUI):
             self.draw_snake_corner(part)
 
     def draw_snake_head(self, part: Snake.Node):
-        self.snake_head.x = self.x + (part.x * self.square_size) + (self.square_size / 2)
-        self.snake_head.y = self.y + (part.y * self.square_size) + (self.square_size / 2)
+        self.snake_head.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
+        self.snake_head.y = self.game_y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.heads_direction(part)
         if direction is Snake.UP:
             self.snake_head.rotation = 0
@@ -72,8 +72,8 @@ class NiceUI(AbstractUI):
         self.snake_head.draw()
 
     def draw_snake_tail(self, part: Snake.Node):
-        self.snake_tail.x = self.x + (part.x * self.square_size) + (self.square_size / 2)
-        self.snake_tail.y = self.y + (part.y * self.square_size) + (self.square_size / 2)
+        self.snake_tail.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
+        self.snake_tail.y = self.game_y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.rest_direction(part)
         if direction is Snake.UP:
             self.snake_tail.rotation = 0
@@ -86,8 +86,8 @@ class NiceUI(AbstractUI):
         self.snake_tail.draw()
 
     def draw_snake_body(self, part: Snake.Node):
-        self.snake_body.x = self.x + (part.x * self.square_size) + (self.square_size / 2)
-        self.snake_body.y = self.y + (part.y * self.square_size) + (self.square_size / 2)
+        self.snake_body.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
+        self.snake_body.y = self.game_y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.heads_direction(part)
         if direction is Snake.UP or direction is Snake.DOWN:
             self.snake_body.rotation = 0
@@ -96,8 +96,8 @@ class NiceUI(AbstractUI):
         self.snake_body.draw()
 
     def draw_snake_corner(self, part: Snake.Node):
-        self.snake_corner.x = self.x + (part.x * self.square_size) + (self.square_size / 2)
-        self.snake_corner.y = self.y + (part.y * self.square_size) + (self.square_size / 2)
+        self.snake_corner.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
+        self.snake_corner.y = self.game_y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.corner_type(part)
         if direction[0] is Snake.UP and direction[1] is Snake.RIGHT:
             self.snake_corner.rotation = 270
@@ -116,14 +116,48 @@ class NiceUI(AbstractUI):
         return self.num_squares_width
 
     def draw_game_field(self):
-        pass
+        for i in range(self.num_squares_height):
+            for j in range(self.num_squares_width):
+                x1 = self.game_x + (j * self.square_size)
+                y1 = self.game_y + (i * self.square_size)
+                x2 = x1
+                y2 = y1 + self.square_size
+                x3 = x1 + self.square_size
+                y3 = y1 + self.square_size
+                x4 = x1 + self.square_size
+                y4 = y1
+                if i % 2:
+                    if j % 2:
+                        pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
+                                             ("v2f", (x1, y1, x2, y2, x3, y3, x4, y4)),
+                                             ("c4B", ((11, 102, 35, 110) * 4)))
+                    else:
+                        pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
+                                             ("v2f", (x1, y1, x2, y2, x3, y3, x4, y4)),
+                                             ("c4B", ((137, 173, 111, 80) * 4)))
+                else:
+                    if j % 2:
+                        pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
+                                             ("v2f", (x1, y1, x2, y2, x3, y3, x4, y4)),
+                                             ("c4B", ((137, 173, 111, 80) * 4)))
+                    else:
+                        pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
+                                             ("v2f", (x1, y1, x2, y2, x3, y3, x4, y4)),
+                                             ("c4B", ((11, 102, 35, 110) * 4)))
 
     def __init__(self, x, y, width, height, window):
         super().__init__(x, y, width, height, window)
         self.square_size = 50
+        self.game_x = x + self.square_size
+        self.game_y = y + self.square_size
         self.load_images()
-        self.num_squares_height = (self.height - self.score_background.height) // self.square_size
-        self.num_squares_width = self.width // self.square_size
+        self.num_squares_height = (self.height - self.score_background.height - 2*self.square_size) // self.square_size
+        self.num_squares_width = (self.width - 2*self.square_size) // self.square_size
+        self.game_width = self.square_size * self.num_squares_width
+        self.game_height = self.square_size * self.num_squares_height
+        # enable transparency
+        pyglet.gl.glEnable(pyglet.gl.GL_BLEND)
+        pyglet.gl.glBlendFunc(pyglet.gl.GL_SRC_ALPHA, pyglet.gl.GL_ONE_MINUS_SRC_ALPHA)
 
     def draw_score(self, score):
         self.score_background.draw()
@@ -142,7 +176,8 @@ class NiceUI(AbstractUI):
 
     def load_grass(self):
         grass_image = pyglet.resource.image("NiceUI/grass.jpg")
-        CommonHelpers.scale_image(grass_image, self.width - 2, self.height - 2)  # minus few pixels so the boundary is visible
+        CommonHelpers.scale_image(grass_image, self.width - 2,
+                                  self.height - 2)  # minus few pixels so the boundary is visible
         CommonHelpers.center_image(grass_image)
         self.grass = pyglet.sprite.Sprite(img=grass_image, x=self.x + (self.width / 2), y=self.y + (self.height / 2))
 
@@ -180,7 +215,20 @@ class NiceUI(AbstractUI):
                                       self.x + self.width, self.y + self.height, self.x + self.width, self.y,
                                       self.x + self.width, self.y, self.x, self.y)))
 
+
 class SimpleUI(AbstractUI):
+    def draw_boundary(self):
+        pass
+
+    def get_num_squares_height(self):
+        pass
+
+    def get_num_squares_width(self):
+        pass
+
+    def draw_snake(self, snake: Snake):
+        pass
+
     def draw_game_field(self):
         pass
 
