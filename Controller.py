@@ -1,13 +1,18 @@
 from abc import ABCMeta, abstractmethod
-
+import Game
+import pyglet
 
 class AbstractController(metaclass=ABCMeta):
-    pass
+    @abstractmethod
+    def get_next_move(self):
+        raise NotImplementedError
 
 
 class PlayerController(AbstractController):
-    pass
+    def get_next_move(self):
+        return Game.FORWARD
 
 
 class GeneticController(AbstractController):
-    pass
+    def get_next_move(self):
+        pass

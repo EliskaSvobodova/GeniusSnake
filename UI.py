@@ -14,6 +14,10 @@ class AbstractUI(metaclass=ABCMeta):
         CommonHelpers.configure_resources()
 
     @abstractmethod
+    def prepare_game(self, snake: Snake.Snake):
+        raise NotImplementedError
+
+    @abstractmethod
     def draw_score(self, score):
         raise NotImplementedError()
 
@@ -38,14 +42,62 @@ class AbstractUI(metaclass=ABCMeta):
         raise NotImplementedError()
 
     @abstractmethod
-    def draw_snake(self, snake: Snake):
+    def draw_snake(self, snake: Snake.Snake):
         raise NotImplementedError()
+
+    @abstractmethod
+    def draw_snake_dead(self, snake: Snake.Snake):
+        raise NotImplementedError()
+
+    @abstractmethod
+    def draw_apple(self, x, y):
+        raise NotImplementedError
+
+    @abstractmethod
+    def draw_square(self, x, y):
+        raise NotImplementedError
+
+    @abstractmethod
+    def draw_snake_move(self, snake: Snake.Snake, prev_tail):
+        raise NotImplementedError
+
+    @abstractmethod
+    def draw_snake_eat(self, snake: Snake.Snake):
+        raise NotImplementedError
 
 
 class NiceUI(AbstractUI):
+    def draw_snake_eat(self, snake: Snake.Snake):
+        self.draw_square(snake.head.next_n.x, snake.head.next_n.y)
+        self.draw_snake_head(snake.head)
+        self.draw_snake_body(snake.head.next_n)
+
+    def draw_snake_move(self, snake: Snake.Snake, prev_tail):
+        self.draw_square(prev_tail[0], prev_tail[1])
+        self.draw_square(snake.tail.x, snake.tail.y)
+        self.draw_square(snake.head.next_n.x, snake.head.next_n.y)
+        self.draw_snake_head(snake.head)
+        self.draw_snake_body(snake.head.next_n)
+        self.draw_snake_tail(snake.tail)
+
+    def draw_apple(self, x, y):
+        self.apple.x = x
+        self.apple.y = y
+        self.apple.draw()
+
+    def prepare_game(self, snake):
+        self.draw_background()
+        self.draw_score(0)
+        self.draw_game_field()
+        self.draw_boundary()
+        self.draw_snake(snake)
+
     def draw_snake(self, snake: Snake.Snake):
         for part in snake:
             self.draw_snake_part(part)
+
+    def draw_snake_dead(self, snake: Snake.Snake):
+        self.draw_snake_head_dead(snake.head)
 
     def draw_snake_part(self, part: Snake.Node):
         if Snake.is_head(part):
@@ -70,6 +122,20 @@ class NiceUI(AbstractUI):
         elif direction is Snake.LEFT:
             self.snake_head.rotation = 270
         self.snake_head.draw()
+
+    def draw_snake_head_dead(self, part: Snake.Node):
+        self.snake_head_dead.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
+        self.snake_head_dead.y = self.game_y + (part.y * self.square_size) + (self.square_size / 2)
+        direction = Snake.heads_direction(part)
+        if direction is Snake.UP:
+            self.snake_head_dead.rotation = 0
+        elif direction is Snake.RIGHT:
+            self.snake_head_dead.rotation = 90
+        elif direction is Snake.DOWN:
+            self.snake_head_dead.rotation = 180
+        elif direction is Snake.LEFT:
+            self.snake_head_dead.rotation = 270
+        self.snake_head_dead.draw()
 
     def draw_snake_tail(self, part: Snake.Node):
         self.snake_tail.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
@@ -116,43 +182,61 @@ class NiceUI(AbstractUI):
         return self.num_squares_width
 
     def draw_game_field(self):
+        for i in range(1, self.num_squares_height - 1):
+            for j in range(1, self.num_squares_width - 1):
+                self.draw_square(j, i)
+        self.draw_bushes()
+
+    def draw_square(self, x, y):
+        x1 = self.game_x + (x * self.square_size)
+        y1 = self.game_y + (y * self.square_size)
+        x2 = x1
+        y2 = y1 + self.square_size
+        x3 = x1 + self.square_size
+        y3 = y1 + self.square_size
+        x4 = x1 + self.square_size
+        y4 = y1
+        if y % 2:
+            if x % 2:
+                pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
+                                     ("v2f", (x1, y1, x2, y2, x3, y3, x4, y4)),
+                                     ("c4B", ((11, 102, 35, 110) * 4)))
+            else:
+                pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
+                                     ("v2f", (x1, y1, x2, y2, x3, y3, x4, y4)),
+                                     ("c4B", ((137, 173, 111, 80) * 4)))
+        else:
+            if x % 2:
+                pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
+                                     ("v2f", (x1, y1, x2, y2, x3, y3, x4, y4)),
+                                     ("c4B", ((137, 173, 111, 80) * 4)))
+            else:
+                pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
+                                     ("v2f", (x1, y1, x2, y2, x3, y3, x4, y4)),
+                                     ("c4B", ((11, 102, 35, 110) * 4)))
+
+    def draw_bushes(self):
+        for i in range(self.num_squares_width):
+            self.bush.x = self.x + i * self.square_size + self.square_size / 2
+            self.bush.y = self.y + self.square_size / 2
+            self.bush.draw()
+            self.bush.y = self.y + (self.num_squares_height - 1) * self.square_size + self.square_size / 2
+            self.bush.draw()
         for i in range(self.num_squares_height):
-            for j in range(self.num_squares_width):
-                x1 = self.game_x + (j * self.square_size)
-                y1 = self.game_y + (i * self.square_size)
-                x2 = x1
-                y2 = y1 + self.square_size
-                x3 = x1 + self.square_size
-                y3 = y1 + self.square_size
-                x4 = x1 + self.square_size
-                y4 = y1
-                if i % 2:
-                    if j % 2:
-                        pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
-                                             ("v2f", (x1, y1, x2, y2, x3, y3, x4, y4)),
-                                             ("c4B", ((11, 102, 35, 110) * 4)))
-                    else:
-                        pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
-                                             ("v2f", (x1, y1, x2, y2, x3, y3, x4, y4)),
-                                             ("c4B", ((137, 173, 111, 80) * 4)))
-                else:
-                    if j % 2:
-                        pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
-                                             ("v2f", (x1, y1, x2, y2, x3, y3, x4, y4)),
-                                             ("c4B", ((137, 173, 111, 80) * 4)))
-                    else:
-                        pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
-                                             ("v2f", (x1, y1, x2, y2, x3, y3, x4, y4)),
-                                             ("c4B", ((11, 102, 35, 110) * 4)))
+            self.bush.x = self.x + self.square_size / 2
+            self.bush.y = self.y + i * self.square_size + self.square_size / 2
+            self.bush.draw()
+            self.bush.x = self.x + (self.num_squares_width - 1) * self.square_size + self.square_size / 2
+            self.bush.draw()
 
     def __init__(self, x, y, width, height, window):
         super().__init__(x, y, width, height, window)
         self.square_size = 50
-        self.game_x = x + self.square_size
-        self.game_y = y + self.square_size
+        self.game_x = x
+        self.game_y = y
         self.load_images()
-        self.num_squares_height = (self.height - self.score_background.height - 2*self.square_size) // self.square_size
-        self.num_squares_width = (self.width - 2*self.square_size) // self.square_size
+        self.num_squares_height = (self.height - self.score_background.height) // self.square_size
+        self.num_squares_width = self.width // self.square_size
         self.game_width = self.square_size * self.num_squares_width
         self.game_height = self.square_size * self.num_squares_height
         # enable transparency
@@ -173,6 +257,8 @@ class NiceUI(AbstractUI):
         self.load_grass()
         self.load_score_background()
         self.load_snake()
+        self.load_bush()
+        self.load_apple()
 
     def load_grass(self):
         grass_image = pyglet.resource.image("NiceUI/grass.jpg")
@@ -193,20 +279,37 @@ class NiceUI(AbstractUI):
         snake_body_image = pyglet.resource.image("NiceUI/snake_body.png")
         snake_corner_image = pyglet.resource.image("NiceUI/snake_corner.png")
         snake_tail_image = pyglet.resource.image("NiceUI/snake_tail.png")
+        snake_head_dead_image = pyglet.resource.image("NiceUI/snake_head_dead.png")
 
         CommonHelpers.scale_image(snake_head_image, self.square_size, self.square_size)
         CommonHelpers.scale_image(snake_body_image, self.square_size, self.square_size)
         CommonHelpers.scale_image(snake_corner_image, self.square_size, self.square_size)
         CommonHelpers.scale_image(snake_tail_image, self.square_size, self.square_size)
+        CommonHelpers.scale_image(snake_head_dead_image, self.square_size, self.square_size)
 
         CommonHelpers.center_image(snake_head_image)
         CommonHelpers.center_image(snake_body_image)
         CommonHelpers.center_image(snake_corner_image)
         CommonHelpers.center_image(snake_tail_image)
+        CommonHelpers.center_image(snake_head_dead_image)
+
         self.snake_head = pyglet.sprite.Sprite(img=snake_head_image)
         self.snake_body = pyglet.sprite.Sprite(img=snake_body_image)
         self.snake_corner = pyglet.sprite.Sprite(img=snake_corner_image)
         self.snake_tail = pyglet.sprite.Sprite(img=snake_tail_image)
+        self.snake_head_dead = pyglet.sprite.Sprite(img=snake_head_dead_image)
+
+    def load_bush(self):
+        bush_image = pyglet.resource.image("NiceUI/bush2.png")
+        CommonHelpers.scale_image(bush_image, self.square_size, self.square_size)
+        CommonHelpers.center_image(bush_image)
+        self.bush = pyglet.sprite.Sprite(img=bush_image)
+
+    def load_apple(self):
+        apple_image = pyglet.resource.image("NiceUI/apple.png")
+        CommonHelpers.scale_image(apple_image, self.square_size, self.square_size)
+        CommonHelpers.center_image(apple_image)
+        self.apple = pyglet.sprite.Sprite(img=apple_image)
 
     def draw_boundary(self):
         pyglet.graphics.draw(8, pyglet.gl.GL_LINES,

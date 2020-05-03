@@ -1,3 +1,5 @@
+import Game
+
 class Node:
     def __init__(self, x, y, next_n=None, prev_n=None):
         self.x = x
@@ -88,10 +90,43 @@ def is_corner(node: Node):
 
 class Snake:
     def __init__(self):
-        self.head = Node(2, 0)
-        self.head.next_n = Node(1, 0, prev_n=self.head)
-        self.tail = Node(0, 0, prev_n=self.head.next_n)
+        self.head = Node(3, 1)
+        self.head.next_n = Node(2, 1, prev_n=self.head)
+        self.tail = Node(1, 1, prev_n=self.head.next_n)
         self.head.next_n.next_n = self.tail
 
     def __iter__(self):
         return SnakeIterator(self)
+
+    def next_square(self, next_move):
+        direction = heads_direction(self.head)
+        if (direction is UP and next_move is Game.FORWARD) \
+                or (direction is RIGHT and next_move is Game.LEFT) \
+                or (direction is LEFT and next_move is Game.RIGHT):
+            return tuple([self.head.x, self.head.y + 1])
+        if (direction is UP and next_move is Game.RIGHT) \
+                or (direction is RIGHT and next_move is Game.FORWARD) \
+                or (direction is DOWN and next_move is Game.LEFT):
+            return tuple([self.head.x + 1, self.head.y])
+        if (direction is RIGHT and next_move is Game.RIGHT) \
+                or (direction is DOWN and next_move is Game.FORWARD) \
+                or (direction is LEFT and next_move is Game.LEFT):
+            return tuple([self.head.x, self.head.y - 1])
+        if (direction is UP and next_move is Game.LEFT) \
+                or (direction is DOWN and next_move is Game.RIGHT) \
+                or (direction is LEFT and next_move is Game.FORWARD):
+            return tuple([self.head.x - 1, self.head.y])
+
+    def move(self, next_square):
+        prev_head = self.head
+        self.head = Node(next_square[0], next_square[1])
+        prev_head.prev_n = self.head
+        self.head.next_n = prev_head
+        self.tail = self.tail.prev_n
+        self.tail.next_n = None
+
+    def eat_apple(self, apple):
+        prev_head = self.head
+        self.head = Node(apple[0], apple[1])
+        prev_head.prev_n = self.head
+        self.head.next_n = prev_head
