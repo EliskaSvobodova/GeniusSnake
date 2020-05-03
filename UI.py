@@ -2,6 +2,7 @@ from abc import ABCMeta, abstractmethod
 import pyglet
 import CommonHelpers
 import Snake
+from PIL import Image
 
 
 class AbstractUI(metaclass=ABCMeta):
@@ -67,6 +68,19 @@ class AbstractUI(metaclass=ABCMeta):
 
 
 class NiceUI(AbstractUI):
+    def prepare_cover_squares(self):
+        grass = pyglet.image.load("resources/NiceUI/grass.png", decoder=pyglet.image.codecs.png.PNGImageDecoder())
+        self.cover_squares = []
+        for i in range(self.num_squares_height):
+            row = []
+            for j in range(self.num_squares_width):
+                square = grass.get_region(x=(self.x + j * self.square_size), y=(self.y + i * self.square_size),
+                                               width=self.square_size, height=self.square_size)
+                row.append(pyglet.sprite.Sprite(square, x=(self.x + j * self.square_size), y=(self.y + i * self.square_size)))
+            self.cover_squares.append(row)
+
+        #self.cover_squares = pyglet.image.ImageGrid(grass, self.num_squares_height, self.num_squares_width)
+
     def draw_snake_eat(self, snake: Snake.Snake):
         self.draw_square(snake.head.next_n.x, snake.head.next_n.y)
         self.draw_snake_head(snake.head)
@@ -188,6 +202,7 @@ class NiceUI(AbstractUI):
         self.draw_bushes()
 
     def draw_square(self, x, y):
+        self.cover_squares[y][x].draw()
         x1 = self.game_x + (x * self.square_size)
         y1 = self.game_y + (y * self.square_size)
         x2 = x1
@@ -239,6 +254,7 @@ class NiceUI(AbstractUI):
         self.num_squares_width = self.width // self.square_size
         self.game_width = self.square_size * self.num_squares_width
         self.game_height = self.square_size * self.num_squares_height
+        self.prepare_cover_squares()
         # enable transparency
         pyglet.gl.glEnable(pyglet.gl.GL_BLEND)
         pyglet.gl.glBlendFunc(pyglet.gl.GL_SRC_ALPHA, pyglet.gl.GL_ONE_MINUS_SRC_ALPHA)
