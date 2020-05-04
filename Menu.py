@@ -1,7 +1,8 @@
 import pyglet
 import resources
 import Game
-import Controller
+import PlayerController
+import GeneticController
 import UI
 import CommonHelpers
 
@@ -77,7 +78,7 @@ class Menu:
             self.window.clear()
             ui = UI.NiceUI(10, 80, self.screen_width - 20, self.screen_height - 90)
             game = Game.Game(ui)
-            controller = Controller.PlayerController(self.window, game)
+            controller = PlayerController.PlayerController(self.window, game)
 
     def on_menu_mouse_motion(self, x, y, dx, dy):
         if self.mouse_on_play_button(x, y):

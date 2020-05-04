@@ -1,15 +1,8 @@
-from abc import ABCMeta, abstractmethod
-import Game
-import Snake
-import pyglet
 import Constants
+import pyglet
 
 
-class AbstractController(metaclass=ABCMeta):
-    pass
-
-
-class PlayerController(AbstractController):
+class PlayerController:
     def __init__(self, window, game):
         super().__init__()
         self.window = window
@@ -23,9 +16,3 @@ class PlayerController(AbstractController):
 
     def on_key_press(self, symbol, modifiers):
         self.next_move = Constants.SNAKE_MOVE_FORWARD
-
-
-
-class GeneticController(AbstractController):
-    def get_next_move(self):
-        pass

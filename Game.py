@@ -1,8 +1,6 @@
-import Controller
 import UI
 import Snake
 import random
-import pyglet
 
 
 class Game:
