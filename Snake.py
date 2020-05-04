@@ -28,26 +28,26 @@ For head and body
 """
 def heads_direction(node: Node):
     if node.next_n.x < node.x:
-        return Constants.SNAKE_HEADS_RIGHT
+        return Constants.RIGHT
     if node.x < node.next_n.x:
-        return Constants.SNAKE_HEADS_LEFT
+        return Constants.LEFT
     if node.next_n.y < node.y:
-        return Constants.SNAKE_HEADS_UP
+        return Constants.UP
     if node.y < node.next_n.y:
-        return Constants.SNAKE_HEADS_DOWN
+        return Constants.DOWN
 
 """
 For tail,  where rest of the body is
 """
 def rest_direction(node: Node):
     if node.prev_n.x < node.x:
-        return Constants.SNAKE_HEADS_LEFT
+        return Constants.LEFT
     if node.x < node.prev_n.x:
-        return Constants.SNAKE_HEADS_RIGHT
+        return Constants.RIGHT
     if node.prev_n.y < node.y:
-        return Constants.SNAKE_HEADS_DOWN
+        return Constants.DOWN
     if node.y < node.prev_n.y:
-        return Constants.SNAKE_HEADS_UP
+        return Constants.UP
 
 
 """
@@ -55,13 +55,13 @@ For corner
 """
 def corner_type(node: Node) -> tuple:
     if (node.x < node.prev_n.x and node.y > node.next_n.y) or (node.x < node.next_n.x and node.y > node.prev_n.y):
-        return tuple([Constants.SNAKE_HEADS_DOWN, Constants.SNAKE_HEADS_RIGHT])
+        return tuple([Constants.DOWN, Constants.RIGHT])
     if (node.x > node.prev_n.x and node.y > node.next_n.y) or (node.x > node.next_n.x and node.y > node.prev_n.y):
-        return tuple([Constants.SNAKE_HEADS_DOWN, Constants.SNAKE_HEADS_LEFT])
+        return tuple([Constants.DOWN, Constants.LEFT])
     if (node.x > node.prev_n.x and node.y < node.next_n.y) or (node.x > node.next_n.x and node.y < node.prev_n.y):
-        return tuple([Constants.SNAKE_HEADS_UP, Constants.SNAKE_HEADS_LEFT])
+        return tuple([Constants.UP, Constants.LEFT])
     if (node.x < node.prev_n.x and node.y < node.next_n.y) or (node.x < node.next_n.x and node.y < node.prev_n.y):
-        return tuple([Constants.SNAKE_HEADS_UP, Constants.SNAKE_HEADS_RIGHT])
+        return tuple([Constants.UP, Constants.RIGHT])
 
 
 def is_head(node: Node):
@@ -94,21 +94,21 @@ class Snake:
 
     def next_square(self, next_move):
         direction = heads_direction(self.head)
-        if (direction is Constants.SNAKE_HEADS_UP and next_move is Constants.SNAKE_MOVE_FORWARD) \
-                or (direction is Constants.SNAKE_HEADS_RIGHT and next_move is Constants.SNAKE_MOVE_LEFT) \
-                or (direction is Constants.SNAKE_HEADS_LEFT and next_move is Constants.SNAKE_MOVE_RIGHT):
+        if (direction is Constants.UP and next_move is Constants.SNAKE_MOVE_FORWARD) \
+                or (direction is Constants.RIGHT and next_move is Constants.SNAKE_MOVE_LEFT) \
+                or (direction is Constants.LEFT and next_move is Constants.SNAKE_MOVE_RIGHT):
             return tuple([self.head.x, self.head.y + 1])
-        if (direction is Constants.SNAKE_HEADS_UP and next_move is Constants.SNAKE_MOVE_RIGHT) \
-                or (direction is Constants.SNAKE_HEADS_RIGHT and next_move is Constants.SNAKE_MOVE_FORWARD) \
-                or (direction is Constants.SNAKE_HEADS_DOWN and next_move is Constants.SNAKE_MOVE_LEFT):
+        if (direction is Constants.UP and next_move is Constants.SNAKE_MOVE_RIGHT) \
+                or (direction is Constants.RIGHT and next_move is Constants.SNAKE_MOVE_FORWARD) \
+                or (direction is Constants.DOWN and next_move is Constants.SNAKE_MOVE_LEFT):
             return tuple([self.head.x + 1, self.head.y])
-        if (direction is Constants.SNAKE_HEADS_RIGHT and next_move is Constants.SNAKE_MOVE_RIGHT) \
-                or (direction is Constants.SNAKE_HEADS_DOWN and next_move is Constants.SNAKE_MOVE_FORWARD) \
-                or (direction is Constants.SNAKE_HEADS_LEFT and next_move is Constants.SNAKE_MOVE_LEFT):
+        if (direction is Constants.RIGHT and next_move is Constants.SNAKE_MOVE_RIGHT) \
+                or (direction is Constants.DOWN and next_move is Constants.SNAKE_MOVE_FORWARD) \
+                or (direction is Constants.LEFT and next_move is Constants.SNAKE_MOVE_LEFT):
             return tuple([self.head.x, self.head.y - 1])
-        if (direction is Constants.SNAKE_HEADS_UP and next_move is Constants.SNAKE_MOVE_LEFT) \
-                or (direction is Constants.SNAKE_HEADS_DOWN and next_move is Constants.SNAKE_MOVE_RIGHT) \
-                or (direction is Constants.SNAKE_HEADS_LEFT and next_move is Constants.SNAKE_MOVE_FORWARD):
+        if (direction is Constants.UP and next_move is Constants.SNAKE_MOVE_LEFT) \
+                or (direction is Constants.DOWN and next_move is Constants.SNAKE_MOVE_RIGHT) \
+                or (direction is Constants.LEFT and next_move is Constants.SNAKE_MOVE_FORWARD):
             return tuple([self.head.x - 1, self.head.y])
 
     def move(self, next_square):

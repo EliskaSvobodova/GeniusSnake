@@ -1,6 +1,7 @@
 import UI
 import Snake
 import random
+import Constants
 
 
 class Game:
@@ -21,7 +22,7 @@ class Game:
             self.game_field[part.y][part.x] = False # +1 for the boundary
         self.put_apple()
 
-    def play(self, next_move):
+    def make_next_move(self, next_move):
         next_square = self.snake.next_square(next_move)
         if self.game_field[next_square[1]][next_square[0]]:  # there is no obstacle
             if self.apple[0] == next_square[0] and self.apple[1] == next_square[1]:  # there is an apple
@@ -53,3 +54,18 @@ class Game:
         self.ui.draw_snake_eat(self.snake)
         self.score += 1
         self.ui.draw_score(self.score)
+
+    def get_move_from_direction(self, direction):
+        snake_heads = Snake.heads_direction(self.snake.head)
+        if (snake_heads is Constants.UP and direction is Constants.LEFT) \
+                or (snake_heads is Constants.RIGHT and direction is Constants.UP) \
+                or (snake_heads is Constants.DOWN and direction is Constants.RIGHT) \
+                or (snake_heads is Constants.LEFT and direction is Constants.DOWN):
+            return Constants.SNAKE_MOVE_LEFT
+        elif (snake_heads is Constants.UP and direction is Constants.RIGHT) \
+                or (snake_heads is Constants.RIGHT and direction is Constants.DOWN) \
+                or (snake_heads is Constants.DOWN and direction is Constants.LEFT) \
+                or (snake_heads is Constants.LEFT and direction is Constants.UP):
+            return Constants.SNAKE_MOVE_RIGHT
+        else:
+            return Constants.SNAKE_MOVE_FORWARD

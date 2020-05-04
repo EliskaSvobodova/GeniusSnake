@@ -126,13 +126,13 @@ class NiceUI(AbstractUI):
         self.snake_head.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
         self.snake_head.y = self.game_y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.heads_direction(part)
-        if direction is Constants.SNAKE_HEADS_UP:
+        if direction is Constants.UP:
             self.snake_head.rotation = 0
-        elif direction is Constants.SNAKE_HEADS_RIGHT:
+        elif direction is Constants.RIGHT:
             self.snake_head.rotation = 90
-        elif direction is Constants.SNAKE_HEADS_DOWN:
+        elif direction is Constants.DOWN:
             self.snake_head.rotation = 180
-        elif direction is Constants.SNAKE_HEADS_LEFT:
+        elif direction is Constants.LEFT:
             self.snake_head.rotation = 270
         self.snake_head.draw()
 
@@ -140,13 +140,13 @@ class NiceUI(AbstractUI):
         self.snake_head_dead.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
         self.snake_head_dead.y = self.game_y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.heads_direction(part)
-        if direction is Constants.SNAKE_HEADS_UP:
+        if direction is Constants.UP:
             self.snake_head_dead.rotation = 0
-        elif direction is Constants.SNAKE_HEADS_RIGHT:
+        elif direction is Constants.RIGHT:
             self.snake_head_dead.rotation = 90
-        elif direction is Constants.SNAKE_HEADS_DOWN:
+        elif direction is Constants.DOWN:
             self.snake_head_dead.rotation = 180
-        elif direction is Constants.SNAKE_HEADS_LEFT:
+        elif direction is Constants.LEFT:
             self.snake_head_dead.rotation = 270
         self.snake_head_dead.draw()
 
@@ -154,13 +154,13 @@ class NiceUI(AbstractUI):
         self.snake_tail.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
         self.snake_tail.y = self.game_y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.rest_direction(part)
-        if direction is Constants.SNAKE_HEADS_UP:
+        if direction is Constants.UP:
             self.snake_tail.rotation = 0
-        elif direction is Constants.SNAKE_HEADS_RIGHT:
+        elif direction is Constants.RIGHT:
             self.snake_tail.rotation = 90
-        elif direction is Constants.SNAKE_HEADS_DOWN:
+        elif direction is Constants.DOWN:
             self.snake_tail.rotation = 180
-        elif direction is Constants.SNAKE_HEADS_LEFT:
+        elif direction is Constants.LEFT:
             self.snake_tail.rotation = 270
         self.snake_tail.draw()
 
@@ -168,9 +168,9 @@ class NiceUI(AbstractUI):
         self.snake_body.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
         self.snake_body.y = self.game_y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.heads_direction(part)
-        if direction is Constants.SNAKE_HEADS_UP or direction is Constants.SNAKE_HEADS_DOWN:
+        if direction is Constants.UP or direction is Constants.DOWN:
             self.snake_body.rotation = 0
-        elif direction is Constants.SNAKE_HEADS_LEFT or direction is Constants.SNAKE_HEADS_RIGHT:
+        elif direction is Constants.LEFT or direction is Constants.RIGHT:
             self.snake_body.rotation = 90
         self.snake_body.draw()
 
@@ -178,13 +178,13 @@ class NiceUI(AbstractUI):
         self.snake_corner.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
         self.snake_corner.y = self.game_y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.corner_type(part)
-        if direction[0] is Constants.SNAKE_HEADS_UP and direction[1] is Constants.SNAKE_HEADS_RIGHT:
+        if direction[0] is Constants.UP and direction[1] is Constants.RIGHT:
             self.snake_corner.rotation = 270
-        elif direction[0] is Constants.SNAKE_HEADS_UP and direction[1] is Constants.SNAKE_HEADS_LEFT:
+        elif direction[0] is Constants.UP and direction[1] is Constants.LEFT:
             self.snake_corner.rotation = 180
-        elif direction[0] is Constants.SNAKE_HEADS_DOWN and direction[1] is Constants.SNAKE_HEADS_RIGHT:
+        elif direction[0] is Constants.DOWN and direction[1] is Constants.RIGHT:
             self.snake_corner.rotation = 0
-        elif direction[0] is Constants.SNAKE_HEADS_DOWN and direction[1] is Constants.SNAKE_HEADS_LEFT:
+        elif direction[0] is Constants.DOWN and direction[1] is Constants.LEFT:
             self.snake_corner.rotation = 90
         self.snake_corner.draw()
 
