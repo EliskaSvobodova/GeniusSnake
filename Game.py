@@ -4,13 +4,6 @@ import Snake
 import random
 import pyglet
 
-"""
-Snake's next move
-"""
-LEFT = -1
-FORWARD = 0
-RIGHT = 1
-
 
 class Game:
     def __init__(self, controller: Controller.AbstractController, ui: UI.AbstractUI):
@@ -42,7 +35,6 @@ class Game:
                 self.move_snake(next_square)
         else:  # snake bumped into an obstacle
             self.ui.draw_snake_dead(self.snake)
-
 
     def put_apple(self):
         x = random.randint(0, self.game_field_width - 1)

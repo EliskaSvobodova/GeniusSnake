@@ -1,0 +1,14 @@
+"""
+Snake's next move
+"""
+SNAKE_MOVE_LEFT = -1
+SNAKE_MOVE_FORWARD = 0
+SNAKE_MOVE_RIGHT = 1
+
+"""
+Direction constants
+"""
+SNAKE_HEADS_UP = 0
+SNAKE_HEADS_RIGHT = 1
+SNAKE_HEADS_DOWN = 2
+SNAKE_HEADS_LEFT = 3

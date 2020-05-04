@@ -75,8 +75,8 @@ class Menu:
         if self.mouse_on_play_button(x, y):
             self.window.pop_handlers()
             self.window.clear()
-            controller = Controller.PlayerController()
-            ui = UI.NiceUI(10, 80, self.screen_width - 20, self.screen_height - 90, self.window)
+            controller = Controller.PlayerController(self.window)
+            ui = UI.NiceUI(10, 80, self.screen_width - 20, self.screen_height - 90)
             Game.Game(controller, ui)
 
     def on_menu_mouse_motion(self, x, y, dx, dy):

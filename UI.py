@@ -2,12 +2,11 @@ from abc import ABCMeta, abstractmethod
 import pyglet
 import CommonHelpers
 import Snake
-from PIL import Image
+import Constants
 
 
 class AbstractUI(metaclass=ABCMeta):
-    def __init__(self, x, y, width, height, window):
-        self.window = window
+    def __init__(self, x, y, width, height):
         self.x = x
         self.y = y
         self.width = width
@@ -75,11 +74,11 @@ class NiceUI(AbstractUI):
             row = []
             for j in range(self.num_squares_width):
                 square = grass.get_region(x=(self.x + j * self.square_size), y=(self.y + i * self.square_size),
-                                               width=self.square_size, height=self.square_size)
-                row.append(pyglet.sprite.Sprite(square, x=(self.x + j * self.square_size), y=(self.y + i * self.square_size)))
+                                          width=self.square_size, height=self.square_size)
+                row.append(pyglet.sprite.Sprite(square,
+                                                x=(self.x + j * self.square_size),
+                                                y=(self.y + i * self.square_size)))
             self.cover_squares.append(row)
-
-        #self.cover_squares = pyglet.image.ImageGrid(grass, self.num_squares_height, self.num_squares_width)
 
     def draw_snake_eat(self, snake: Snake.Snake):
         self.draw_square(snake.head.next_n.x, snake.head.next_n.y)
@@ -127,13 +126,13 @@ class NiceUI(AbstractUI):
         self.snake_head.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
         self.snake_head.y = self.game_y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.heads_direction(part)
-        if direction is Snake.UP:
+        if direction is Constants.SNAKE_HEADS_UP:
             self.snake_head.rotation = 0
-        elif direction is Snake.RIGHT:
+        elif direction is Constants.SNAKE_HEADS_RIGHT:
             self.snake_head.rotation = 90
-        elif direction is Snake.DOWN:
+        elif direction is Constants.SNAKE_HEADS_DOWN:
             self.snake_head.rotation = 180
-        elif direction is Snake.LEFT:
+        elif direction is Constants.SNAKE_HEADS_LEFT:
             self.snake_head.rotation = 270
         self.snake_head.draw()
 
@@ -141,13 +140,13 @@ class NiceUI(AbstractUI):
         self.snake_head_dead.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
         self.snake_head_dead.y = self.game_y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.heads_direction(part)
-        if direction is Snake.UP:
+        if direction is Constants.SNAKE_HEADS_UP:
             self.snake_head_dead.rotation = 0
-        elif direction is Snake.RIGHT:
+        elif direction is Constants.SNAKE_HEADS_RIGHT:
             self.snake_head_dead.rotation = 90
-        elif direction is Snake.DOWN:
+        elif direction is Constants.SNAKE_HEADS_DOWN:
             self.snake_head_dead.rotation = 180
-        elif direction is Snake.LEFT:
+        elif direction is Constants.SNAKE_HEADS_LEFT:
             self.snake_head_dead.rotation = 270
         self.snake_head_dead.draw()
 
@@ -155,13 +154,13 @@ class NiceUI(AbstractUI):
         self.snake_tail.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
         self.snake_tail.y = self.game_y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.rest_direction(part)
-        if direction is Snake.UP:
+        if direction is Constants.SNAKE_HEADS_UP:
             self.snake_tail.rotation = 0
-        elif direction is Snake.RIGHT:
+        elif direction is Constants.SNAKE_HEADS_RIGHT:
             self.snake_tail.rotation = 90
-        elif direction is Snake.DOWN:
+        elif direction is Constants.SNAKE_HEADS_DOWN:
             self.snake_tail.rotation = 180
-        elif direction is Snake.LEFT:
+        elif direction is Constants.SNAKE_HEADS_LEFT:
             self.snake_tail.rotation = 270
         self.snake_tail.draw()
 
@@ -169,9 +168,9 @@ class NiceUI(AbstractUI):
         self.snake_body.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
         self.snake_body.y = self.game_y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.heads_direction(part)
-        if direction is Snake.UP or direction is Snake.DOWN:
+        if direction is Constants.SNAKE_HEADS_UP or direction is Constants.SNAKE_HEADS_DOWN:
             self.snake_body.rotation = 0
-        elif direction is Snake.LEFT or direction is Snake.RIGHT:
+        elif direction is Constants.SNAKE_HEADS_LEFT or direction is Constants.SNAKE_HEADS_RIGHT:
             self.snake_body.rotation = 90
         self.snake_body.draw()
 
@@ -179,13 +178,13 @@ class NiceUI(AbstractUI):
         self.snake_corner.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
         self.snake_corner.y = self.game_y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.corner_type(part)
-        if direction[0] is Snake.UP and direction[1] is Snake.RIGHT:
+        if direction[0] is Constants.SNAKE_HEADS_UP and direction[1] is Constants.SNAKE_HEADS_RIGHT:
             self.snake_corner.rotation = 270
-        elif direction[0] is Snake.UP and direction[1] is Snake.LEFT:
+        elif direction[0] is Constants.SNAKE_HEADS_UP and direction[1] is Constants.SNAKE_HEADS_LEFT:
             self.snake_corner.rotation = 180
-        elif direction[0] is Snake.DOWN and direction[1] is Snake.RIGHT:
+        elif direction[0] is Constants.SNAKE_HEADS_DOWN and direction[1] is Constants.SNAKE_HEADS_RIGHT:
             self.snake_corner.rotation = 0
-        elif direction[0] is Snake.DOWN and direction[1] is Snake.LEFT:
+        elif direction[0] is Constants.SNAKE_HEADS_DOWN and direction[1] is Constants.SNAKE_HEADS_LEFT:
             self.snake_corner.rotation = 90
         self.snake_corner.draw()
 
@@ -244,8 +243,8 @@ class NiceUI(AbstractUI):
             self.bush.x = self.x + (self.num_squares_width - 1) * self.square_size + self.square_size / 2
             self.bush.draw()
 
-    def __init__(self, x, y, width, height, window):
-        super().__init__(x, y, width, height, window)
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height)
         self.square_size = 50
         self.game_x = x
         self.game_y = y
