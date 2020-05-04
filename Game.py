@@ -6,8 +6,7 @@ import pyglet
 
 
 class Game:
-    def __init__(self, controller: Controller.AbstractController, ui: UI.AbstractUI):
-        self.controller = controller
+    def __init__(self, ui: UI.AbstractUI):
         self.ui = ui
         self.score = 0
         self.game_field_height = self.ui.get_num_squares_height()
@@ -23,10 +22,8 @@ class Game:
         for part in self.snake:
             self.game_field[part.y][part.x] = False # +1 for the boundary
         self.put_apple()
-        pyglet.clock.schedule_interval(self.play, 1)
 
-    def play(self, dt):
-        next_move = self.controller.get_next_move()
+    def play(self, next_move):
         next_square = self.snake.next_square(next_move)
         if self.game_field[next_square[1]][next_square[0]]:  # there is no obstacle
             if self.apple[0] == next_square[0] and self.apple[1] == next_square[1]:  # there is an apple
