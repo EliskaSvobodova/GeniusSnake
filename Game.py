@@ -1,20 +1,11 @@
-import Controller
 import UI
 import Snake
 import random
-import pyglet
-
-"""
-Snake's next move
-"""
-LEFT = -1
-FORWARD = 0
-RIGHT = 1
+import Constants
 
 
 class Game:
-    def __init__(self, controller: Controller.AbstractController, ui: UI.AbstractUI):
-        self.controller = controller
+    def __init__(self, ui: UI.AbstractUI):
         self.ui = ui
         self.score = 0
         self.game_field_height = self.ui.get_num_squares_height()
@@ -30,10 +21,8 @@ class Game:
         for part in self.snake:
             self.game_field[part.y][part.x] = False # +1 for the boundary
         self.put_apple()
-        pyglet.clock.schedule_interval(self.play, 1)
 
-    def play(self, dt):
-        next_move = self.controller.get_next_move()
+    def make_next_move(self, next_move):
         next_square = self.snake.next_square(next_move)
         if self.game_field[next_square[1]][next_square[0]]:  # there is no obstacle
             if self.apple[0] == next_square[0] and self.apple[1] == next_square[1]:  # there is an apple
@@ -43,13 +32,12 @@ class Game:
         else:  # snake bumped into an obstacle
             self.ui.draw_snake_dead(self.snake)
 
-
     def put_apple(self):
-        x = random.randint(0, self.game_field_width - 1)
-        y = random.randint(0, self.game_field_height - 1)
+        x = random.randint(1, self.game_field_width - 1)
+        y = random.randint(1, self.game_field_height - 1)
         while not self.game_field[y][x]:
-            x = random.randint(0, self.game_field_width - 1)
-            y = random.randint(0, self.game_field_height - 1)
+            x = random.randint(1, self.game_field_width - 1)
+            y = random.randint(1, self.game_field_height - 1)
         self.apple = tuple([x, y])
         self.ui.draw_apple(x, y)
 
@@ -66,3 +54,19 @@ class Game:
         self.ui.draw_snake_eat(self.snake)
         self.score += 1
         self.ui.draw_score(self.score)
+        self.put_apple()
+
+    def get_move_from_direction(self, direction):
+        snake_heads = Snake.heads_direction(self.snake.head)
+        if (snake_heads is Constants.UP and direction is Constants.LEFT) \
+                or (snake_heads is Constants.RIGHT and direction is Constants.UP) \
+                or (snake_heads is Constants.DOWN and direction is Constants.RIGHT) \
+                or (snake_heads is Constants.LEFT and direction is Constants.DOWN):
+            return Constants.SNAKE_MOVE_LEFT
+        elif (snake_heads is Constants.UP and direction is Constants.RIGHT) \
+                or (snake_heads is Constants.RIGHT and direction is Constants.DOWN) \
+                or (snake_heads is Constants.DOWN and direction is Constants.LEFT) \
+                or (snake_heads is Constants.LEFT and direction is Constants.UP):
+            return Constants.SNAKE_MOVE_RIGHT
+        else:
+            return Constants.SNAKE_MOVE_FORWARD
