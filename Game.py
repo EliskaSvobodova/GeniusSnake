@@ -25,6 +25,7 @@ class Game:
         for part in self.snake:
             self.game_field[part.y][part.x] = False # +1 for the boundary
         self.put_apple()
+        self.game_state = Constants.PLAY
 
     def make_next_move(self, next_move):
         next_square = self.snake.next_square(next_move)
@@ -35,6 +36,8 @@ class Game:
                 self.move_snake(next_square)
         else:  # snake bumped into an obstacle
             self.ui.draw_snake_dead(self.snake)
+            self.ui.draw_game_over()
+            self.game_state = Constants.LOOSE
 
     def put_apple(self):
         x = random.randint(1, self.game_field_width - 1)
@@ -58,6 +61,8 @@ class Game:
         self.ui.draw_snake_eat(self.snake)
         self.score += 1
         self.ui.draw_score(self.score)
+        if self.score == self.score_max:
+            self.game_state = Constants.WIN  # TODO: WIN THE GAME
         self.speed -= self.speed_step
         self.put_apple()
 

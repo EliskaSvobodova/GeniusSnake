@@ -65,6 +65,10 @@ class AbstractUI(metaclass=ABCMeta):
     def draw_snake_eat(self, snake: Snake.Snake):
         raise NotImplementedError
 
+    @abstractmethod
+    def draw_game_over(self):
+        raise NotImplementedError
+
 
 class NiceUI(AbstractUI):
     def __init__(self, x, y, width, height):
@@ -83,6 +87,7 @@ class NiceUI(AbstractUI):
         pyglet.gl.glBlendFunc(pyglet.gl.GL_SRC_ALPHA, pyglet.gl.GL_ONE_MINUS_SRC_ALPHA)
 
     """ IMAGE LOADING """
+
     def load_images(self):
         self.load_grass()
         self.load_score_background()
@@ -142,6 +147,7 @@ class NiceUI(AbstractUI):
         self.apple = pyglet.sprite.Sprite(img=apple_image)
 
     """ OTHER PREPARATIONS """
+
     def prepare_cover_squares(self):
         grass = pyglet.image.load("resources/NiceUI/grass.png", decoder=pyglet.image.codecs.png.PNGImageDecoder())
         self.cover_squares = []
@@ -156,6 +162,7 @@ class NiceUI(AbstractUI):
             self.cover_squares.append(row)
 
     """ GETTERS """
+
     def get_num_squares_height(self):
         return self.num_squares_height
 
@@ -163,6 +170,7 @@ class NiceUI(AbstractUI):
         return self.num_squares_width
 
     """ DRAWING """
+
     def prepare_game(self, snake):
         self.draw_background()
         self.draw_score(0)
@@ -336,6 +344,20 @@ class NiceUI(AbstractUI):
                                       self.x, self.y + self.height, self.x + self.width, self.y + self.height,
                                       self.x + self.width, self.y + self.height, self.x + self.width, self.y,
                                       self.x + self.width, self.y, self.x, self.y)))
+
+    """ DRAW GAME STATES """
+
+    def draw_game_over(self):
+        pyglet.text.Label(text="GAME OVER",
+                          x=(self.width / 2),
+                          y=(self.height / 3) * 2,
+                          anchor_x="center", anchor_y="center",
+                          font_name="Bangers", font_size=60).draw()
+        pyglet.text.Label(text="[click to go back to menu]",
+                          x=(self.width / 2),
+                          y=(self.height / 3),
+                          anchor_x="center", anchor_y="center",
+                          font_name="Bangers", font_size=40).draw()
 
 
 class SimpleUI(AbstractUI):

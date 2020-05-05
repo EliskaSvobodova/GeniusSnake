@@ -12,3 +12,10 @@ UP = 10
 RIGHT = 11
 DOWN = 12
 LEFT = 13
+
+"""
+Game states
+"""
+PLAY = 20
+WIN = 21
+LOOSE = 22

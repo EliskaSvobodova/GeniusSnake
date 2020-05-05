@@ -3,6 +3,7 @@ import resources
 import Game
 import PlayerController
 import GeneticController
+import Constants
 import UI
 import CommonHelpers
 
@@ -75,10 +76,19 @@ class Menu:
         # play clicked
         if self.mouse_on_play_button(x, y):
             self.window.pop_handlers()
+            self.button_background.opacity = 100
+            self.window.push_handlers(on_mouse_press=self.on_back_mouse_press)
             self.window.clear()
             ui = UI.NiceUI(10, 80, self.screen_width - 20, self.screen_height - 90)
             game = Game.Game(ui)
-            controller = PlayerController.PlayerController(self.window, game)
+            self.controller = PlayerController.PlayerController(self.window, game)
+
+    def on_back_mouse_press(self, x, y, button, modifiers):
+        if self.controller.state is not Constants.PLAY:
+            self.on_menu_draw()
+            self.window.push_handlers(on_draw=self.on_menu_draw,
+                                      on_mouse_press=self.on_menu_mouse_press,
+                                      on_mouse_motion=self.on_menu_mouse_motion)
 
     def on_menu_mouse_motion(self, x, y, dx, dy):
         if self.mouse_on_play_button(x, y):
