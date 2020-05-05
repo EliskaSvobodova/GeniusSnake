@@ -8,12 +8,16 @@ class PlayerController:
         self.window = window
         self.window.push_handlers(on_key_press=self.on_key_press)
         self.game = game
+        self.speed = self.game.speed
         self.next_move = Constants.SNAKE_MOVE_FORWARD
-
-        pyglet.clock.schedule_interval(self.control, 1/3)
+        pyglet.clock.schedule_interval(self.control, self.speed)
 
     def control(self, dt):
         self.game.make_next_move(self.next_move)
+        if self.speed != self.game.speed:
+            self.speed = self.game.speed
+            pyglet.clock.unschedule(self.control)
+            pyglet.clock.schedule_interval(self.control, self.speed)
         self.next_move = Constants.SNAKE_MOVE_FORWARD
 
     def on_key_press(self, symbol, modifiers):
