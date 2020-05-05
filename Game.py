@@ -82,3 +82,95 @@ class Game:
             return Constants.SNAKE_MOVE_RIGHT
         else:
             return Constants.SNAKE_MOVE_FORWARD
+
+    """ Functions for genetic programming """
+
+    def if_food_forward(self, yes, no):
+        snake_heads = Snake.heads_direction(self.snake.head)
+        if snake_heads is Constants.UP:
+            if self.apple[0] == self.snake.head.x and self.apple[1] > self.snake.head.y:
+                return yes
+            else:
+                return no
+        if snake_heads is Constants.RIGHT:
+            if self.apple[1] == self.snake.head.y and self.apple[0] > self.snake.head.x:
+                return yes
+            else:
+                return no
+        if snake_heads is Constants.DOWN:
+            if self.apple[0] == self.snake.head.x and self.apple[1] < self.snake.head.y:
+                return yes
+            else:
+                return no
+        if snake_heads is Constants.LEFT:
+            if self.apple[1] == self.snake.head.y and self.apple[0] < self.snake.head.x:
+                return yes
+            else:
+                return no
+
+    def if_food_left(self, yes, no):
+        snake_heads = Snake.heads_direction(self.snake.head)
+        if snake_heads is Constants.UP:
+            if self.apple[1] == self.snake.head.y and self.apple[0] < self.snake.head.x:
+                return yes
+            else:
+                return no
+        if snake_heads is Constants.RIGHT:
+            if self.apple[0] == self.snake.head.x and self.apple[1] > self.snake.head.y:
+                return yes
+            else:
+                return no
+        if snake_heads is Constants.DOWN:
+            if self.apple[1] == self.snake.head.y and self.apple[0] > self.snake.head.x:
+                return yes
+            else:
+                return no
+        if snake_heads is Constants.LEFT:
+            if self.apple[0] == self.snake.head.x and self.apple[1] < self.snake.head.y:
+                return yes
+            else:
+                return no
+
+    def if_food_right(self, yes, no):
+        snake_heads = Snake.heads_direction(self.snake.head)
+        if snake_heads is Constants.UP:
+            if self.apple[1] == self.snake.head.y and self.apple[0] > self.snake.head.x:
+                return yes
+            else:
+                return no
+        if snake_heads is Constants.RIGHT:
+            if self.apple[0] == self.snake.head.x and self.apple[1] < self.snake.head.y:
+                return yes
+            else:
+                return no
+        if snake_heads is Constants.DOWN:
+            if self.apple[1] == self.snake.head.y and self.apple[0] < self.snake.head.x:
+                return yes
+            else:
+                return no
+        if snake_heads is Constants.LEFT:
+            if self.apple[0] == self.snake.head.x and self.apple[1] > self.snake.head.y:
+                return yes
+            else:
+                return no
+
+    def if_obstacle_forward(self, yes, no):
+        next_square = self.snake.next_square(Constants.SNAKE_MOVE_FORWARD)
+        if self.game_field[next_square[0]][next_square[1]]:
+            return no
+        else:
+            return yes
+
+    def if_obstacle_left(self, yes, no):
+        next_square = self.snake.next_square(Constants.SNAKE_MOVE_LEFT)
+        if self.game_field[next_square[0]][next_square[1]]:
+            return no
+        else:
+            return yes
+
+    def if_obstacle_right(self, yes, no):
+        next_square = self.snake.next_square(Constants.SNAKE_MOVE_RIGHT)
+        if self.game_field[next_square[0]][next_square[1]]:
+            return no
+        else:
+            return yes
