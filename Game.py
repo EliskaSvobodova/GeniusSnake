@@ -62,9 +62,11 @@ class Game:
         self.score += 1
         self.ui.draw_score(self.score)
         if self.score == self.score_max:
-            self.game_state = Constants.WIN  # TODO: WIN THE GAME
-        self.speed -= self.speed_step
-        self.put_apple()
+            self.ui.draw_game_won()
+            self.game_state = Constants.WIN
+        else:
+            self.speed -= self.speed_step
+            self.put_apple()
 
     def get_move_from_direction(self, direction):
         snake_heads = Snake.heads_direction(self.snake.head)

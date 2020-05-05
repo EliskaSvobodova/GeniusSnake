@@ -20,6 +20,8 @@ class PlayerController:
             pyglet.clock.unschedule(self.control)
             pyglet.clock.schedule_interval(self.control, self.speed)
         if self.game.game_state is Constants.WIN:
+            pyglet.clock.unschedule(self.control)
+            self.window.pop_handlers()
             self.state = Constants.WIN
         elif self.game.game_state is Constants.LOOSE:
             pyglet.clock.unschedule(self.control)
