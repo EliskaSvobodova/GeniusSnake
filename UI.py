@@ -69,6 +69,10 @@ class AbstractUI(metaclass=ABCMeta):
     def draw_game_over(self):
         raise NotImplementedError
 
+    @abstractmethod
+    def draw_game_won(self):
+        raise NotImplementedError
+
 
 class NiceUI(AbstractUI):
     def __init__(self, x, y, width, height):
@@ -349,6 +353,18 @@ class NiceUI(AbstractUI):
 
     def draw_game_over(self):
         pyglet.text.Label(text="GAME OVER",
+                          x=(self.width / 2),
+                          y=(self.height / 3) * 2,
+                          anchor_x="center", anchor_y="center",
+                          font_name="Bangers", font_size=60).draw()
+        pyglet.text.Label(text="[click to go back to menu]",
+                          x=(self.width / 2),
+                          y=(self.height / 3),
+                          anchor_x="center", anchor_y="center",
+                          font_name="Bangers", font_size=40).draw()
+
+    def draw_game_won(self):
+        pyglet.text.Label(text="YOU WIN! CONGRATULATION!",
                           x=(self.width / 2),
                           y=(self.height / 3) * 2,
                           anchor_x="center", anchor_y="center",
