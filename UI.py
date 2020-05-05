@@ -67,6 +67,81 @@ class AbstractUI(metaclass=ABCMeta):
 
 
 class NiceUI(AbstractUI):
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height)
+        self.square_size = 50
+        self.game_x = x
+        self.game_y = y
+        self.load_images()
+        self.num_squares_height = (self.height - self.score_background.height) // self.square_size
+        self.num_squares_width = self.width // self.square_size
+        self.game_width = self.square_size * self.num_squares_width
+        self.game_height = self.square_size * self.num_squares_height
+        self.prepare_cover_squares()
+        # enable transparency
+        pyglet.gl.glEnable(pyglet.gl.GL_BLEND)
+        pyglet.gl.glBlendFunc(pyglet.gl.GL_SRC_ALPHA, pyglet.gl.GL_ONE_MINUS_SRC_ALPHA)
+
+    """ IMAGE LOADING """
+    def load_images(self):
+        self.load_grass()
+        self.load_score_background()
+        self.load_snake()
+        self.load_bush()
+        self.load_apple()
+
+    def load_grass(self):
+        grass_image = pyglet.resource.image("NiceUI/grass.jpg")
+        CommonHelpers.scale_image(grass_image, self.width - 2,
+                                  self.height - 2)  # minus few pixels so the boundary is visible
+        CommonHelpers.center_image(grass_image)
+        self.grass = pyglet.sprite.Sprite(img=grass_image, x=self.x + (self.width / 2), y=self.y + (self.height / 2))
+
+    def load_score_background(self):
+        score_background_image = pyglet.resource.image("NiceUI/score_background.png")
+        CommonHelpers.center_image(score_background_image)
+        self.score_background = pyglet.sprite.Sprite(img=score_background_image,
+                                                     x=self.x + (self.width / 2),
+                                                     y=self.y + self.height - (score_background_image.height / 2))
+
+    def load_snake(self):
+        snake_head_image = pyglet.resource.image("NiceUI/snake_head.png")
+        snake_body_image = pyglet.resource.image("NiceUI/snake_body.png")
+        snake_corner_image = pyglet.resource.image("NiceUI/snake_corner.png")
+        snake_tail_image = pyglet.resource.image("NiceUI/snake_tail.png")
+        snake_head_dead_image = pyglet.resource.image("NiceUI/snake_head_dead.png")
+
+        CommonHelpers.scale_image(snake_head_image, self.square_size, self.square_size)
+        CommonHelpers.scale_image(snake_body_image, self.square_size, self.square_size)
+        CommonHelpers.scale_image(snake_corner_image, self.square_size, self.square_size)
+        CommonHelpers.scale_image(snake_tail_image, self.square_size, self.square_size)
+        CommonHelpers.scale_image(snake_head_dead_image, self.square_size, self.square_size)
+
+        CommonHelpers.center_image(snake_head_image)
+        CommonHelpers.center_image(snake_body_image)
+        CommonHelpers.center_image(snake_corner_image)
+        CommonHelpers.center_image(snake_tail_image)
+        CommonHelpers.center_image(snake_head_dead_image)
+
+        self.snake_head = pyglet.sprite.Sprite(img=snake_head_image)
+        self.snake_body = pyglet.sprite.Sprite(img=snake_body_image)
+        self.snake_corner = pyglet.sprite.Sprite(img=snake_corner_image)
+        self.snake_tail = pyglet.sprite.Sprite(img=snake_tail_image)
+        self.snake_head_dead = pyglet.sprite.Sprite(img=snake_head_dead_image)
+
+    def load_bush(self):
+        bush_image = pyglet.resource.image("NiceUI/bush2.png")
+        CommonHelpers.scale_image(bush_image, self.square_size, self.square_size)
+        CommonHelpers.center_image(bush_image)
+        self.bush = pyglet.sprite.Sprite(img=bush_image)
+
+    def load_apple(self):
+        apple_image = pyglet.resource.image("NiceUI/apple.png")
+        CommonHelpers.scale_image(apple_image, self.square_size, self.square_size)
+        CommonHelpers.center_image(apple_image)
+        self.apple = pyglet.sprite.Sprite(img=apple_image)
+
+    """ OTHER PREPARATIONS """
     def prepare_cover_squares(self):
         grass = pyglet.image.load("resources/NiceUI/grass.png", decoder=pyglet.image.codecs.png.PNGImageDecoder())
         self.cover_squares = []
@@ -79,6 +154,21 @@ class NiceUI(AbstractUI):
                                                 x=(self.x + j * self.square_size),
                                                 y=(self.y + i * self.square_size)))
             self.cover_squares.append(row)
+
+    """ GETTERS """
+    def get_num_squares_height(self):
+        return self.num_squares_height
+
+    def get_num_squares_width(self):
+        return self.num_squares_width
+
+    """ DRAWING """
+    def prepare_game(self, snake):
+        self.draw_background()
+        self.draw_score(0)
+        self.draw_game_field()
+        self.draw_boundary()
+        self.draw_snake(snake)
 
     def draw_snake_eat(self, snake: Snake.Snake):
         self.draw_square(snake.head.next_n.x, snake.head.next_n.y)
@@ -97,13 +187,6 @@ class NiceUI(AbstractUI):
         self.apple.x = x
         self.apple.y = y
         self.apple.draw()
-
-    def prepare_game(self, snake):
-        self.draw_background()
-        self.draw_score(0)
-        self.draw_game_field()
-        self.draw_boundary()
-        self.draw_snake(snake)
 
     def draw_snake(self, snake: Snake.Snake):
         for part in snake:
@@ -188,12 +271,6 @@ class NiceUI(AbstractUI):
             self.snake_corner.rotation = 90
         self.snake_corner.draw()
 
-    def get_num_squares_height(self):
-        return self.num_squares_height
-
-    def get_num_squares_width(self):
-        return self.num_squares_width
-
     def draw_game_field(self):
         for i in range(1, self.num_squares_height - 1):
             for j in range(1, self.num_squares_width - 1):
@@ -243,21 +320,6 @@ class NiceUI(AbstractUI):
             self.bush.x = self.x + (self.num_squares_width - 1) * self.square_size + self.square_size / 2
             self.bush.draw()
 
-    def __init__(self, x, y, width, height):
-        super().__init__(x, y, width, height)
-        self.square_size = 50
-        self.game_x = x
-        self.game_y = y
-        self.load_images()
-        self.num_squares_height = (self.height - self.score_background.height) // self.square_size
-        self.num_squares_width = self.width // self.square_size
-        self.game_width = self.square_size * self.num_squares_width
-        self.game_height = self.square_size * self.num_squares_height
-        self.prepare_cover_squares()
-        # enable transparency
-        pyglet.gl.glEnable(pyglet.gl.GL_BLEND)
-        pyglet.gl.glBlendFunc(pyglet.gl.GL_SRC_ALPHA, pyglet.gl.GL_ONE_MINUS_SRC_ALPHA)
-
     def draw_score(self, score):
         self.score_background.draw()
         pyglet.text.Label(text=f"Score: {score}", x=self.score_background.x, y=self.score_background.y,
@@ -267,64 +329,6 @@ class NiceUI(AbstractUI):
 
     def draw_background(self):
         self.grass.draw()
-
-    def load_images(self):
-        self.load_grass()
-        self.load_score_background()
-        self.load_snake()
-        self.load_bush()
-        self.load_apple()
-
-    def load_grass(self):
-        grass_image = pyglet.resource.image("NiceUI/grass.jpg")
-        CommonHelpers.scale_image(grass_image, self.width - 2,
-                                  self.height - 2)  # minus few pixels so the boundary is visible
-        CommonHelpers.center_image(grass_image)
-        self.grass = pyglet.sprite.Sprite(img=grass_image, x=self.x + (self.width / 2), y=self.y + (self.height / 2))
-
-    def load_score_background(self):
-        score_background_image = pyglet.resource.image("NiceUI/score_background.png")
-        CommonHelpers.center_image(score_background_image)
-        self.score_background = pyglet.sprite.Sprite(img=score_background_image,
-                                                     x=self.x + (self.width / 2),
-                                                     y=self.y + self.height - (score_background_image.height / 2))
-
-    def load_snake(self):
-        snake_head_image = pyglet.resource.image("NiceUI/snake_head.png")
-        snake_body_image = pyglet.resource.image("NiceUI/snake_body.png")
-        snake_corner_image = pyglet.resource.image("NiceUI/snake_corner.png")
-        snake_tail_image = pyglet.resource.image("NiceUI/snake_tail.png")
-        snake_head_dead_image = pyglet.resource.image("NiceUI/snake_head_dead.png")
-
-        CommonHelpers.scale_image(snake_head_image, self.square_size, self.square_size)
-        CommonHelpers.scale_image(snake_body_image, self.square_size, self.square_size)
-        CommonHelpers.scale_image(snake_corner_image, self.square_size, self.square_size)
-        CommonHelpers.scale_image(snake_tail_image, self.square_size, self.square_size)
-        CommonHelpers.scale_image(snake_head_dead_image, self.square_size, self.square_size)
-
-        CommonHelpers.center_image(snake_head_image)
-        CommonHelpers.center_image(snake_body_image)
-        CommonHelpers.center_image(snake_corner_image)
-        CommonHelpers.center_image(snake_tail_image)
-        CommonHelpers.center_image(snake_head_dead_image)
-
-        self.snake_head = pyglet.sprite.Sprite(img=snake_head_image)
-        self.snake_body = pyglet.sprite.Sprite(img=snake_body_image)
-        self.snake_corner = pyglet.sprite.Sprite(img=snake_corner_image)
-        self.snake_tail = pyglet.sprite.Sprite(img=snake_tail_image)
-        self.snake_head_dead = pyglet.sprite.Sprite(img=snake_head_dead_image)
-
-    def load_bush(self):
-        bush_image = pyglet.resource.image("NiceUI/bush2.png")
-        CommonHelpers.scale_image(bush_image, self.square_size, self.square_size)
-        CommonHelpers.center_image(bush_image)
-        self.bush = pyglet.sprite.Sprite(img=bush_image)
-
-    def load_apple(self):
-        apple_image = pyglet.resource.image("NiceUI/apple.png")
-        CommonHelpers.scale_image(apple_image, self.square_size, self.square_size)
-        CommonHelpers.center_image(apple_image)
-        self.apple = pyglet.sprite.Sprite(img=apple_image)
 
     def draw_boundary(self):
         pyglet.graphics.draw(8, pyglet.gl.GL_LINES,
