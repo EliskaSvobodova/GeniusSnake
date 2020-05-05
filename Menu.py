@@ -82,7 +82,7 @@ class Menu:
             self.button_play_background.opacity = 100
             self.window.push_handlers(on_mouse_press=self.on_back_mouse_press)
             self.window.clear()
-            ui = UI.NiceUI(10, 80, self.screen_width - 20, self.screen_height - 90)
+            ui = UI.NiceUI(10, 80, self.screen_width - 20, self.screen_height - 90, 50)
             game = Game.Game(ui)
             self.controller = PlayerController.PlayerController(self.window, game)
         if CommonHelpers.mouse_on_button(self.button_genetic_background, x, y):
@@ -90,7 +90,7 @@ class Menu:
             self.button_play_background.opacity = 100
             self.window.push_handlers(on_mouse_press=self.on_back_mouse_press)
             self.window.clear()
-            ui = UI.NiceUI(10, 80, self.screen_width - 20, self.screen_height - 90)
+            ui = UI.NiceUI(10, 80, self.screen_width - 20, self.screen_height - 90, 50)
             game = Game.Game(ui)
             self.controller = GeneticController.GeneticController(game)
 

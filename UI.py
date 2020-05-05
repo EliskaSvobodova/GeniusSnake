@@ -6,15 +6,56 @@ import Constants
 
 
 class AbstractUI(metaclass=ABCMeta):
-    def __init__(self, x, y, width, height):
+    def __init__(self, x, y, width, height, square_size):
         self.x = x
         self.y = y
         self.width = width
         self.height = height
+        self.square_size = square_size
         CommonHelpers.configure_resources()
+
+    """ GETTERS """
+
+    @abstractmethod
+    def get_num_squares_height(self):
+        raise NotImplementedError()
+
+    @abstractmethod
+    def get_num_squares_width(self):
+        raise NotImplementedError()
+
+    """ DRAWING """
 
     @abstractmethod
     def prepare_game(self, snake: Snake.Snake):
+        raise NotImplementedError
+
+    @abstractmethod
+    def draw_snake_eat(self, snake: Snake.Snake):
+        raise NotImplementedError
+
+    @abstractmethod
+    def draw_snake_move(self, snake: Snake.Snake, prev_tail):
+        raise NotImplementedError
+
+    @abstractmethod
+    def draw_apple(self, x, y):
+        raise NotImplementedError
+
+    @abstractmethod
+    def draw_snake(self, snake: Snake.Snake):
+        raise NotImplementedError()
+
+    @abstractmethod
+    def draw_snake_dead(self, snake: Snake.Snake):
+        raise NotImplementedError()
+
+    @abstractmethod
+    def draw_game_field(self):
+        raise NotImplementedError()
+
+    @abstractmethod
+    def draw_square(self, x, y):
         raise NotImplementedError
 
     @abstractmethod
@@ -26,46 +67,6 @@ class AbstractUI(metaclass=ABCMeta):
         raise NotImplementedError()
 
     @abstractmethod
-    def draw_game_field(self):
-        raise NotImplementedError()
-
-    @abstractmethod
-    def draw_boundary(self):
-        raise NotImplementedError()
-
-    @abstractmethod
-    def get_num_squares_height(self):
-        raise NotImplementedError()
-
-    @abstractmethod
-    def get_num_squares_width(self):
-        raise NotImplementedError()
-
-    @abstractmethod
-    def draw_snake(self, snake: Snake.Snake):
-        raise NotImplementedError()
-
-    @abstractmethod
-    def draw_snake_dead(self, snake: Snake.Snake):
-        raise NotImplementedError()
-
-    @abstractmethod
-    def draw_apple(self, x, y):
-        raise NotImplementedError
-
-    @abstractmethod
-    def draw_square(self, x, y):
-        raise NotImplementedError
-
-    @abstractmethod
-    def draw_snake_move(self, snake: Snake.Snake, prev_tail):
-        raise NotImplementedError
-
-    @abstractmethod
-    def draw_snake_eat(self, snake: Snake.Snake):
-        raise NotImplementedError
-
-    @abstractmethod
     def draw_game_over(self):
         raise NotImplementedError
 
@@ -73,13 +74,17 @@ class AbstractUI(metaclass=ABCMeta):
     def draw_game_won(self):
         raise NotImplementedError
 
+    def draw_boundary(self):
+        pyglet.graphics.draw(8, pyglet.gl.GL_LINES,
+                             ("v2f", (self.x, self.y, self.x, self.y + self.height,
+                                      self.x, self.y + self.height, self.x + self.width, self.y + self.height,
+                                      self.x + self.width, self.y + self.height, self.x + self.width, self.y,
+                                      self.x + self.width, self.y, self.x, self.y)))
+
 
 class NiceUI(AbstractUI):
-    def __init__(self, x, y, width, height):
-        super().__init__(x, y, width, height)
-        self.square_size = 50
-        self.game_x = x
-        self.game_y = y
+    def __init__(self, x, y, width, height, square_size):
+        super().__init__(x, y, width, height, square_size)
         self.load_images()
         self.num_squares_height = (self.height - self.score_background.height) // self.square_size
         self.num_squares_width = self.width // self.square_size
@@ -218,8 +223,8 @@ class NiceUI(AbstractUI):
             self.draw_snake_corner(part)
 
     def draw_snake_head(self, part: Snake.Node):
-        self.snake_head.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
-        self.snake_head.y = self.game_y + (part.y * self.square_size) + (self.square_size / 2)
+        self.snake_head.x = self.x + (part.x * self.square_size) + (self.square_size / 2)
+        self.snake_head.y = self.y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.heads_direction(part)
         if direction is Constants.UP:
             self.snake_head.rotation = 0
@@ -232,8 +237,8 @@ class NiceUI(AbstractUI):
         self.snake_head.draw()
 
     def draw_snake_head_dead(self, part: Snake.Node):
-        self.snake_head_dead.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
-        self.snake_head_dead.y = self.game_y + (part.y * self.square_size) + (self.square_size / 2)
+        self.snake_head_dead.x = self.x + (part.x * self.square_size) + (self.square_size / 2)
+        self.snake_head_dead.y = self.y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.heads_direction(part)
         if direction is Constants.UP:
             self.snake_head_dead.rotation = 0
@@ -246,8 +251,8 @@ class NiceUI(AbstractUI):
         self.snake_head_dead.draw()
 
     def draw_snake_tail(self, part: Snake.Node):
-        self.snake_tail.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
-        self.snake_tail.y = self.game_y + (part.y * self.square_size) + (self.square_size / 2)
+        self.snake_tail.x = self.x + (part.x * self.square_size) + (self.square_size / 2)
+        self.snake_tail.y = self.y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.rest_direction(part)
         if direction is Constants.UP:
             self.snake_tail.rotation = 0
@@ -260,8 +265,8 @@ class NiceUI(AbstractUI):
         self.snake_tail.draw()
 
     def draw_snake_body(self, part: Snake.Node):
-        self.snake_body.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
-        self.snake_body.y = self.game_y + (part.y * self.square_size) + (self.square_size / 2)
+        self.snake_body.x = self.x + (part.x * self.square_size) + (self.square_size / 2)
+        self.snake_body.y = self.y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.heads_direction(part)
         if direction is Constants.UP or direction is Constants.DOWN:
             self.snake_body.rotation = 0
@@ -270,8 +275,8 @@ class NiceUI(AbstractUI):
         self.snake_body.draw()
 
     def draw_snake_corner(self, part: Snake.Node):
-        self.snake_corner.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
-        self.snake_corner.y = self.game_y + (part.y * self.square_size) + (self.square_size / 2)
+        self.snake_corner.x = self.x + (part.x * self.square_size) + (self.square_size / 2)
+        self.snake_corner.y = self.y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.corner_type(part)
         if direction[0] is Constants.UP and direction[1] is Constants.RIGHT:
             self.snake_corner.rotation = 270
@@ -291,8 +296,8 @@ class NiceUI(AbstractUI):
 
     def draw_square(self, x, y):
         self.cover_squares[y][x].draw()
-        x1 = self.game_x + (x * self.square_size)
-        y1 = self.game_y + (y * self.square_size)
+        x1 = self.x + (x * self.square_size)
+        y1 = self.y + (y * self.square_size)
         x2 = x1
         y2 = y1 + self.square_size
         x3 = x1 + self.square_size
@@ -342,13 +347,6 @@ class NiceUI(AbstractUI):
     def draw_background(self):
         self.grass.draw()
 
-    def draw_boundary(self):
-        pyglet.graphics.draw(8, pyglet.gl.GL_LINES,
-                             ("v2f", (self.x, self.y, self.x, self.y + self.height,
-                                      self.x, self.y + self.height, self.x + self.width, self.y + self.height,
-                                      self.x + self.width, self.y + self.height, self.x + self.width, self.y,
-                                      self.x + self.width, self.y, self.x, self.y)))
-
     """ DRAW GAME STATES """
 
     def draw_game_over(self):
@@ -377,8 +375,8 @@ class NiceUI(AbstractUI):
 
 
 class SimpleUI(AbstractUI):
-    def draw_boundary(self):
-        pass
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height)
 
     def get_num_squares_height(self):
         pass
@@ -386,17 +384,38 @@ class SimpleUI(AbstractUI):
     def get_num_squares_width(self):
         pass
 
-    def draw_snake(self, snake: Snake):
+    def prepare_game(self, snake: Snake.Snake):
+        pass
+
+    def draw_snake_eat(self, snake: Snake.Snake):
+        pass
+
+    def draw_snake_move(self, snake: Snake.Snake, prev_tail):
+        pass
+
+    def draw_apple(self, x, y):
+        pass
+
+    def draw_snake(self, snake: Snake.Snake):
+        pass
+
+    def draw_snake_dead(self, snake: Snake.Snake):
         pass
 
     def draw_game_field(self):
         pass
 
-    def get_game_board_height(self):
+    def draw_square(self, x, y):
+        pass
+
+    def draw_score(self, score):
         pass
 
     def draw_background(self):
         pass
 
-    def draw_score(self, score):
+    def draw_game_over(self):
+        pass
+
+    def draw_game_won(self):
         pass
