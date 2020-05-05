@@ -90,7 +90,7 @@ class NiceUI(AbstractUI):
         self.draw_square(snake.tail.x, snake.tail.y)
         self.draw_square(snake.head.next_n.x, snake.head.next_n.y)
         self.draw_snake_head(snake.head)
-        self.draw_snake_body(snake.head.next_n)
+        self.draw_snake_part(snake.head.next_n)
         self.draw_snake_tail(snake.tail)
 
     def draw_apple(self, x, y):
