@@ -34,7 +34,7 @@ class Menu:
         button_background_image = pyglet.resource.image("button_background.png")
         CommonHelpers.center_image(snake_image)
         CommonHelpers.center_image(button_background_image)
-        self.snake = pyglet.sprite.Sprite(img=snake_image, x=(self.screen_width // 2), y=(self.screen_height // 2))
+        self.snake_background = pyglet.sprite.Sprite(img=snake_image, x=(self.screen_width // 2), y=(self.screen_height // 2))
         self.button_background = pyglet.sprite.Sprite(img=button_background_image,
                                                       x=self.play_label.x, y=self.play_label.y)
         self.button_background.opacity = 100
@@ -66,7 +66,7 @@ class Menu:
         return False
 
     def on_menu_draw(self):
-        self.snake.draw()
+        self.snake_background.draw()
         self.game_name_shadow_label.draw()
         self.game_name_label.draw()
         self.button_background.draw()
