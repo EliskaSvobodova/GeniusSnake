@@ -33,11 +33,11 @@ class Game:
             self.ui.draw_snake_dead(self.snake)
 
     def put_apple(self):
-        x = random.randint(0, self.game_field_width - 1)
-        y = random.randint(0, self.game_field_height - 1)
+        x = random.randint(1, self.game_field_width - 1)
+        y = random.randint(1, self.game_field_height - 1)
         while not self.game_field[y][x]:
-            x = random.randint(0, self.game_field_width - 1)
-            y = random.randint(0, self.game_field_height - 1)
+            x = random.randint(1, self.game_field_width - 1)
+            y = random.randint(1, self.game_field_height - 1)
         self.apple = tuple([x, y])
         self.ui.draw_apple(x, y)
 
@@ -54,6 +54,7 @@ class Game:
         self.ui.draw_snake_eat(self.snake)
         self.score += 1
         self.ui.draw_score(self.score)
+        self.put_apple()
 
     def get_move_from_direction(self, direction):
         snake_heads = Snake.heads_direction(self.snake.head)

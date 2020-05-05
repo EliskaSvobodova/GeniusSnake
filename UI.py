@@ -173,7 +173,7 @@ class NiceUI(AbstractUI):
     def draw_snake_eat(self, snake: Snake.Snake):
         self.draw_square(snake.head.next_n.x, snake.head.next_n.y)
         self.draw_snake_head(snake.head)
-        self.draw_snake_body(snake.head.next_n)
+        self.draw_snake_part(snake.head.next_n)
 
     def draw_snake_move(self, snake: Snake.Snake, prev_tail):
         self.draw_square(prev_tail[0], prev_tail[1])
@@ -184,8 +184,8 @@ class NiceUI(AbstractUI):
         self.draw_snake_tail(snake.tail)
 
     def draw_apple(self, x, y):
-        self.apple.x = x
-        self.apple.y = y
+        self.apple.x = self.x + x * self.square_size + self.square_size / 2
+        self.apple.y = self.y + y * self.square_size + self.square_size / 2
         self.apple.draw()
 
     def draw_snake(self, snake: Snake.Snake):
