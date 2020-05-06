@@ -218,7 +218,7 @@ class NiceUI(AbstractUI):
         self.draw_snake_head_dead(snake.head)
         pyglet.gl.glFlush()
 
-    def draw_snake_part(self, part: Snake.Node):
+    def draw_snake_part(self, part: Snake.ListNode):
         if Snake.is_head(part):
             self.draw_snake_head(part)
         elif Snake.is_tail(part):
@@ -229,7 +229,7 @@ class NiceUI(AbstractUI):
             self.draw_snake_corner(part)
         pyglet.gl.glFlush()
 
-    def draw_snake_head(self, part: Snake.Node):
+    def draw_snake_head(self, part: Snake.ListNode):
         self.snake_head.x = self.x + (part.x * self.square_size) + (self.square_size / 2)
         self.snake_head.y = self.y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.heads_direction(part)
@@ -244,7 +244,7 @@ class NiceUI(AbstractUI):
         self.snake_head.draw()
         pyglet.gl.glFlush()
 
-    def draw_snake_head_dead(self, part: Snake.Node):
+    def draw_snake_head_dead(self, part: Snake.ListNode):
         self.snake_head_dead.x = self.x + (part.x * self.square_size) + (self.square_size / 2)
         self.snake_head_dead.y = self.y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.heads_direction(part)
@@ -259,7 +259,7 @@ class NiceUI(AbstractUI):
         self.snake_head_dead.draw()
         pyglet.gl.glFlush()
 
-    def draw_snake_tail(self, part: Snake.Node):
+    def draw_snake_tail(self, part: Snake.ListNode):
         self.snake_tail.x = self.x + (part.x * self.square_size) + (self.square_size / 2)
         self.snake_tail.y = self.y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.rest_direction(part)
@@ -274,7 +274,7 @@ class NiceUI(AbstractUI):
         self.snake_tail.draw()
         pyglet.gl.glFlush()
 
-    def draw_snake_body(self, part: Snake.Node):
+    def draw_snake_body(self, part: Snake.ListNode):
         self.snake_body.x = self.x + (part.x * self.square_size) + (self.square_size / 2)
         self.snake_body.y = self.y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.heads_direction(part)
@@ -285,7 +285,7 @@ class NiceUI(AbstractUI):
         self.snake_body.draw()
         pyglet.gl.glFlush()
 
-    def draw_snake_corner(self, part: Snake.Node):
+    def draw_snake_corner(self, part: Snake.ListNode):
         self.snake_corner.x = self.x + (part.x * self.square_size) + (self.square_size / 2)
         self.snake_corner.y = self.y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.corner_type(part)

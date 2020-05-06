@@ -23,7 +23,7 @@ class Game:
         for y in range(self.game_field_height):
             self.game_field[y][0] = self.game_field[y][self.game_field_width - 1] = False
         for part in self.snake:
-            self.game_field[part.y][part.x] = False # +1 for the boundary
+            self.game_field[part.y][part.x] = False
         self.put_apple()
         self.game_state = Constants.PLAY
 
@@ -156,7 +156,7 @@ class Game:
 
     def if_obstacle_forward(self, yes, no):
         next_square = self.snake.next_square(Constants.SNAKE_MOVE_FORWARD)
-        if self.game_field[next_square[0]][next_square[1]]:
+        if self.game_field[next_square[1]][next_square[0]]:
             return no
         else:
             return yes

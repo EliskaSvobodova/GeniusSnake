@@ -6,29 +6,32 @@ import pyglet
 max_depth = 10
 
 
+class TreeNode:
+    def __init__(self, value, left=None, right=None):
+        self.value = value
+        self.left = left
+        self.right = right
+
+    def __call__(self, *args, **kwargs):
+        if callable(self.value):
+            return self.value(self.left(), self.right())
+        else:
+            return self.value
+
+
 class GeneticController:
     def __init__(self, game: Game.Game, root=None):
         self.game = game
         if root is None:
-            self.root = generate_tree(0, self.game)
+            self.root = generate_test_tree(self.game)  #generate_tree(0, self.game)
         else:
             self.root = root
         self.state = Constants.PLAY
-        pyglet.clock.schedule_interval(self.play_on_tic, 1/3)
-
-    def play(self):
-        if callable(self.root):
-            while self.game.game_state is Constants.PLAY:
-                self.game.make_next_move(self.root())
-        else:  # root is a terminal
-            while self.game.game_state is Constants.PLAY:
-                self.game.make_next_move(self.root)
+        pyglet.clock.schedule_interval(self.play_on_tic, 1 / 15)
 
     def play_on_tic(self, dt):
-        if callable(self.root):
-            self.game.make_next_move(self.root())
-        else:  # root is a terminal
-            self.game.make_next_move(self.root)
+        move = self.root()
+        self.game.make_next_move(move)
         self.state = self.game.game_state
         if self.state is not Constants.PLAY:
             pyglet.clock.unschedule(self.play_on_tic)
@@ -39,15 +42,34 @@ def generate_tree(depth, game):
         return get_random_terminal()
     if random.random() < 0.5:
         fnc = get_random_function(game)
-        return fnc(generate_tree(depth + 1, game), generate_tree(depth + 1, game))
+        fnc.left = generate_tree(depth + 1, game)
+        fnc.right = generate_tree(depth + 1, game)
+        return fnc
     else:
         return get_random_terminal()
 
 
+def generate_test_tree(game):
+    return TreeNode(game.if_obstacle_forward, TreeNode(Constants.SNAKE_MOVE_LEFT), TreeNode(Constants.SNAKE_MOVE_FORWARD))
+
+
 def get_random_terminal():
-    return random.choice([Constants.SNAKE_MOVE_RIGHT, Constants.SNAKE_MOVE_LEFT, Constants.SNAKE_MOVE_FORWARD])
+    terminal = random.choice([Constants.SNAKE_MOVE_RIGHT, Constants.SNAKE_MOVE_LEFT, Constants.SNAKE_MOVE_FORWARD])
+    return TreeNode(terminal)
 
 
 def get_random_function(game):
-    return random.choice([game.if_food_forward, game.if_food_left, game.if_food_right,
-                          game.if_obstacle_forward, game.if_obstacle_left, game.if_obstacle_right])
+    choice = random.choice(range(6))
+    if choice == 0:
+        fnc = game.if_food_forward
+    elif choice == 1:
+        fnc = game.if_food_left
+    elif choice == 2:
+        fnc = game.if_food_right
+    elif choice == 3:
+        fnc = game.if_obstacle_forward
+    elif choice == 4:
+        fnc = game.if_obstacle_left
+    elif choice == 5:
+        fnc = game.if_obstacle_right
+    return TreeNode(fnc)
