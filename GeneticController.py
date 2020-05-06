@@ -14,7 +14,7 @@ class GeneticController:
         else:
             self.root = root
         self.state = Constants.PLAY
-        pyglet.clock.schedule_interval(self.play_on_tic, 1)
+        pyglet.clock.schedule_interval(self.play_on_tic, 1/3)
 
     def play(self):
         if callable(self.root):
@@ -29,6 +29,7 @@ class GeneticController:
             self.game.make_next_move(self.root())
         else:  # root is a terminal
             self.game.make_next_move(self.root)
+        self.state = self.game.game_state
 
 
 def generate_tree(depth, game):

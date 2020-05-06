@@ -90,12 +90,13 @@ class Menu:
             self.button_play_background.opacity = 100
             self.window.push_handlers(on_mouse_press=self.on_back_mouse_press)
             self.window.clear()
-            ui = UI.NiceUI(10, 80, self.screen_width - 20, self.screen_height - 90, 50)
+            ui = UI.SimpleUI(10, 80, self.screen_width - 20, self.screen_height - 90, 50)
             game = Game.Game(ui)
             self.controller = GeneticController.GeneticController(game)
 
     def on_back_mouse_press(self, x, y, button, modifiers):
         if self.controller.state is not Constants.PLAY:
+            self.window.clear()
             self.on_menu_draw()
             self.window.push_handlers(on_draw=self.on_menu_draw,
                                       on_mouse_press=self.on_menu_mouse_press,
