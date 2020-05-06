@@ -24,10 +24,11 @@ class Menu:
         screen = display.get_default_screen()
         self.screen_width = screen.width
         self.screen_height = screen.height
-        self.window = pyglet.window.Window(self.screen_width, self.screen_height)
+        config = pyglet.gl.Config(double_buffer=False)
+        self.window = pyglet.window.Window(self.screen_width, self.screen_height, config=config)
         self.window.push_handlers(on_draw=self.on_menu_draw,
-                                  on_mouse_press=self.on_menu_mouse_press,
-                                  on_mouse_motion=self.on_menu_mouse_motion)
+                                 on_mouse_press=self.on_menu_mouse_press,
+                                 on_mouse_motion=self.on_menu_mouse_motion)
 
     def load_images(self):
         snake_image = pyglet.resource.image("snake_background.jpg")
@@ -36,7 +37,8 @@ class Menu:
                                   self.genetic_label.content_width + 100, self.genetic_label.content_height + 30)
         CommonHelpers.center_image(snake_image)
         CommonHelpers.center_image(button_background_image)
-        self.snake_background = pyglet.sprite.Sprite(img=snake_image, x=(self.screen_width // 2), y=(self.screen_height // 2))
+        self.snake_background = pyglet.sprite.Sprite(img=snake_image, x=(self.screen_width // 2),
+                                                     y=(self.screen_height // 2))
         self.button_play_background = pyglet.sprite.Sprite(img=button_background_image,
                                                            x=self.play_label.x, y=self.play_label.y)
         self.button_genetic_background = pyglet.sprite.Sprite(img=button_background_image,
@@ -74,6 +76,7 @@ class Menu:
         self.button_genetic_background.draw()
         self.play_label.draw()
         self.genetic_label.draw()
+        pyglet.gl.glFlush()
 
     def on_menu_mouse_press(self, x, y, button, modifiers):
         # play clicked
@@ -98,6 +101,7 @@ class Menu:
         if self.controller.state is not Constants.PLAY:
             self.window.clear()
             self.on_menu_draw()
+            self.window.pop_handlers()
             self.window.push_handlers(on_draw=self.on_menu_draw,
                                       on_mouse_press=self.on_menu_mouse_press,
                                       on_mouse_motion=self.on_menu_mouse_motion)
