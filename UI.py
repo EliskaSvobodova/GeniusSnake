@@ -186,11 +186,13 @@ class NiceUI(AbstractUI):
         self.draw_game_field()
         self.draw_boundary()
         self.draw_snake(snake)
+        pyglet.gl.glFlush()
 
     def draw_snake_eat(self, snake: Snake.Snake):
         self.draw_square(snake.head.next_n.x, snake.head.next_n.y)
         self.draw_snake_head(snake.head)
         self.draw_snake_part(snake.head.next_n)
+        pyglet.gl.glFlush()
 
     def draw_snake_move(self, snake: Snake.Snake, prev_tail):
         self.draw_square(prev_tail[0], prev_tail[1])
@@ -199,18 +201,22 @@ class NiceUI(AbstractUI):
         self.draw_snake_head(snake.head)
         self.draw_snake_part(snake.head.next_n)
         self.draw_snake_tail(snake.tail)
+        pyglet.gl.glFlush()
 
     def draw_apple(self, x, y):
         self.apple.x = self.x + x * self.square_size + self.square_size / 2
         self.apple.y = self.y + y * self.square_size + self.square_size / 2
         self.apple.draw()
+        pyglet.gl.glFlush()
 
     def draw_snake(self, snake: Snake.Snake):
         for part in snake:
             self.draw_snake_part(part)
+        pyglet.gl.glFlush()
 
     def draw_snake_dead(self, snake: Snake.Snake):
         self.draw_snake_head_dead(snake.head)
+        pyglet.gl.glFlush()
 
     def draw_snake_part(self, part: Snake.Node):
         if Snake.is_head(part):
@@ -221,6 +227,7 @@ class NiceUI(AbstractUI):
             self.draw_snake_body(part)
         elif Snake.is_corner(part):
             self.draw_snake_corner(part)
+        pyglet.gl.glFlush()
 
     def draw_snake_head(self, part: Snake.Node):
         self.snake_head.x = self.x + (part.x * self.square_size) + (self.square_size / 2)
@@ -235,6 +242,7 @@ class NiceUI(AbstractUI):
         elif direction is Constants.LEFT:
             self.snake_head.rotation = 270
         self.snake_head.draw()
+        pyglet.gl.glFlush()
 
     def draw_snake_head_dead(self, part: Snake.Node):
         self.snake_head_dead.x = self.x + (part.x * self.square_size) + (self.square_size / 2)
@@ -249,6 +257,7 @@ class NiceUI(AbstractUI):
         elif direction is Constants.LEFT:
             self.snake_head_dead.rotation = 270
         self.snake_head_dead.draw()
+        pyglet.gl.glFlush()
 
     def draw_snake_tail(self, part: Snake.Node):
         self.snake_tail.x = self.x + (part.x * self.square_size) + (self.square_size / 2)
@@ -263,6 +272,7 @@ class NiceUI(AbstractUI):
         elif direction is Constants.LEFT:
             self.snake_tail.rotation = 270
         self.snake_tail.draw()
+        pyglet.gl.glFlush()
 
     def draw_snake_body(self, part: Snake.Node):
         self.snake_body.x = self.x + (part.x * self.square_size) + (self.square_size / 2)
@@ -273,6 +283,7 @@ class NiceUI(AbstractUI):
         elif direction is Constants.LEFT or direction is Constants.RIGHT:
             self.snake_body.rotation = 90
         self.snake_body.draw()
+        pyglet.gl.glFlush()
 
     def draw_snake_corner(self, part: Snake.Node):
         self.snake_corner.x = self.x + (part.x * self.square_size) + (self.square_size / 2)
@@ -287,12 +298,14 @@ class NiceUI(AbstractUI):
         elif direction[0] is Constants.DOWN and direction[1] is Constants.LEFT:
             self.snake_corner.rotation = 90
         self.snake_corner.draw()
+        pyglet.gl.glFlush()
 
     def draw_game_field(self):
         for i in range(1, self.num_squares_height - 1):
             for j in range(1, self.num_squares_width - 1):
                 self.draw_square(j, i)
         self.draw_bushes()
+        pyglet.gl.glFlush()
 
     def draw_square(self, x, y):
         self.cover_squares[y][x].draw()
@@ -322,6 +335,7 @@ class NiceUI(AbstractUI):
                 pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
                                      ("v2f", (x1, y1, x2, y2, x3, y3, x4, y4)),
                                      ("c4B", ((11, 102, 35, 110) * 4)))
+        pyglet.gl.glFlush()
 
     def draw_bushes(self):
         for i in range(self.num_squares_width):
@@ -336,6 +350,7 @@ class NiceUI(AbstractUI):
             self.bush.draw()
             self.bush.x = self.x + (self.num_squares_width - 1) * self.square_size + self.square_size / 2
             self.bush.draw()
+        pyglet.gl.glFlush()
 
     def draw_score(self, score):
         self.score_background.draw()
@@ -343,9 +358,11 @@ class NiceUI(AbstractUI):
                           anchor_x="center", anchor_y="center",
                           font_name="Bangers", font_size=self.score_background.height // 3
                           ).draw()
+        pyglet.gl.glFlush()
 
     def draw_background(self):
         self.grass.draw()
+        pyglet.gl.glFlush()
 
     """ DRAW GAME STATES """
 
@@ -360,6 +377,7 @@ class NiceUI(AbstractUI):
                           y=(self.height / 3),
                           anchor_x="center", anchor_y="center",
                           font_name="Bangers", font_size=40).draw()
+        pyglet.gl.glFlush()
 
     def draw_game_won(self):
         pyglet.text.Label(text="YOU WIN! CONGRATULATION!",
@@ -372,6 +390,7 @@ class NiceUI(AbstractUI):
                           y=(self.height / 3),
                           anchor_x="center", anchor_y="center",
                           font_name="Bangers", font_size=40).draw()
+        pyglet.gl.glFlush()
 
 
 class SimpleUI(AbstractUI):
@@ -393,24 +412,30 @@ class SimpleUI(AbstractUI):
         self.draw_bushes()
         self.draw_snake(snake)
         self.draw_boundary()
+        pyglet.gl.glFlush()
 
     def draw_snake_eat(self, snake: Snake.Snake):
         self.draw_colorful_square(snake.head.x, snake.head.y, 255, 255, 255)
+        pyglet.gl.glFlush()
 
     def draw_snake_move(self, snake: Snake.Snake, prev_tail):
         self.draw_colorful_square(prev_tail[0], prev_tail[1], 0, 0, 0)
         self.draw_colorful_square(snake.head.x, snake.head.y, 255, 255, 255)
+        pyglet.gl.glFlush()
 
     def draw_apple(self, x, y):
         self.draw_colorful_square(x, y, 192, 0, 0)
+        pyglet.gl.glFlush()
 
     def draw_snake(self, snake: Snake.Snake):
         for part in snake:
             self.draw_colorful_square(part.x, part.y, 255, 255, 255)
+        pyglet.gl.glFlush()
 
     def draw_snake_dead(self, snake: Snake.Snake):
         for part in snake:
             self.draw_colorful_square(part.x, part.y, 65, 51, 101)
+        pyglet.gl.glFlush()
 
     def draw_game_field(self):
         pass  # no need to do anything, game field is supposed to be black
@@ -428,6 +453,7 @@ class SimpleUI(AbstractUI):
         pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
                              ("v2f", (x1, y1, x2, y2, x3, y3, x4, y4)),
                              ("c3B", ((r, g, b) * 4)))
+        pyglet.gl.glFlush()
 
     def draw_bushes(self):
         for i in range(self.num_squares_width):
@@ -436,6 +462,7 @@ class SimpleUI(AbstractUI):
         for i in range(self.num_squares_height):
             self.draw_colorful_square(0, i, 56, 88, 129)
             self.draw_colorful_square(self.num_squares_width - 1, i, 56, 88, 129)
+        pyglet.gl.glFlush()
 
     def draw_score(self, score):
         x = self.x
@@ -449,11 +476,13 @@ class SimpleUI(AbstractUI):
                           anchor_x="center", anchor_y="center",
                           font_name="Bangers", font_size=height // 2
                           ).draw()
+        pyglet.gl.glFlush()
 
     def draw_background(self):
         pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
                              ("v2f", (self.x, self.y, self.x, self.y + self.height, self.x + self.width, self.y + self.height, self.x + self.width, self.y)),
                              ("c3B", ((0, 0, 0) * 4)))
+        pyglet.gl.glFlush()
 
     def draw_game_over(self):
         pyglet.text.Label(text="GAME OVER",
@@ -466,6 +495,7 @@ class SimpleUI(AbstractUI):
                           y=(self.height / 3),
                           anchor_x="center", anchor_y="center",
                           font_name="Bangers", font_size=40).draw()
+        pyglet.gl.glFlush()
 
     def draw_game_won(self):
         pyglet.text.Label(text="YOU WIN! CONGRATULATION!",
@@ -478,3 +508,4 @@ class SimpleUI(AbstractUI):
                           y=(self.height / 3),
                           anchor_x="center", anchor_y="center",
                           font_name="Bangers", font_size=40).draw()
+        pyglet.gl.glFlush()
