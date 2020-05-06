@@ -23,7 +23,7 @@ class GeneticController:
     def __init__(self, game: Game.Game, root=None):
         self.game = game
         if root is None:
-            self.root = generate_test_tree(self.game)  #generate_tree(0, self.game)
+            self.root = generate_tree(0, self.game)
         else:
             self.root = root
         self.state = Constants.PLAY
@@ -70,6 +70,6 @@ def get_random_function(game):
         fnc = game.if_obstacle_forward
     elif choice == 4:
         fnc = game.if_obstacle_left
-    elif choice == 5:
+    else:
         fnc = game.if_obstacle_right
     return TreeNode(fnc)

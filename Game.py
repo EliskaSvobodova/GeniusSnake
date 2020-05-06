@@ -1,11 +1,11 @@
-import UI
+import AbstractUI
 import Snake
 import random
 import Constants
 
 
 class Game:
-    def __init__(self, ui: UI.AbstractUI):
+    def __init__(self, ui: AbstractUI.AbstractUI):
         self.ui = ui
         self.score = 0
         self.game_field_height = self.ui.get_num_squares_height()
