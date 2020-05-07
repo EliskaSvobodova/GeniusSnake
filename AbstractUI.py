@@ -72,10 +72,3 @@ class AbstractUI(metaclass=ABCMeta):
     @abstractmethod
     def draw_game_won(self):
         raise NotImplementedError
-
-    def draw_boundary(self):
-        pyglet.graphics.draw(8, pyglet.gl.GL_LINES,
-                             ("v2f", (self.x, self.y, self.x, self.y + self.height,
-                                      self.x, self.y + self.height, self.x + self.width, self.y + self.height,
-                                      self.x + self.width, self.y + self.height, self.x + self.width, self.y,
-                                      self.x + self.width, self.y, self.x, self.y)))

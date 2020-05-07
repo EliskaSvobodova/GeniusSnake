@@ -3,6 +3,26 @@ import Snake
 import AbstractUI
 
 
+class ControlPaneUI:
+    def __init__(self, x, y, width, height):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+
+    def draw(self):
+        x2 = x1 = self.x + self.width // 2
+        y4 = y1 = self.y + self.height // 2
+        y2 = y1 + 50
+        x3 = x1 + 50
+        y3 = y1 + 50
+        x4 = x1 + 50
+        pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
+                             ("v2f", (x1, y1, x2, y2, x3, y3, x4, y4)),
+                             ("c3B", ((60, 60, 60) * 4)))
+        pyglet.gl.glFlush()
+
+
 class SimpleUI(AbstractUI.AbstractUI):
     def __init__(self, x, y, width, height, square_size):
         super().__init__(x, y, width, height, square_size)
@@ -99,15 +119,10 @@ class SimpleUI(AbstractUI.AbstractUI):
 
     def draw_game_over(self):
         pyglet.text.Label(text="GAME OVER",
-                          x=(self.width / 2),
-                          y=(self.height / 3) * 2,
+                          x=self.x + (self.width / 2),
+                          y=self.y + (self.height / 2),
                           anchor_x="center", anchor_y="center",
-                          font_name="Bangers", font_size=60).draw()
-        pyglet.text.Label(text="[click to go back to menu]",
-                          x=(self.width / 2),
-                          y=(self.height / 3),
-                          anchor_x="center", anchor_y="center",
-                          font_name="Bangers", font_size=40).draw()
+                          font_name="Bangers", font_size=30).draw()
         pyglet.gl.glFlush()
 
     def draw_game_won(self):
@@ -122,3 +137,13 @@ class SimpleUI(AbstractUI.AbstractUI):
                           anchor_x="center", anchor_y="center",
                           font_name="Bangers", font_size=40).draw()
         pyglet.gl.glFlush()
+
+    def draw_boundary(self):
+        width = (self.num_squares_width * self.square_size)
+        height = self.height
+        pyglet.graphics.draw(8, pyglet.gl.GL_LINES,
+                             ("v2f", (self.x, self.y, self.x, self.y + height,
+                                      self.x, self.y + height, self.x + width, self.y + height,
+                                      self.x + width, self.y + height, self.x + width, self.y,
+                                      self.x + width, self.y, self.x, self.y)))
+

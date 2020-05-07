@@ -313,3 +313,10 @@ class NiceUI(AbstractUI.AbstractUI):
                           anchor_x="center", anchor_y="center",
                           font_name="Bangers", font_size=40).draw()
         pyglet.gl.glFlush()
+
+    def draw_boundary(self):
+        pyglet.graphics.draw(8, pyglet.gl.GL_LINES,
+                             ("v2f", (self.x, self.y, self.x, self.y + self.height,
+                                      self.x, self.y + self.height, self.x + self.width, self.y + self.height,
+                                      self.x + self.width, self.y + self.height, self.x + self.width, self.y,
+                                      self.x + self.width, self.y, self.x, self.y)))
