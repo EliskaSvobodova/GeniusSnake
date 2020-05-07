@@ -2,7 +2,7 @@ import Game
 import Constants
 
 
-class Node:
+class ListNode:
     def __init__(self, x, y, next_n=None, prev_n=None):
         self.x = x
         self.y = y
@@ -26,7 +26,7 @@ class SnakeIterator:
 """
 For head and body
 """
-def heads_direction(node: Node):
+def heads_direction(node: ListNode):
     if node.next_n.x < node.x:
         return Constants.RIGHT
     if node.x < node.next_n.x:
@@ -39,7 +39,7 @@ def heads_direction(node: Node):
 """
 For tail,  where rest of the body is
 """
-def rest_direction(node: Node):
+def rest_direction(node: ListNode):
     if node.prev_n.x < node.x:
         return Constants.LEFT
     if node.x < node.prev_n.x:
@@ -53,7 +53,7 @@ def rest_direction(node: Node):
 """
 For corner
 """
-def corner_type(node: Node) -> tuple:
+def corner_type(node: ListNode) -> tuple:
     if (node.x < node.prev_n.x and node.y > node.next_n.y) or (node.x < node.next_n.x and node.y > node.prev_n.y):
         return tuple([Constants.DOWN, Constants.RIGHT])
     if (node.x > node.prev_n.x and node.y > node.next_n.y) or (node.x > node.next_n.x and node.y > node.prev_n.y):
@@ -64,29 +64,29 @@ def corner_type(node: Node) -> tuple:
         return tuple([Constants.UP, Constants.RIGHT])
 
 
-def is_head(node: Node):
+def is_head(node: ListNode):
     return node.prev_n is None
 
 
-def is_tail(node: Node):
+def is_tail(node: ListNode):
     return node.next_n is None
 
 
-def is_body(node: Node):
+def is_body(node: ListNode):
     return (node.next_n is not None and node.prev_n is not None) \
            and (node.prev_n.x == node.next_n.x or node.prev_n.y == node.next_n.y)
 
 
-def is_corner(node: Node):
+def is_corner(node: ListNode):
     return (node.next_n is not None and node.prev_n is not None) \
            and (node.prev_n.x != node.next_n.x or node.prev_n.y != node.next_n.y)
 
 
 class Snake:
     def __init__(self):
-        self.head = Node(3, 1)
-        self.head.next_n = Node(2, 1, prev_n=self.head)
-        self.tail = Node(1, 1, prev_n=self.head.next_n)
+        self.head = ListNode(3, 1)
+        self.head.next_n = ListNode(2, 1, prev_n=self.head)
+        self.tail = ListNode(1, 1, prev_n=self.head.next_n)
         self.head.next_n.next_n = self.tail
 
     def __iter__(self):
@@ -113,7 +113,7 @@ class Snake:
 
     def move(self, next_square):
         prev_head = self.head
-        self.head = Node(next_square[0], next_square[1])
+        self.head = ListNode(next_square[0], next_square[1])
         prev_head.prev_n = self.head
         self.head.next_n = prev_head
         self.tail = self.tail.prev_n
@@ -121,6 +121,6 @@ class Snake:
 
     def eat_apple(self, apple):
         prev_head = self.head
-        self.head = Node(apple[0], apple[1])
+        self.head = ListNode(apple[0], apple[1])
         prev_head.prev_n = self.head
         self.head.next_n = prev_head

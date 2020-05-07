@@ -1,11 +1,11 @@
-import UI
+import AbstractUI
 import Snake
 import random
 import Constants
 
 
 class Game:
-    def __init__(self, ui: UI.AbstractUI):
+    def __init__(self, ui: AbstractUI.AbstractUI):
         self.ui = ui
         self.score = 0
         self.game_field_height = self.ui.get_num_squares_height()
@@ -23,7 +23,7 @@ class Game:
         for y in range(self.game_field_height):
             self.game_field[y][0] = self.game_field[y][self.game_field_width - 1] = False
         for part in self.snake:
-            self.game_field[part.y][part.x] = False # +1 for the boundary
+            self.game_field[part.y][part.x] = False
         self.put_apple()
         self.game_state = Constants.PLAY
 
@@ -82,3 +82,95 @@ class Game:
             return Constants.SNAKE_MOVE_RIGHT
         else:
             return Constants.SNAKE_MOVE_FORWARD
+
+    """ Functions for genetic programming """
+
+    def if_food_forward(self, yes, no):
+        snake_heads = Snake.heads_direction(self.snake.head)
+        if snake_heads is Constants.UP:
+            if self.apple[0] == self.snake.head.x and self.apple[1] > self.snake.head.y:
+                return yes
+            else:
+                return no
+        if snake_heads is Constants.RIGHT:
+            if self.apple[1] == self.snake.head.y and self.apple[0] > self.snake.head.x:
+                return yes
+            else:
+                return no
+        if snake_heads is Constants.DOWN:
+            if self.apple[0] == self.snake.head.x and self.apple[1] < self.snake.head.y:
+                return yes
+            else:
+                return no
+        if snake_heads is Constants.LEFT:
+            if self.apple[1] == self.snake.head.y and self.apple[0] < self.snake.head.x:
+                return yes
+            else:
+                return no
+
+    def if_food_left(self, yes, no):
+        snake_heads = Snake.heads_direction(self.snake.head)
+        if snake_heads is Constants.UP:
+            if self.apple[1] == self.snake.head.y and self.apple[0] < self.snake.head.x:
+                return yes
+            else:
+                return no
+        if snake_heads is Constants.RIGHT:
+            if self.apple[0] == self.snake.head.x and self.apple[1] > self.snake.head.y:
+                return yes
+            else:
+                return no
+        if snake_heads is Constants.DOWN:
+            if self.apple[1] == self.snake.head.y and self.apple[0] > self.snake.head.x:
+                return yes
+            else:
+                return no
+        if snake_heads is Constants.LEFT:
+            if self.apple[0] == self.snake.head.x and self.apple[1] < self.snake.head.y:
+                return yes
+            else:
+                return no
+
+    def if_food_right(self, yes, no):
+        snake_heads = Snake.heads_direction(self.snake.head)
+        if snake_heads is Constants.UP:
+            if self.apple[1] == self.snake.head.y and self.apple[0] > self.snake.head.x:
+                return yes
+            else:
+                return no
+        if snake_heads is Constants.RIGHT:
+            if self.apple[0] == self.snake.head.x and self.apple[1] < self.snake.head.y:
+                return yes
+            else:
+                return no
+        if snake_heads is Constants.DOWN:
+            if self.apple[1] == self.snake.head.y and self.apple[0] < self.snake.head.x:
+                return yes
+            else:
+                return no
+        if snake_heads is Constants.LEFT:
+            if self.apple[0] == self.snake.head.x and self.apple[1] > self.snake.head.y:
+                return yes
+            else:
+                return no
+
+    def if_obstacle_forward(self, yes, no):
+        next_square = self.snake.next_square(Constants.SNAKE_MOVE_FORWARD)
+        if self.game_field[next_square[1]][next_square[0]]:
+            return no
+        else:
+            return yes
+
+    def if_obstacle_left(self, yes, no):
+        next_square = self.snake.next_square(Constants.SNAKE_MOVE_LEFT)
+        if self.game_field[next_square[0]][next_square[1]]:
+            return no
+        else:
+            return yes
+
+    def if_obstacle_right(self, yes, no):
+        next_square = self.snake.next_square(Constants.SNAKE_MOVE_RIGHT)
+        if self.game_field[next_square[0]][next_square[1]]:
+            return no
+        else:
+            return yes
