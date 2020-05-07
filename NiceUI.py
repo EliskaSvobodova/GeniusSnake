@@ -130,6 +130,7 @@ class NiceUI(AbstractUI.AbstractUI):
         self.draw_square(snake.tail.x, snake.tail.y)
         self.draw_square(snake.tail.prev_n.x, snake.tail.prev_n.y)
         self.draw_snake_tail(snake.tail.prev_n)
+        pyglet.gl.glFlush()
 
     def draw_apple(self, x, y):
         self.apple.x = self.x + x * self.square_size + self.square_size / 2

@@ -44,6 +44,22 @@ class SimpleUI(AbstractUI.AbstractUI):
         self.draw_boundary()
         pyglet.gl.glFlush()
 
+    def redraw(self, snake: Snake.Snake, score, apple):
+        x = self.x + self.square_size
+        y = self.y + self.square_size
+        width = self.game_width - 2 * self.square_size
+        height = self.game_height - 2 * self.square_size
+        pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
+                             ("v2f", (x, y,
+                                      x, y + height,
+                                      x + width, y + height,
+                                      x + width, y)),
+                             ("c3B", ((0, 0, 0) * 4)))
+        self.draw_score(score)
+        self.draw_apple(apple[0], apple[1])
+        self.draw_snake(snake)
+        pyglet.gl.glFlush()
+
     def draw_snake_eat(self, snake: Snake.Snake):
         self.draw_colorful_square(snake.head.x, snake.head.y, 255, 255, 255)
         pyglet.gl.glFlush()
@@ -55,6 +71,7 @@ class SimpleUI(AbstractUI.AbstractUI):
 
     def draw_snake_shrink(self, snake: Snake.Snake):
         self.draw_colorful_square(snake.tail.x, snake.tail.y, 0, 0, 0)
+        pyglet.gl.glFlush()
 
     def draw_apple(self, x, y):
         self.draw_colorful_square(x, y, 192, 0, 0)
@@ -98,9 +115,9 @@ class SimpleUI(AbstractUI.AbstractUI):
         pyglet.gl.glFlush()
 
     def draw_score(self, score):
-        x = self.x
+        x = self.x + 2
         y = self.y + self.num_squares_height * self.square_size
-        width = self.width
+        width = self.width - 20 # minus few pixels so it doesn't cover boundary
         height = self.y + self.height - y
         pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
                              ("v2f", (x, y, x, y + height, x + width, y + height, x + width, y)),

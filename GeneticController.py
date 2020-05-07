@@ -27,14 +27,10 @@ class GeneticController:
         else:
             self.root = root
         self.state = Constants.PLAY
-        pyglet.clock.schedule_interval(self.play_on_tic, 1 / 15)
 
-    def play_on_tic(self, dt):
-        move = self.root()
-        self.game.make_next_move(move)
+    def make_next_move(self):
+        self.game.make_next_move(self.root())
         self.state = self.game.game_state
-        if self.state is not Constants.PLAY:
-            pyglet.clock.unschedule(self.play_on_tic)
 
 
 def generate_tree(depth, game):

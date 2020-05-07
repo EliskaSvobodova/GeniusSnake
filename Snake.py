@@ -88,7 +88,7 @@ class Snake:
         self.head.next_n = ListNode(2, 1, prev_n=self.head)
         self.tail = ListNode(1, 1, prev_n=self.head.next_n)
         self.head.next_n.next_n = self.tail
-        self.stamina = 10  # how many times is snake able to move without shrinking
+        self.stamina = 100  # how many times is snake able to move without shrinking
         self.without_food = 0
         self.length = 3
 
@@ -135,3 +135,4 @@ class Snake:
         self.tail = self.tail.prev_n
         self.tail.next_n = None
         self.length -= 1
+        self.without_food = 0
