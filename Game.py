@@ -33,7 +33,10 @@ class Game:
             if self.apple[0] == next_square[0] and self.apple[1] == next_square[1]:  # there is an apple
                 self.eat_apple()
             else:
-                self.move_snake(next_square)
+                if not self.move_snake(next_square):
+                    self.ui.draw_snake_dead(self.snake)
+                    self.ui.draw_game_over()
+                    self.game_state = Constants.LOOSE
         else:  # snake bumped into an obstacle
             self.ui.draw_snake_dead(self.snake)
             self.ui.draw_game_over()
@@ -54,6 +57,13 @@ class Game:
         prev_tail = tuple([self.snake.tail.x, self.snake.tail.y])
         self.snake.move(next_square)
         self.ui.draw_snake_move(self.snake, prev_tail)
+        if self.snake.without_food == self.snake.stamina:
+            self.game_field[self.snake.tail.y][self.snake.tail.x] = True
+            self.ui.draw_snake_shrink(self.snake)
+            self.snake.shrink()
+            if self.snake.length == 2:
+                return False  # snake starved to death
+        return True
 
     def eat_apple(self):
         self.game_field[self.apple[1]][self.apple[0]] = False
