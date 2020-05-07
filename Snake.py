@@ -88,6 +88,9 @@ class Snake:
         self.head.next_n = ListNode(2, 1, prev_n=self.head)
         self.tail = ListNode(1, 1, prev_n=self.head.next_n)
         self.head.next_n.next_n = self.tail
+        self.stamina = 10  # how many times is snake able to move without shrinking
+        self.without_food = 0
+        self.length = 3
 
     def __iter__(self):
         return SnakeIterator(self)
@@ -118,9 +121,17 @@ class Snake:
         self.head.next_n = prev_head
         self.tail = self.tail.prev_n
         self.tail.next_n = None
+        self.without_food += 1
 
     def eat_apple(self, apple):
         prev_head = self.head
         self.head = ListNode(apple[0], apple[1])
         prev_head.prev_n = self.head
         self.head.next_n = prev_head
+        self.without_food = 0
+        self.length += 1
+
+    def shrink(self):
+        self.tail = self.tail.prev_n
+        self.tail.next_n = None
+        self.length -= 1

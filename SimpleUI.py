@@ -53,6 +53,9 @@ class SimpleUI(AbstractUI.AbstractUI):
         self.draw_colorful_square(snake.head.x, snake.head.y, 255, 255, 255)
         pyglet.gl.glFlush()
 
+    def draw_snake_shrink(self, snake: Snake.Snake):
+        self.draw_colorful_square(snake.tail.x, snake.tail.y, 0, 0, 0)
+
     def draw_apple(self, x, y):
         self.draw_colorful_square(x, y, 192, 0, 0)
         pyglet.gl.glFlush()
