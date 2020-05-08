@@ -142,7 +142,7 @@ class GeneticController:
         res, current = self.find_parent_node(index, current + 1, tree.right)
         return res, current
 
-    def mutate(self):
+    def mutate_one_node_to_another(self):
         r = random.randint(0, self.num_nodes - 1)
         node, dummy = self.find_node(r, 0, self.root)
         if node.left is None:
@@ -150,6 +150,11 @@ class GeneticController:
         else:
             node.value = get_random_function(self.game)
 
+    def mutate(self):
+        r = random.randint(0, self.num_nodes - 1)
+        node, dummy = self.find_node(r, 0, self.root)
+        node.left, dummy = generate_tree(0, self.game)
+        node.right, dummy = generate_tree(0, self.game)
 
 def generate_tree(depth, game):
     if depth == max_depth:
