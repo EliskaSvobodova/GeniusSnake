@@ -6,8 +6,8 @@ import GeneticController
 import pyglet
 import random
 
-size_of_population = 20
-num_of_offsprings = 20
+size_of_population = 50
+num_of_offsprings = 40
 mutation_rate = 0.1
 
 
@@ -73,8 +73,14 @@ class GeneticProgramming:
             self.move_to_next_generation()
 
     def move_to_next_generation(self):
+        print("-----------------------------------------------------------")
+        print(f"Generation {self.generation}")
         index_sum = ((size_of_population - 1) * size_of_population) // 2
         self.population.sort(key=self.get_fitness)
+        print("Best individual: ", end="")
+        self.population[len(self.population)-1].root.print()
+        print()
+        print("Score: ", self.population[len(self.population)-1].game.score)
         self.substitute_population()
         offsprings = []
         for i in range(num_of_offsprings):
@@ -104,18 +110,16 @@ class GeneticProgramming:
         return individual.game.score
 
     def substitute_population(self):
-        print("-----------------------------------------------------------")
-        print(f"Generation {self.generation}")
         i = 0
         next_population = []
         self.population.reverse()
         for individual in self.population:
-            print("Score: ", individual.game.score)
+            # print("Score: ", individual.game.score)
             individual.game = Game.Game(NoUI.NoUI(0, 0, self.game_width, self.game_height, self.square_size))
             next_population.append(individual)
-            individual.root.print()
-            print()
-            print()
+            # individual.root.print()
+            # print()
+            # print()
             i += 1
             if i >= size_of_population:
                 break
