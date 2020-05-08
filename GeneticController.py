@@ -166,7 +166,7 @@ class GeneticController:
 def generate_tree(depth, game):
     if depth == max_depth:
         return get_random_terminal_tree_node(), 1
-    if random.random() < 0.5:
+    if random.random() < 0.6:
         fnc = get_random_function_tree_node(game)
         fnc.left, left_nodes = generate_tree(depth + 1, game)
         fnc.right, right_nodes = generate_tree(depth + 1, game)
