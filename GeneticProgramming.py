@@ -66,7 +66,6 @@ class GeneticProgramming:
                     game = self.still_running[last_draw_index].game
                     self.still_running[last_draw_index].game.ui.redraw(game.snake, game.score, game.apple)
         if len(self.still_running) == 0:
-            self.state = Constants.WIN  # not PLAY
             pyglet.clock.unschedule(self.make_next_move_with_all)
             self.move_to_next_generation()
 
@@ -115,6 +114,8 @@ class GeneticProgramming:
                 if i != (self.layout[0] - 1) or j != 0:
                     ui = SimpleUI.SimpleUI(self.x + j * self.game_width, self.y + i * self.game_height,
                                            self.game_width, self.game_height, self.square_size)
-                    self.population[index].game.ui = ui
+                    game = self.population[index].game
+                    game.ui = ui
+                    game.ui.redraw(game.snake, game.score, game.apple)
                     index += 1
 

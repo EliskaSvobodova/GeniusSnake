@@ -38,6 +38,12 @@ class SimpleUI(AbstractUI.AbstractUI):
         return self.num_squares_width
 
     def prepare_game(self, snake: Snake.Snake):
+        pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
+                             ("v2f", (self.x, self.y,
+                                      self.x, self.y + self.height,
+                                      self.x + self.width, self.y + self.height,
+                                      self.x + self.width, self.y)),
+                             ("c3B", ((0, 0, 0) * 4)))
         self.draw_score(0)
         self.draw_bushes()
         self.draw_snake(snake)
