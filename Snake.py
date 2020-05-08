@@ -84,13 +84,18 @@ def is_corner(node: ListNode):
 
 class Snake:
     def __init__(self):
-        self.head = ListNode(3, 1)
-        self.head.next_n = ListNode(2, 1, prev_n=self.head)
-        self.tail = ListNode(1, 1, prev_n=self.head.next_n)
-        self.head.next_n.next_n = self.tail
+        self.tail = self.head = ListNode(5, 1)
+        for i in range(4):
+            self.add_part(self.head.x - i - 1, 1)
         self.stamina = 100  # how many times is snake able to move without shrinking
         self.without_food = 0
-        self.length = 3
+        self.length = 5
+
+    def add_part(self, x, y):
+        prev = self.tail
+        self.tail = ListNode(x, y)
+        self.tail.prev_n = prev
+        prev.next_n = self.tail
 
     def __iter__(self):
         return SnakeIterator(self)
