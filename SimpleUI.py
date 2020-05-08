@@ -10,16 +10,17 @@ class ControlPaneUI:
         self.width = width
         self.height = height
 
-    def draw(self):
-        x2 = x1 = self.x + self.width // 2
-        y4 = y1 = self.y + self.height // 2
-        y2 = y1 + 50
-        x3 = x1 + 50
-        y3 = y1 + 50
-        x4 = x1 + 50
+    def draw(self, generation):
         pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
-                             ("v2f", (x1, y1, x2, y2, x3, y3, x4, y4)),
-                             ("c3B", ((60, 60, 60) * 4)))
+                             ("v2f", (self.x, self.y,
+                                      self.x, self.y + self.height,
+                                      self.x + self.width, self.y + self.height,
+                                      self.x + self.width, self.y)),
+                             ("c3B", ((0, 0, 0) * 4)))
+        pyglet.text.Label(text=f"Generation: {generation}", x=(self.x + self.width / 2), y=(self.y + self.height / 2),
+                          anchor_x="center", anchor_y="center",
+                          font_name="Bangers", font_size=50
+                          ).draw()
         pyglet.gl.glFlush()
 
 

@@ -23,8 +23,10 @@ class GeneticProgramming:
         self.game_width = self.screen_width // self.layout[1]
         self.game_height = self.screen_height // self.layout[0]
         self.square_size = 20
-        self.ui = SimpleUI.ControlPaneUI(self.x, self.y + (self.layout[0] - 1) * self.game_height,
-                                         self.game_width, self.game_height)
+        self.ui = SimpleUI.ControlPaneUI(self.x + 10, self.y + (self.layout[0] - 1) * self.game_height + 10,
+                                         self.game_width - 20, self.game_height - 20)
+        self.generation = 0
+        self.ui.draw(self.generation)
         self.population = []
         self.randomly_initialize_population()
         self.test_fitness()
@@ -37,7 +39,7 @@ class GeneticProgramming:
                     ui = SimpleUI.SimpleUI(self.x + j * self.game_width, self.y + i * self.game_height,
                                            self.game_width, self.game_height, self.square_size)
                     game = Game.Game(ui)
-                    controller = GeneticController.GeneticController(game)
+                    controller = GeneticController.GeneticController(game, GeneticController.generate_test_tree(game))
                     self.population.append(controller)
         # rest of the population that will not draw itself (in the beginning)
         for i in range(size_of_population - ((self.layout[0] * self.layout[1]) - 1)):
@@ -49,7 +51,8 @@ class GeneticProgramming:
 
     def test_fitness(self):
         self.still_running = self.population.copy()
-        pyglet.clock.schedule_interval(self.make_next_move_with_all, 1 / 15)
+        #pyglet.clock.schedule_interval(self.make_next_move_with_all, 1 / 20)
+        pyglet.clock.schedule(self.make_next_move_with_all)
 
     def make_next_move_with_all(self, dt):
         last_draw_index = (self.layout[0] * self.layout[1]) - 1 - 1
@@ -85,6 +88,8 @@ class GeneticProgramming:
             offsprings.append(offs1)
             offsprings.append(offs2)
         self.population += offsprings
+        self.generation += 1
+        self.ui.draw(self.generation)
         self.test_fitness()
 
     def select_parent(self, index_sum):
@@ -99,12 +104,19 @@ class GeneticProgramming:
         return individual.game.score
 
     def substitute_population(self):
+        print("-----------------------------------------------------------")
+        print(f"Generation {self.generation}")
         i = 0
         for individual in self.population:
             if i < size_of_population:
+                print("Score: ", individual.game.score)
                 individual.game = Game.Game(NoUI.NoUI(0, 0, self.game_width, self.game_height, self.square_size))
+                i += 1
+                individual.root.print()
+                print()
+                print()
             else:
-                del self.population[size_of_population - 1:]
+                del self.population[size_of_population:]
                 break
 
         # first few individuals which will draw themselves

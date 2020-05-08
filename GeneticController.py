@@ -4,6 +4,7 @@ import random
 import copy
 import NoUI
 
+
 max_depth = 10
 
 
@@ -18,6 +19,24 @@ class TreeNode:
             return self.value(self.left(), self.right())
         else:
             return self.value
+
+    def print(self):
+        if callable(self.value):
+            print("[", self.value.__name__, ":", end=" ")
+        else:
+            print("[", end=" ")
+            Constants.print_constant(self.value)
+            print(":", end=" ")
+        if self.left is not None:
+            self.left.print()
+        else:
+            print("_", end=" ")
+        print(",", end=" ")
+        if self.right is not None:
+            self.right.print()
+        else:
+            print("_", end=" ")
+        print("]", end="")
 
 
 class GeneticController:
@@ -34,6 +53,7 @@ class GeneticController:
             self.root, self.num_nodes = generate_tree(0, self.game)
         else:
             self.root = root
+            self.num_nodes = count_nodes(self.root)
         self.state = Constants.PLAY
         self.id = self.next_id()
 
@@ -143,9 +163,29 @@ def generate_tree(depth, game):
         return get_random_terminal_tree_node(), 1
 
 
-def generate_test_tree(game):
+def generate_test_tree_1(game):
     return TreeNode(game.if_obstacle_forward, TreeNode(Constants.SNAKE_MOVE_LEFT),
                     TreeNode(Constants.SNAKE_MOVE_FORWARD))
+
+
+def generate_test_tree(game):
+    return TreeNode(game.if_food_forward,
+                    TreeNode(game.if_obstacle_left,
+                             TreeNode(Constants.SNAKE_MOVE_RIGHT),
+                             TreeNode(game.if_obstacle_right,
+                                      TreeNode(Constants.SNAKE_MOVE_LEFT),
+                                      TreeNode(game.if_food_left,
+                                               TreeNode(Constants.SNAKE_MOVE_LEFT),
+                                               TreeNode(Constants.SNAKE_MOVE_RIGHT)))),
+                    TreeNode(game.if_obstacle_left,
+                             TreeNode(game.if_obstacle_right,
+                                      TreeNode(Constants.SNAKE_MOVE_FORWARD),
+                                      TreeNode(game.if_food_forward,
+                                               TreeNode(Constants.SNAKE_MOVE_FORWARD),
+                                               TreeNode(Constants.SNAKE_MOVE_RIGHT))),
+                             TreeNode(game.if_food_forward,
+                                      TreeNode(Constants.SNAKE_MOVE_FORWARD),
+                                      TreeNode(Constants.SNAKE_MOVE_LEFT))))
 
 
 def get_random_terminal():
