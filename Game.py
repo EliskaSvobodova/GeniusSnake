@@ -98,22 +98,22 @@ class Game:
     def if_food_forward(self, yes, no):
         snake_heads = Snake.heads_direction(self.snake.head)
         if snake_heads is Constants.UP:
-            if self.apple[0] == self.snake.head.x and self.apple[1] > self.snake.head.y:
+            if self.apple[1] > self.snake.head.y:
                 return yes
             else:
                 return no
         if snake_heads is Constants.RIGHT:
-            if self.apple[1] == self.snake.head.y and self.apple[0] > self.snake.head.x:
+            if self.apple[0] > self.snake.head.x:
                 return yes
             else:
                 return no
         if snake_heads is Constants.DOWN:
-            if self.apple[0] == self.snake.head.x and self.apple[1] < self.snake.head.y:
+            if self.apple[1] < self.snake.head.y:
                 return yes
             else:
                 return no
         if snake_heads is Constants.LEFT:
-            if self.apple[1] == self.snake.head.y and self.apple[0] < self.snake.head.x:
+            if self.apple[0] < self.snake.head.x:
                 return yes
             else:
                 return no

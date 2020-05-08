@@ -107,17 +107,19 @@ class GeneticProgramming:
         print("-----------------------------------------------------------")
         print(f"Generation {self.generation}")
         i = 0
+        next_population = []
+        self.population.reverse()
         for individual in self.population:
-            if i < size_of_population:
-                print("Score: ", individual.game.score)
-                individual.game = Game.Game(NoUI.NoUI(0, 0, self.game_width, self.game_height, self.square_size))
-                i += 1
-                individual.root.print()
-                print()
-                print()
-            else:
-                del self.population[size_of_population:]
+            print("Score: ", individual.game.score)
+            individual.game = Game.Game(NoUI.NoUI(0, 0, self.game_width, self.game_height, self.square_size))
+            next_population.append(individual)
+            individual.root.print()
+            print()
+            print()
+            i += 1
+            if i >= size_of_population:
                 break
+        self.population = next_population
 
         # first few individuals which will draw themselves
         index = 0
