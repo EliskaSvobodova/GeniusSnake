@@ -4,8 +4,8 @@ import random
 import copy
 import NoUI
 
-
-max_depth = 10
+max_depth = 6
+max_nodes = sum([2**i for i in range(max_depth + 1)])
 
 
 class TreeNode:
@@ -109,11 +109,15 @@ class GeneticController:
                 NoUI.NoUI(0, 0, self.game.ui.width, self.game.ui.height, self.game.ui.square_size)),
             offs1)
         offspring1.num_nodes = count_nodes(offspring1.root)
+        if offspring1.num_nodes > max_nodes:
+            cut_individual_tree(offspring1)
         offspring2 = GeneticController(
             Game.Game(
                 NoUI.NoUI(0, 0, self.game.ui.width, self.game.ui.height, self.game.ui.square_size)),
             offs2)
         offspring2.num_nodes = count_nodes(offspring2.root)
+        if offspring2.num_nodes > max_nodes:
+            cut_individual_tree(offspring2)
         return offspring1, offspring2
 
     def find_parent_node(self, index, current, tree):
@@ -166,7 +170,7 @@ class GeneticController:
 def generate_tree(depth, game):
     if depth == max_depth:
         return get_random_terminal_tree_node(), 1
-    if random.random() < 0.6:
+    if random.random() < 0.9:
         fnc = get_random_function_tree_node(game)
         fnc.left, left_nodes = generate_tree(depth + 1, game)
         fnc.right, right_nodes = generate_tree(depth + 1, game)
@@ -235,3 +239,25 @@ def count_nodes(tree):
     count += count_nodes(tree.left)
     count += count_nodes(tree.right)
     return count
+
+
+def cut_individual_tree(individual):
+    num_nodes = cut_tree(0, individual.root)
+    individual.num_nodes = num_nodes
+
+
+def cut_tree(depth, tree):
+    nodes = 1
+    if depth == max_depth - 1:
+        if tree.left is not None:
+            if tree.left.left is not None:
+                tree.left = get_random_terminal_tree_node()
+            if tree.right.right is not None:
+                tree.right = get_random_terminal_tree_node()
+            nodes += 2
+        return nodes
+    if tree.left is None:
+        return 1
+    nodes += cut_tree(depth + 1, tree.left)
+    nodes += cut_tree(depth + 1, tree.right)
+    return nodes
