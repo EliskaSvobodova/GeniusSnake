@@ -2,6 +2,7 @@ import AbstractUI
 import Snake
 import random
 import Constants
+import Settings
 
 
 class Game:
@@ -12,9 +13,11 @@ class Game:
         self.game_field_width = self.ui.get_num_squares_width()
         self.snake = Snake.Snake()
         self.ui.prepare_game(self.snake)
-        self.speed = 1/3
-        self.speed_max = 1/15
+        self.speed = Settings.player_snake_start_speed
+        self.speed_max = Settings.player_snake_max_speed
         self.score_max = (self.game_field_width * self.game_field_height) - self.snake.length
+        if Settings.max_score != -1 and Settings.max_score < self.score_max:
+            self.score_max = Settings.max_score
         self.speed_step = (self.speed - self.speed_max) / self.score_max
         self.game_field = [[True for x in range(self.game_field_width)] for y in range(self.game_field_height)]
         # boundary

@@ -1,4 +1,4 @@
-import Game
+import Settings
 import Constants
 
 
@@ -84,12 +84,12 @@ def is_corner(node: ListNode):
 
 class Snake:
     def __init__(self):
-        self.tail = self.head = ListNode(5, 1)
-        for i in range(4):
+        self.length = Settings.snake_start_length
+        self.tail = self.head = ListNode(self.length, 1)
+        for i in range(self.length - 1):
             self.add_part(self.head.x - i - 1, 1)
         self.stamina = 300  # how many times is snake able to move without shrinking
         self.without_food = 0
-        self.length = 5
 
     def add_part(self, x, y):
         prev = self.tail
