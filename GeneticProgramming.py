@@ -6,8 +6,8 @@ import GeneticController
 import pyglet
 import random
 
-size_of_population = 50
-num_of_offsprings = 40
+size_of_population = 100
+num_of_offsprings = 80
 num_of_random = 10
 mutation_rate = 0.1
 

@@ -14,7 +14,7 @@ class Game:
         self.ui.prepare_game(self.snake)
         self.speed = 1/3
         self.speed_max = 1/15
-        self.score_max = (self.game_field_width * self.game_field_height)
+        self.score_max = (self.game_field_width * self.game_field_height) - self.snake.length
         self.speed_step = (self.speed - self.speed_max) / self.score_max
         self.game_field = [[True for x in range(self.game_field_width)] for y in range(self.game_field_height)]
         # boundary
@@ -58,11 +58,7 @@ class Game:
         self.snake.move(next_square)
         self.ui.draw_snake_move(self.snake, prev_tail)
         if self.snake.without_food == self.snake.stamina:
-            self.game_field[self.snake.tail.y][self.snake.tail.x] = True
-            self.ui.draw_snake_shrink(self.snake)
-            self.snake.shrink()
-            if self.snake.length == 2:
-                return False  # snake starved to death
+            return False  # snake starved to death
         return True
 
     def eat_apple(self):
