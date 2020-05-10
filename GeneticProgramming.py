@@ -46,6 +46,12 @@ class GeneticProgramming:
             game = Game.Game(ui)
             controller = GeneticController.GeneticController(game)
             self.population.append(controller)
+        if Settings.print_initial:
+            print("Initial population:")
+            for i in self.population:
+                i.root.print()
+                print()
+            print()
 
     def test_fitness(self):
         for individual in self.population:

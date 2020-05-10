@@ -21,5 +21,6 @@ snake_start_length = 5
 
 print_best = True
 print_all = False
+print_initial = True
 
 selection_operator = Constants.RANK_SELECTION
