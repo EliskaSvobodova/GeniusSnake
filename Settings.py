@@ -15,3 +15,6 @@ player_snake_max_speed = 1/15
 
 max_score = 100
 snake_start_length = 5
+
+print_best = False
+print_all = True

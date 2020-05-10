@@ -60,7 +60,6 @@ class GeneticProgramming:
                     game.ui.redraw(game.snake, game.score, game.apple)
                     index += 1
         self.still_running = self.population.copy()
-        #pyglet.clock.schedule_interval(self.make_next_move_with_all, 1 / 20)
         pyglet.clock.schedule(self.make_next_move_with_all)
 
     def make_next_move_with_all(self, dt):
@@ -82,15 +81,15 @@ class GeneticProgramming:
             self.move_to_next_generation()
 
     def move_to_next_generation(self):
-        print("-----------------------------------------------------------")
-        print(f"Generation {self.generation}")
         #index_sum = ((size_of_population - 1) * size_of_population) // 2
         self.population.sort(key=self.get_fitness)
-        print("Best individual: ", end="")
-        self.population[len(self.population)-1].root.print()
-        print()
-        print("Score: ", self.population[len(self.population)-1].game.score)
-        # print("Population:")
+        if Settings.print_best:
+            print("-----------------------------------------------------------")
+            print(f"Generation {self.generation}")
+            print("Best individual: ", end="")
+            self.population[len(self.population)-1].root.print()
+            print()
+            print("Score: ", self.population[len(self.population)-1].game.score)
         self.substitute_population()
         fitness_sum = sum([i.game.score for i in self.population])
         offsprings = []
@@ -136,9 +135,11 @@ class GeneticProgramming:
     def substitute_population(self):
         self.population.reverse()
         del self.population[Settings.size_of_population:]
-        # for i in self.population:
-        #     print("Score: ", i.game.score)
-        #     i.root.print()
-        #     print()
-        #     print()
+        if Settings.print_all:
+            print("Population:")
+            for i in self.population:
+                print("Score: ", i.game.score)
+                i.root.print()
+                print()
+                print()
 
