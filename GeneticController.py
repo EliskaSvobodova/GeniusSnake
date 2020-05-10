@@ -48,7 +48,7 @@ class GeneticController:
     def __init__(self, game: Game.Game, root=None):
         self.game = game
         if root is None:
-            self.root, self.num_nodes = generate_tree(0, self.game)
+            self.root, self.num_nodes = generate_not_elementary_tree(self.game)
         else:
             self.root = root
             self.num_nodes = count_nodes(self.root)
@@ -145,6 +145,12 @@ class GeneticController:
             parent_node.right, dummy = generate_tree(0, self.game)
             self.num_nodes = count_nodes(self.root)
 
+# tree deeper than 1
+def generate_not_elementary_tree(game):
+    fnc = get_random_function_tree_node(game)
+    fnc.left, left_nodes = generate_tree(1, game)
+    fnc.right, right_nodes = generate_tree(1, game)
+    return fnc, (left_nodes + right_nodes + 1)
 
 def generate_tree(depth, game):
     if depth == Settings.max_depth:
