@@ -53,6 +53,9 @@ class GeneticController:
             self.root = root
             self.num_nodes = count_nodes(self.root)
         self.state = Constants.PLAY
+        self.num_runs = 0
+        self.scores = []
+        self.average_score = 0
         self.id = self.next_id()
 
     def make_next_move(self):
