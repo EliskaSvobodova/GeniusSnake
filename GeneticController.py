@@ -66,60 +66,38 @@ class GeneticController:
         return self.id == other.id
 
     def crossover(self, other):
-        offs1 = copy.deepcopy(self.root)
-        offs2 = copy.deepcopy(other.root)
         r1 = random.randint(0, self.num_nodes - 1)
         r2 = random.randint(0, other.num_nodes - 1)
-        parent_node1, son_type1 = self.find_parent_node(r1, 0, offs1)
-        parent_node2, son_type2 = self.find_parent_node(r2, 0, offs2)
-        # -1:root, 0:left, 1:right
-        if son_type1 == -1:
-            tmp = offs1
-            if son_type2 == -1:
-                pass  # we switch hole offsprings, no effect
-            elif son_type2 == 0:
-                offs1 = parent_node2.left
-                offs2 = tmp
-            elif son_type2 == 1:
-                offs1 = parent_node2.right
-                offs2 = tmp
-        elif son_type1 == 0:
-            tmp = parent_node1.left
-            if son_type2 == -1:
-                parent_node1.left = offs2
-                offs2 = tmp
-            elif son_type2 == 0:
-                parent_node1.left = parent_node2.left
-                parent_node2.left = tmp
-            elif son_type2 == 1:
-                parent_node1.left = parent_node2.right
-                parent_node2.right = tmp
-        elif son_type1 == 1:
-            tmp = parent_node1.right
-            if son_type2 == -1:
-                parent_node1.right = offs2
-                offs2 = tmp
-            elif son_type2 == 0:
-                parent_node1.right = parent_node2.left
-                parent_node2.left = tmp
-            elif son_type2 == 1:
-                parent_node1.right = parent_node2.right
-                parent_node2.right = tmp
+        new_subtree1, dummy = self.find_node(r1, 0, self.root)
+        new_subtree2, dummy = self.find_node(r2, 0, other.root)
+        offs1, dummy = self.replace_subtree(self.root, copy.deepcopy(new_subtree2), 0, r1)
+        offs2, dummy = self.replace_subtree(other.root, copy.deepcopy(new_subtree1), 0, r2)
+        num_nodes1 = count_nodes(new_subtree1)
+        num_nodes2 = count_nodes(new_subtree2)
+
         offspring1 = GeneticController(
-            Game.Game(
-                NoUI.NoUI(0, 0, self.game.ui.width, self.game.ui.height, self.game.ui.square_size)),
-            offs1)
-        offspring1.num_nodes = count_nodes(offspring1.root)
+            Game.Game(NoUI.NoUI(0, 0, self.game.ui.width, self.game.ui.height, self.game.ui.square_size)), offs1)
+        offspring1.num_nodes = self.num_nodes - num_nodes1 + num_nodes2
         if offspring1.num_nodes > Settings.max_nodes:
-            cut_individual_tree(offspring1)
+            cut_individual(offspring1)
+
         offspring2 = GeneticController(
-            Game.Game(
-                NoUI.NoUI(0, 0, self.game.ui.width, self.game.ui.height, self.game.ui.square_size)),
-            offs2)
-        offspring2.num_nodes = count_nodes(offspring2.root)
+            Game.Game(NoUI.NoUI(0, 0, self.game.ui.width, self.game.ui.height, self.game.ui.square_size)), offs2)
+        offspring2.num_nodes = other.num_nodes - num_nodes2 + num_nodes1
         if offspring2.num_nodes > Settings.max_nodes:
-            cut_individual_tree(offspring2)
+            cut_individual(offspring2)
+
         return offspring1, offspring2
+
+    def replace_subtree(self, tree, new_subtree, node_current, node_number):
+        if node_current == node_number:
+            return new_subtree, node_current
+        if tree.left is None:   # it is terminal
+            return TreeNode(tree.value), node_current
+        # it is a function
+        res_left, node_current = self.replace_subtree(tree.left, new_subtree, node_current + 1, node_number)
+        res_right, node_current = self.replace_subtree(tree.right, new_subtree, node_current + 1, node_number)
+        return TreeNode(tree.value, res_left, res_right), node_current
 
     def find_parent_node(self, index, current, tree):
         if index == current:
@@ -141,10 +119,10 @@ class GeneticController:
             return tree, current
         if tree.left is None:
             return None, current
-        res, current = self.find_parent_node(index, current + 1, tree.left)
+        res, current = self.find_node(index, current + 1, tree.left)
         if res is not None:
             return res, current
-        res, current = self.find_parent_node(index, current + 1, tree.right)
+        res, current = self.find_node(index, current + 1, tree.right)
         return res, current
 
     def mutate_one_node_to_another(self):
@@ -242,7 +220,7 @@ def count_nodes(tree):
     return count
 
 
-def cut_individual_tree(individual):
+def cut_individual(individual):
     num_nodes = cut_tree(0, individual.root)
     individual.num_nodes = num_nodes
 

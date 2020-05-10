@@ -20,6 +20,12 @@ PLAY = 20
 WIN = 21
 LOOSE = 22
 
+"""
+Selection operators
+"""
+RANK_SELECTION = 30
+FITNESS_SELECTION = 31
+
 
 def print_constant(constant):
     if constant is SNAKE_MOVE_LEFT:

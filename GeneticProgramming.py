@@ -89,7 +89,6 @@ class GeneticProgramming:
             self.move_to_next_generation()
 
     def move_to_next_generation(self):
-        #index_sum = ((size_of_population - 1) * size_of_population) // 2
         self.population.sort(key=self.get_fitness)
         if Settings.print_best:
             print("-----------------------------------------------------------")
@@ -102,10 +101,18 @@ class GeneticProgramming:
             print("Average score: ", best.average_score)
         self.substitute_population()
         fitness_sum = sum([i.game.score for i in self.population])
+        index_sum = ((Settings.size_of_population - 1) * Settings.size_of_population) // 2
         offsprings = []
+        parent1 = parent2 = None
         for i in range(Settings.num_of_offsprings):
-            parent1 = self.select_parent(fitness_sum)
-            parent2 = self.select_parent(fitness_sum)
+            if Settings.selection_operator == Constants.FITNESS_SELECTION:
+                parent1 = self.select_parent_fitness(fitness_sum)
+                parent2 = self.select_parent_fitness(fitness_sum)
+            elif Settings.selection_operator == Constants.RANK_SELECTION:
+                parent1 = self.select_parent_rank(index_sum)
+                parent2 = self.select_parent_rank(index_sum)
+            else:
+                raise ValueError("Wrong selection operator in settings!")
             offs1, offs2 = parent1.crossover(parent2)
             if random.random() <= Settings.mutation_rate:
                 offs1.mutate()
@@ -131,7 +138,7 @@ class GeneticProgramming:
             if r <= tmp:
                 return self.population[i]
 
-    def select_parent(self, fitness_sum):
+    def select_parent_fitness(self, fitness_sum):
         tmp = 0
         r = random.randint(0, fitness_sum)
         for individual in self.population:
