@@ -95,18 +95,15 @@ class GeneticProgramming:
             self.move_to_next_generation()
 
     def move_to_next_generation(self):
-        self.population.sort(key=self.get_fitness)
         if Settings.print_best:
-            print("-----------------------------------------------------------")
-            print(f"Generation {self.generation}")
-            print("Best individual: ", end="")
-            best = self.population[len(self.population)-1]
-            best.root.print()
-            print()
-            print("Scores: ", best.scores)
-            print("Average score: ", best.average_score)
+            self.print_best()
         self.substitute_population()
-        fitness_sum = sum([i.game.score for i in self.population])
+        self.population.sort(key=self.get_fitness)
+        mutants = []
+        for i in self.population:
+            if random.random() <= Settings.mutation_rate:
+                mutants.append(i.mutate())
+        fitness_sum = sum([self.get_fitness(i) for i in self.population])
         index_sum = ((Settings.size_of_population - 1) * Settings.size_of_population) // 2
         offsprings = []
         parent1 = parent2 = None
@@ -120,12 +117,10 @@ class GeneticProgramming:
             else:
                 raise ValueError("Wrong selection operator in settings!")
             offs1, offs2 = parent1.crossover(parent2)
-            if random.random() <= Settings.mutation_rate:
-                offs1.mutate()
-            if random.random() <= Settings.mutation_rate:
-                offs2.mutate()
             offsprings.append(offs1)
             offsprings.append(offs2)
+
+        self.population += mutants
         self.population += offsprings
         for i in range(Settings.num_of_random):
             ui = NoUI.NoUI(0, 0, self.game_width, self.game_height, self.square_size)
@@ -148,7 +143,7 @@ class GeneticProgramming:
         tmp = 0
         r = random.randint(0, fitness_sum)
         for individual in self.population:
-            tmp += individual.game.score
+            tmp += self.get_fitness(individual)
             if r <= tmp:
                 return individual
 
@@ -156,7 +151,7 @@ class GeneticProgramming:
         return individual.average_score
 
     def substitute_population(self):
-        self.population.reverse()
+        self.population.sort(key=self.get_fitness, reverse=True)
         del self.population[Settings.size_of_population:]
         if Settings.print_all:
             print("Population:")
@@ -166,3 +161,12 @@ class GeneticProgramming:
                 print()
                 print()
 
+    def print_best(self):
+        print("-----------------------------------------------------------")
+        print(f"Generation {self.generation}")
+        print("Best individual: ", end="")
+        best = self.population[len(self.population) - 1]
+        best.root.print()
+        print()
+        print("Scores: ", best.scores)
+        print("Average score: ", best.average_score)

@@ -5,7 +5,7 @@ num_of_offsprings = 80
 num_of_random = 10
 mutation_rate = 0.1
 
-max_depth = 6
+max_depth = 4
 max_nodes = sum([2**i for i in range(max_depth + 1)])
 
 genetic_layout = tuple([2, 4])

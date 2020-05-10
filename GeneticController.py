@@ -125,25 +125,15 @@ class GeneticController:
         res, current = self.find_node(index, current + 1, tree.right)
         return res, current
 
-    def mutate_one_node_to_another(self):
-        r = random.randint(0, self.num_nodes - 1)
-        node, dummy = self.find_node(r, 0, self.root)
-        if node.left is None:
-            node.value = get_random_terminal()
-        else:
-            node.value = get_random_function(self.game)
-
     def mutate(self):
-        r = random.randint(0, self.num_nodes - 1)
-        parent_node, son_type = self.find_parent_node(r, 0, self.root)
-        if son_type == -1:
-            self.root, self.num_nodes = generate_tree(0, self.game)
-        elif son_type == 0:
-            parent_node.left, dummy = generate_tree(0, self.game)
-            self.num_nodes = count_nodes(self.root)
-        else:
-            parent_node.right, dummy = generate_tree(0, self.game)
-            self.num_nodes = count_nodes(self.root)
+        mutant_genome, dummy = self.replace_subtree(self.root, generate_tree(0, self.game), 0, random.randint)
+        mutant = GeneticController(
+            Game.Game(NoUI.NoUI(0, 0, self.game.ui.width, self.game.ui.height, self.game.ui.square_size)), mutant_genome)
+        mutant.num_nodes = count_nodes(mutant_genome)
+        if mutant.num_nodes > Settings.max_nodes:
+            cut_individual(mutant)
+        return mutant
+
 
 # tree deeper than 1
 def generate_not_elementary_tree(game):
@@ -151,6 +141,7 @@ def generate_not_elementary_tree(game):
     fnc.left, left_nodes = generate_tree(1, game)
     fnc.right, right_nodes = generate_tree(1, game)
     return fnc, (left_nodes + right_nodes + 1)
+
 
 def generate_tree(depth, game):
     if depth == Settings.max_depth:
