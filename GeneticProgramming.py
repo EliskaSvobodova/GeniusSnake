@@ -96,10 +96,32 @@ class GeneticProgramming:
     def move_to_next_generation(self):
         self.substitute_population()
         self.population.sort(key=self.get_fitness)
-        mutants = []
-        for i in self.population:
-            if random.random() <= Settings.mutation_rate:
-                mutants.append(i.mutate())
+        # first produce all new individuals, then add them
+        mutants = self.produce_mutants()
+        offsprings = self.produce_offsprings()
+        rand_individuals = self.produce_additional_random_individuals()
+        self.population += mutants
+        self.population += offsprings
+        self.population += rand_individuals
+        for i in range(Settings.num_of_random):
+            ui = NoUI.NoUI(0, 0, self.game_width, self.game_height, self.square_size)
+            game = Game.Game(ui)
+            controller = GeneticController.GeneticController(game)
+            self.population.append(controller)
+        self.generation += 1
+        self.ui.draw(self.generation)
+        self.test_fitness()
+
+    def produce_additional_random_individuals(self):
+        rand_individuals = []
+        for i in range(Settings.num_of_random):
+            ui = NoUI.NoUI(0, 0, self.game_width, self.game_height, self.square_size)
+            game = Game.Game(ui)
+            controller = GeneticController.GeneticController(game)
+            rand_individuals.append(controller)
+        return rand_individuals
+
+    def produce_offsprings(self):
         fitness_sum = sum([self.get_fitness(i) for i in self.population])
         index_sum = ((Settings.size_of_population - 1) * Settings.size_of_population) // 2
         offsprings = []
@@ -116,17 +138,14 @@ class GeneticProgramming:
             offs1, offs2 = parent1.crossover(parent2)
             offsprings.append(offs1)
             offsprings.append(offs2)
+        return offsprings
 
-        self.population += mutants
-        self.population += offsprings
-        for i in range(Settings.num_of_random):
-            ui = NoUI.NoUI(0, 0, self.game_width, self.game_height, self.square_size)
-            game = Game.Game(ui)
-            controller = GeneticController.GeneticController(game)
-            self.population.append(controller)
-        self.generation += 1
-        self.ui.draw(self.generation)
-        self.test_fitness()
+    def produce_mutants(self):
+        mutants = []
+        for i in self.population:
+            if random.random() <= Settings.mutation_rate:
+                mutants.append(i.mutate())
+        return mutants
 
     def select_parent_rank(self, index_sum):
         tmp = 0
@@ -155,7 +174,7 @@ class GeneticProgramming:
         if Settings.print_all:
             print("Population:")
             for i in self.population:
-                print("Score: ", i.game.score)
+                print("Score: ", i.scores, " - ", i.average_score)
                 i.root.print()
                 print()
                 print()
