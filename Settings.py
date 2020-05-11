@@ -5,6 +5,8 @@ num_of_offsprings = 80
 num_of_random = 10
 mutation_rate = 0.1
 
+max_generations = 500
+
 max_depth = 4
 max_nodes = sum([2**i for i in range(max_depth + 1)])
 
@@ -21,7 +23,9 @@ snake_start_length = 5
 
 print_best = True
 print_all = False
-print_initial = True
+print_initial = False
 
 selection_operator = Constants.RANK_SELECTION
 initialization_operator = Constants.RAMPED_HALF_AND_HALF_INIT
+
+num_graph_labels = 10

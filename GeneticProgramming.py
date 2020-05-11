@@ -24,6 +24,7 @@ class GeneticProgramming:
         self.ui = SimpleUI.ControlPaneUI(self.x + 10, self.y + (self.layout[0] - 1) * self.game_height + 10,
                                          self.game_width - 20, self.game_height - 20)
         self.generation = 0
+        self.best_average_in_generations = []
         self.ui.draw(self.generation)
         self.population = []
         if Settings.initialization_operator is Constants.GROW_INIT:
@@ -194,6 +195,8 @@ class GeneticProgramming:
 
     def substitute_population(self):
         self.population.sort(key=self.get_fitness, reverse=True)
+        self.best_average_in_generations.append(self.population[0].average_score)
+        self.ui.draw_graph(self.best_average_in_generations)
         if Settings.print_best:
             self.print_best()
         del self.population[Settings.size_of_population:]

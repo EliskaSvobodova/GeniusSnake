@@ -1,6 +1,8 @@
 import pyglet
 import Snake
 import AbstractUI
+import Settings
+import CommonHelpers
 
 
 class ControlPaneUI:
@@ -9,19 +11,68 @@ class ControlPaneUI:
         self.y = y
         self.width = width
         self.height = height
+        self.font_size = 50
+        space_between = 20
+        self.graph_x = self.x + space_between
+        self.graph_y = self.y + space_between
+        self.graph_width = self.width - 2 * space_between
+        self.graph_height = self.height - 1.5 * self.font_size - 2 * space_between
+        self.point = self.load_point()
 
     def draw(self, generation):
+        height = self.height - self.graph_height
+        # plus five because of graph's last label
         pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
-                             ("v2f", (self.x, self.y,
-                                      self.x, self.y + self.height,
-                                      self.x + self.width, self.y + self.height,
-                                      self.x + self.width, self.y)),
+                             ("v2f", (self.x, self.graph_y + self.graph_height + 5,
+                                      self.x, self.graph_y + self.graph_height + height + 5,
+                                      self.x + self.width, self.graph_y + self.graph_height + height + 5,
+                                      self.x + self.width, self.graph_y + self.graph_height + 5)),
                              ("c3B", ((0, 0, 0) * 4)))
-        pyglet.text.Label(text=f"Generation: {generation}", x=(self.x + self.width / 2), y=(self.y + self.height / 2),
+        pyglet.text.Label(text=f"Generation: {generation}",
+                          x=(self.x + self.width / 2), y=(self.y + self.height - self.font_size / 2),
                           anchor_x="center", anchor_y="center",
-                          font_name="Bangers", font_size=50
+                          font_name="Bangers", font_size=self.font_size
                           ).draw()
+        self.draw_graph_skeleton()
         pyglet.gl.glFlush()
+
+    def draw_graph(self, values):
+        pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
+                             ("v2f", (self.graph_x, self.graph_y,
+                                      self.graph_x, self.graph_y + self.graph_height,
+                                      self.graph_x + self.graph_width, self.graph_y + self.graph_height,
+                                      self.graph_x + self.graph_width, self.graph_y)),
+                             ("c3B", ((0, 0, 0) * 4)))
+        space = self.graph_width / (len(values) + 1)
+        point_scale = self.graph_height / Settings.max_score
+        i = 0
+        for v in values:
+            self.point.x = self.graph_x + i * space + space
+            self.point.y = self.graph_y + v * point_scale
+            self.point.draw()
+            i += 1
+        pyglet.gl.glFlush()
+
+    def draw_graph_skeleton(self):
+        pyglet.graphics.draw(4, pyglet.gl.GL_LINES,
+                             ("v2f", (self.graph_x, self.graph_y,
+                                      self.graph_x, self.graph_y + self.graph_height,
+                                      self.graph_x, self.graph_y,
+                                      self.graph_x + self.graph_width, self.graph_y)),
+                             ("c3B", ((56, 88, 129) * 4)))
+        space_between = self.graph_height / (Settings.num_graph_labels - 1)
+        difference = Settings.max_score / (Settings.num_graph_labels - 1)
+        for i in range(Settings.num_graph_labels):
+            pyglet.text.Label(text=f"{round(i * difference)}",
+                              x=self.x, y=self.graph_y + i * space_between,
+                              anchor_x="center", anchor_y="center",
+                              font_size=10).draw()
+
+    def load_point(self):
+        point_image = pyglet.resource.image("SimpleUI/point.png")
+        CommonHelpers.scale_image(point_image, 10, 10)
+        CommonHelpers.center_image(point_image)
+        return pyglet.sprite.Sprite(img=point_image)
 
 
 class SimpleUI(AbstractUI.AbstractUI):
@@ -124,7 +175,7 @@ class SimpleUI(AbstractUI.AbstractUI):
     def draw_score(self, score):
         x = self.x + 2
         y = self.y + self.num_squares_height * self.square_size
-        width = self.width - 20 # minus few pixels so it doesn't cover boundary
+        width = self.width - 20  # minus few pixels so it doesn't cover boundary
         height = self.y + self.height - y
         pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
                              ("v2f", (x, y, x, y + height, x + width, y + height, x + width, y)),
@@ -173,4 +224,3 @@ class SimpleUI(AbstractUI.AbstractUI):
                                       self.x, self.y + height, self.x + width, self.y + height,
                                       self.x + width, self.y + height, self.x + width, self.y,
                                       self.x + width, self.y, self.x, self.y)))
-
