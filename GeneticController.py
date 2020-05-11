@@ -12,9 +12,9 @@ class TreeNode:
         self.left = left
         self.right = right
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, game):
         if callable(self.value):
-            return self.value(self.left(), self.right())
+            return self.value(game, self.left(game), self.right(game))
         else:
             return self.value
 
@@ -59,7 +59,7 @@ class GeneticController:
         self.id = self.next_id()
 
     def make_next_move(self):
-        self.game.make_next_move(self.root())
+        self.game.make_next_move(self.root(self.game))
         self.state = self.game.game_state
 
     def __eq__(self, other):
@@ -98,21 +98,6 @@ class GeneticController:
         res_left, node_current = self.replace_subtree(tree.left, new_subtree, node_current + 1, node_number)
         res_right, node_current = self.replace_subtree(tree.right, new_subtree, node_current + 1, node_number)
         return TreeNode(tree.value, res_left, res_right), node_current
-
-    def find_parent_node(self, index, current, tree):
-        if index == current:
-            return tree, -1
-        if tree.left is None:
-            return None, current
-        res, current = self.find_parent_node(index, current + 1, tree.left)
-        if current == -1:
-            return tree, 0
-        if res is not None:
-            return res, current
-        res, current = self.find_parent_node(index, current + 1, tree.right)
-        if current == -1:
-            return tree, 1
-        return res, current
 
     def find_node(self, index, current, tree):
         if index == current:
@@ -155,31 +140,6 @@ def generate_tree(depth, game):
         return get_random_terminal_tree_node(), 1
 
 
-def generate_test_tree_1(game):
-    return TreeNode(game.if_obstacle_forward, TreeNode(Constants.SNAKE_MOVE_LEFT),
-                    TreeNode(Constants.SNAKE_MOVE_FORWARD))
-
-
-def generate_test_tree(game):
-    return TreeNode(game.if_food_forward,
-                    TreeNode(game.if_obstacle_left,
-                             TreeNode(Constants.SNAKE_MOVE_RIGHT),
-                             TreeNode(game.if_obstacle_right,
-                                      TreeNode(Constants.SNAKE_MOVE_LEFT),
-                                      TreeNode(game.if_food_left,
-                                               TreeNode(Constants.SNAKE_MOVE_LEFT),
-                                               TreeNode(Constants.SNAKE_MOVE_RIGHT)))),
-                    TreeNode(game.if_obstacle_left,
-                             TreeNode(game.if_obstacle_right,
-                                      TreeNode(Constants.SNAKE_MOVE_FORWARD),
-                                      TreeNode(game.if_food_forward,
-                                               TreeNode(Constants.SNAKE_MOVE_FORWARD),
-                                               TreeNode(Constants.SNAKE_MOVE_RIGHT))),
-                             TreeNode(game.if_food_forward,
-                                      TreeNode(Constants.SNAKE_MOVE_FORWARD),
-                                      TreeNode(Constants.SNAKE_MOVE_LEFT))))
-
-
 def get_random_terminal():
     return random.choice([Constants.SNAKE_MOVE_RIGHT, Constants.SNAKE_MOVE_LEFT, Constants.SNAKE_MOVE_FORWARD])
 
@@ -191,17 +151,17 @@ def get_random_terminal_tree_node():
 def get_random_function(game):
     choice = random.randint(0, 5)
     if choice == 0:
-        return game.if_food_forward
+        return Game.if_food_forward
     elif choice == 1:
-        return game.if_food_left
+        return Game.if_food_left
     elif choice == 2:
-        return game.if_food_right
+        return Game.if_food_right
     elif choice == 3:
-        return game.if_obstacle_forward
+        return Game.if_obstacle_forward
     elif choice == 4:
-        return game.if_obstacle_left
+        return Game.if_obstacle_left
     else:
-        return game.if_obstacle_right
+        return Game.if_obstacle_right
 
 
 def get_random_function_tree_node(game):

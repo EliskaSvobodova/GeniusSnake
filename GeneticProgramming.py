@@ -75,7 +75,6 @@ class GeneticProgramming:
             individual.make_next_move()
             if individual.state is not Constants.PLAY:
                 controller = self.population[self.population.index(individual)]
-                controller.game.score = individual.game.score
                 controller.num_runs += 1
                 controller.scores.append(individual.game.score)
                 if controller.num_runs >= Settings.num_runs:
@@ -95,8 +94,6 @@ class GeneticProgramming:
             self.move_to_next_generation()
 
     def move_to_next_generation(self):
-        if Settings.print_best:
-            self.print_best()
         self.substitute_population()
         self.population.sort(key=self.get_fitness)
         mutants = []
@@ -152,6 +149,8 @@ class GeneticProgramming:
 
     def substitute_population(self):
         self.population.sort(key=self.get_fitness, reverse=True)
+        if Settings.print_best:
+            self.print_best()
         del self.population[Settings.size_of_population:]
         if Settings.print_all:
             print("Population:")
@@ -165,7 +164,7 @@ class GeneticProgramming:
         print("-----------------------------------------------------------")
         print(f"Generation {self.generation}")
         print("Best individual: ", end="")
-        best = self.population[len(self.population) - 1]
+        best = self.population[0]
         best.root.print()
         print()
         print("Scores: ", best.scores)
