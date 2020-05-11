@@ -26,32 +26,58 @@ class GeneticProgramming:
         self.generation = 0
         self.ui.draw(self.generation)
         self.population = []
-        self.randomly_initialize_population()
+        if Settings.initialization_operator is Constants.GROW_INIT:
+            self.initialize_grow()
+        elif Settings.initialization_operator is Constants.FULL_INIT:
+            self.initialize_full()
+        elif Settings.initialization_operator is Constants.RAMPED_HALF_AND_HALF_INIT:
+            self.initialize_ramped_half_and_half()
+        else:
+            raise ValueError("Wrong initialization operator in settings!")
+        if Settings.print_initial:
+            self.print_initial()
+        self.draw_initial()
         self.test_fitness()
 
-    def randomly_initialize_population(self):
-        # first few individuals which will draw themselves
+    def initialize_ramped_half_and_half(self):
+        for i in range(1, Settings.max_depth + 1):
+            for j in range(0, (Settings.size_of_population // (2 * Settings.max_depth)) + 1):
+                # grow initialization method
+                ui = NoUI.NoUI(0, 0, self.game_width, self.game_height, self.square_size)
+                tree, num_nodes = GeneticController.generate_tree(0, 1, i)
+                controller = GeneticController.GeneticController(Game.Game(ui), tree, num_nodes)
+                self.population.append(controller)
+                # full initialization method
+                ui = NoUI.NoUI(0, 0, self.game_width, self.game_height, self.square_size)
+                tree, num_nodes = GeneticController.generate_tree(0, i, i)
+                controller = GeneticController.GeneticController(Game.Game(ui), tree, num_nodes)
+                self.population.append(controller)
+
+    def initialize_grow(self):
+        self.initialize_population_with_min_max_depth(1, Settings.max_depth)
+
+    def initialize_full(self):
+        self.initialize_population_with_min_max_depth(Settings.max_depth, Settings.max_depth)
+
+    def initialize_population_with_min_max_depth(self, min_depth, max_depth):
+        for i in range(Settings.size_of_population):
+            ui = NoUI.NoUI(0, 0,  # some dummy values
+                           self.game_width, self.game_height, self.square_size)
+            tree, num_nodes = GeneticController.generate_tree(0, min_depth, max_depth)
+            controller = GeneticController.GeneticController(Game.Game(ui), tree, num_nodes)
+            self.population.append(controller)
+
+    def draw_initial(self):
+        index = 0
         for i in range(self.layout[0]):
             for j in range(self.layout[1]):
                 if i != (self.layout[0] - 1) or j != 0:
                     ui = SimpleUI.SimpleUI(self.x + j * self.game_width, self.y + i * self.game_height,
                                            self.game_width, self.game_height, self.square_size)
-                    game = Game.Game(ui)
-                    controller = GeneticController.GeneticController(game)
-                    self.population.append(controller)
-        # rest of the population that will not draw itself (in the beginning)
-        for i in range(Settings.size_of_population - ((self.layout[0] * self.layout[1]) - 1)):
-            ui = NoUI.NoUI(0, 0,  # some dummy values
-                           self.game_width, self.game_height, self.square_size)
-            game = Game.Game(ui)
-            controller = GeneticController.GeneticController(game)
-            self.population.append(controller)
-        if Settings.print_initial:
-            print("Initial population:")
-            for i in self.population:
-                i.root.print()
-                print()
-            print()
+                    individual = self.population[index]
+                    individual.game.ui = ui
+                    individual.game.ui.prepare_game(individual.game.snake)
+                    index += 1
 
     def test_fitness(self):
         for individual in self.population:
@@ -188,3 +214,10 @@ class GeneticProgramming:
         print()
         print("Scores: ", best.scores)
         print("Average score: ", best.average_score)
+
+    def print_initial(self):
+        print("Initial population:")
+        for i in self.population:
+            i.root.print()
+            print()
+        print()

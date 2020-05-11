@@ -45,13 +45,16 @@ class GeneticController:
         cls.id += 1
         return cls.id
 
-    def __init__(self, game: Game.Game, root=None):
+    def __init__(self, game: Game.Game, root=None, num_nodes=None):
         self.game = game
         if root is None:
-            self.root, self.num_nodes = generate_not_elementary_tree(self.game)
+            self.root, self.num_nodes = generate_tree(0, 1, Settings.max_depth)
         else:
             self.root = root
-            self.num_nodes = count_nodes(self.root)
+            if num_nodes is None:
+                self.num_nodes = count_nodes(self.root)
+            else:
+                self.num_nodes = num_nodes
         self.state = Constants.PLAY
         self.num_runs = 0
         self.scores = []
@@ -111,44 +114,40 @@ class GeneticController:
         return res, current
 
     def mutate(self):
-        mutant_genome, dummy = self.replace_subtree(self.root, generate_tree(0, self.game), 0, random.randint)
+        mutant_genome, dummy = self.replace_subtree(self.root,
+                                                    generate_tree(0, 0, Settings.max_depth),
+                                                    0,
+                                                    random.randint)
         mutant = GeneticController(
-            Game.Game(NoUI.NoUI(0, 0, self.game.ui.width, self.game.ui.height, self.game.ui.square_size)), mutant_genome)
+            Game.Game(
+                NoUI.NoUI(0, 0, self.game.ui.width, self.game.ui.height, self.game.ui.square_size)),
+            mutant_genome)
         mutant.num_nodes = count_nodes(mutant_genome)
         if mutant.num_nodes > Settings.max_nodes:
             cut_individual(mutant)
         return mutant
 
 
-# tree deeper than 1
-def generate_not_elementary_tree(game):
-    fnc = get_random_function_tree_node(game)
-    fnc.left, left_nodes = generate_tree(1, game)
-    fnc.right, right_nodes = generate_tree(1, game)
-    return fnc, (left_nodes + right_nodes + 1)
+def generate_tree(depth, min_depth, max_depth):
+    if depth == max_depth:
+        return TreeNode(get_random_terminal()), 1
 
+    if depth < min_depth:
+        fnc = TreeNode(get_random_function())
+        fnc.left, num_nodes_left = generate_tree(depth + 1, min_depth, max_depth)
+        fnc.right, num_nodes_right = generate_tree(depth + 1, min_depth, max_depth)
+        return fnc, (num_nodes_left + num_nodes_right + 1)
 
-def generate_tree(depth, game):
-    if depth == Settings.max_depth:
-        return get_random_terminal_tree_node(), 1
     if random.random() < Settings.chance_new_node_function:
-        fnc = get_random_function_tree_node(game)
-        fnc.left, left_nodes = generate_tree(depth + 1, game)
-        fnc.right, right_nodes = generate_tree(depth + 1, game)
-        return fnc, (left_nodes + right_nodes + 1)
+        fnc = TreeNode(get_random_function())
+        fnc.left, num_nodes_left = generate_tree(depth + 1, min_depth, max_depth)
+        fnc.right, num_nodes_right = generate_tree(depth + 1, min_depth, max_depth)
+        return fnc, (num_nodes_left + num_nodes_right + 1)
     else:
-        return get_random_terminal_tree_node(), 1
+        return TreeNode(get_random_terminal()), 1
 
 
-def get_random_terminal():
-    return random.choice([Constants.SNAKE_MOVE_RIGHT, Constants.SNAKE_MOVE_LEFT, Constants.SNAKE_MOVE_FORWARD])
-
-
-def get_random_terminal_tree_node():
-    return TreeNode(get_random_terminal())
-
-
-def get_random_function(game):
+def get_random_function():
     choice = random.randint(0, 5)
     if choice == 0:
         return Game.if_food_forward
@@ -164,8 +163,8 @@ def get_random_function(game):
         return Game.if_obstacle_right
 
 
-def get_random_function_tree_node(game):
-    return TreeNode(get_random_function(game))
+def get_random_terminal():
+    return random.choice([Constants.SNAKE_MOVE_RIGHT, Constants.SNAKE_MOVE_LEFT, Constants.SNAKE_MOVE_FORWARD])
 
 
 def count_nodes(tree):
@@ -187,9 +186,9 @@ def cut_tree(depth, tree):
     if depth == Settings.max_depth - 1:
         if tree.left is not None:
             if tree.left.left is not None:
-                tree.left = get_random_terminal_tree_node()
+                tree.left = TreeNode(get_random_terminal())
             if tree.right.right is not None:
-                tree.right = get_random_terminal_tree_node()
+                tree.right = TreeNode(get_random_terminal())
             nodes += 2
         return nodes
     if tree.left is None:

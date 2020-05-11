@@ -20,7 +20,8 @@ max_score = 100
 snake_start_length = 5
 
 print_best = True
-print_all = True
+print_all = False
 print_initial = True
 
 selection_operator = Constants.RANK_SELECTION
+initialization_operator = Constants.RAMPED_HALF_AND_HALF_INIT

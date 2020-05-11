@@ -26,6 +26,13 @@ Selection operators
 RANK_SELECTION = 30
 FITNESS_SELECTION = 31
 
+"""
+Initialization operators
+"""
+GROW_INIT = 40
+FULL_INIT = 41
+RAMPED_HALF_AND_HALF_INIT = 42
+
 
 def print_constant(constant):
     if constant is SNAKE_MOVE_LEFT:
@@ -48,3 +55,13 @@ def print_constant(constant):
         print("WIN", end="")
     elif constant is LOOSE:
         print("LOOSE", end="")
+    elif constant is RANK_SELECTION:
+        print("RANK_SELECTION", end="")
+    elif constant is FITNESS_SELECTION:
+        print("FITNESS_SELECTION", end="")
+    elif constant is GROW_INIT:
+        print("GROW_INIT", end="")
+    elif constant is FULL_INIT:
+        print("FULL_INIT", end="")
+    elif constant is RAMPED_HALF_AND_HALF_INIT:
+        print("RAMPED_HALF_AND_HALF_INIT", end="")
