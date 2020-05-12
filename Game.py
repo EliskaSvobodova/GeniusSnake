@@ -217,33 +217,6 @@ def if_body_right(game, yes, no):
         return no
 
 
-def if_obstacle_two_forward(game, yes, no):
-    next_square = game.snake.next_square(Constants.SNAKE_MOVE_FORWARD, 2)
-    if next_square[0] >= game.game_field_width or next_square[1] >= game.game_field_height \
-            or not game.game_field[next_square[1]][next_square[0]]:
-        return yes
-    else:
-        return no
-
-
-def if_obstacle_two_left(game, yes, no):
-    next_square = game.snake.next_square(Constants.SNAKE_MOVE_LEFT, 2)
-    if next_square[0] >= game.game_field_width or next_square[1] >= game.game_field_height \
-            or not game.game_field[next_square[1]][next_square[0]]:
-        return yes
-    else:
-        return no
-
-
-def if_obstacle_two_right(game, yes, no):
-    next_square = game.snake.next_square(Constants.SNAKE_MOVE_RIGHT, 2)
-    if next_square[0] >= game.game_field_width or next_square[1] >= game.game_field_height \
-            or not game.game_field[next_square[1]][next_square[0]]:
-        return yes
-    else:
-        return no
-
-
 def is_wall(game, next_square):
     if next_square[0] == 0 or next_square[0] == game.game_field_width - 1 \
             or next_square[1] == 0 or next_square[1] == game.game_field_height - 1:
