@@ -19,16 +19,18 @@ player_snake_max_speed = 1/15
 # number of individuals in each generation before breeding
 size_of_population = 100
 # number of offsprings produced in each generation
-num_of_offsprings = 80
+num_of_offsprings = 85
 # number of additional randomly generated individuals (for diversity of genome)
 num_of_random = 10
 # chance that an individual will produce a mutant
 mutation_rate = 0.1
+# chance of picking a terminal node for crossover
+crossover_terminal_rate = 0.2
+
 # limits number of generations
-
 max_generations = 50
-# max depth of the decision tree in snake's "brain"
 
+# max depth of the decision tree in snake's "brain"
 max_depth = 6
 # max number of nodes in the decision tree in snake's "brain", limited by max depth
 max_nodes = sum([2**i for i in range(max_depth + 1)])

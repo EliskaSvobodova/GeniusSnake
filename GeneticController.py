@@ -70,9 +70,31 @@ class GeneticController:
 
     def crossover(self, other):
         r1 = random.randint(0, self.num_nodes - 1)
-        r2 = random.randint(0, other.num_nodes - 1)
         new_subtree1, dummy = self.find_node(r1, 0, self.root)
+        while True:
+            if new_subtree1.left is None:
+                if random.random() < Settings.crossover_terminal_rate:
+                    break
+                else:
+                    r1 = random.randint(0, self.num_nodes - 1)
+                    new_subtree1, dummy = self.find_node(r1, 0, self.root)
+                    break
+            else:
+                break
+
+        r2 = random.randint(0, other.num_nodes - 1)
         new_subtree2, dummy = self.find_node(r2, 0, other.root)
+        while True:
+            if new_subtree2.left is None:
+                if random.random() < 0.2:
+                    break
+                else:
+                    r2 = random.randint(0, other.num_nodes - 1)
+                    new_subtree2, dummy = self.find_node(r2, 0, other.root)
+                    break
+            else:
+                break
+
         offs1, dummy = self.replace_subtree(self.root, copy.deepcopy(new_subtree2), 0, r1)
         offs2, dummy = self.replace_subtree(other.root, copy.deepcopy(new_subtree1), 0, r2)
         num_nodes1 = count_nodes(new_subtree1)
