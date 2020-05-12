@@ -54,10 +54,6 @@ class AbstractUI(metaclass=ABCMeta):
         raise NotImplementedError()
 
     @abstractmethod
-    def draw_square(self, x, y):
-        raise NotImplementedError
-
-    @abstractmethod
     def draw_score(self, score):
         raise NotImplementedError()
 
@@ -71,8 +67,4 @@ class AbstractUI(metaclass=ABCMeta):
 
     @abstractmethod
     def draw_game_won(self):
-        raise NotImplementedError
-
-    @abstractmethod
-    def draw_snake_shrink(self, snake: Snake.Snake):
         raise NotImplementedError
