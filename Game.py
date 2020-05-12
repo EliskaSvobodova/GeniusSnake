@@ -12,7 +12,6 @@ class Game:
         self.game_field_height = self.ui.get_num_squares_height()
         self.game_field_width = self.ui.get_num_squares_width()
         self.snake = Snake.Snake()
-        self.ui.prepare_game(self.snake)
         self.speed = Settings.player_snake_start_speed
         self.speed_max = Settings.player_snake_max_speed
         self.score_max = (self.game_field_width * self.game_field_height) - self.snake.length

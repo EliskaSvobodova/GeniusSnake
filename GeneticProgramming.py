@@ -28,6 +28,7 @@ class GeneticProgramming:
         self.best_average_in_generations = []
         self.ui.draw(self.generation)
         self.winners = []
+        self.still_running = []
         self.population = []
         if Settings.initialization_operator is Constants.GROW_INIT:
             self.initialize_grow()
@@ -80,6 +81,7 @@ class GeneticProgramming:
                     individual = self.population[index]
                     individual.game.ui = ui
                     individual.game.ui.prepare_game(individual.game.snake)
+                    individual.game.ui.draw_identifier(individual.id, individual.num_runs + 1)
                     index += 1
 
     def test_fitness(self):
@@ -91,9 +93,10 @@ class GeneticProgramming:
                 if i != (self.layout[0] - 1) or j != 0:
                     ui = SimpleUI.SimpleUI(self.x + j * self.game_width, self.y + i * self.game_height,
                                            self.game_width, self.game_height, self.square_size)
-                    game = self.population[index].game
-                    game.ui = ui
-                    game.ui.redraw(game.snake, game.score, game.apple)
+                    individual = self.population[index]
+                    individual.game.ui = ui
+                    individual.game.ui.redraw(individual.game.snake, individual.game.score,
+                                              individual.id, individual.num_runs, individual.game.apple)
                     index += 1
         self.still_running = self.population.copy()
         pyglet.clock.schedule(self.make_next_move_with_all)
@@ -117,9 +120,14 @@ class GeneticProgramming:
                             individual.game.ui.width, individual.game.ui.height,
                             individual.game.ui.square_size)
                         game = self.still_running[last_draw_index].game
-                        self.still_running[last_draw_index].game.ui.redraw(game.snake, game.score, game.apple)
+                        self.still_running[last_draw_index].game.ui.redraw(game.snake, game.score,
+                                                                           self.still_running[last_draw_index].id,
+                                                                           self.still_running[last_draw_index].num_runs,
+                                                                           game.apple)
                 else:
                     individual.game = Game.Game(individual.game.ui)
+                    individual.game.ui.redraw(individual.game.snake, individual.game.score,
+                                              individual.id, individual.num_runs, individual.game.apple)
         if len(self.still_running) == 0:
             pyglet.clock.unschedule(self.make_next_move_with_all)
             if len(self.winners) != 0:
@@ -213,8 +221,8 @@ class GeneticProgramming:
     def print_best(self):
         print("-----------------------------------------------------------")
         print(f"Generation {self.generation}")
-        print("Best individual: ", end="")
         best = self.population[0]
+        print(f"Best individual: {best.id}")
         best.root.print()
         print()
         print("Scores: ", best.scores)
@@ -226,6 +234,7 @@ class GeneticProgramming:
         print(f"Final Generation {self.generation}")
 
         for individual in self.winners:
+            print(f"Individual {individual.id}:")
             individual.root.print()
             print()
             print("Scores: ", individual.scores)
@@ -236,6 +245,7 @@ class GeneticProgramming:
     def print_initial(self):
         print("Initial population:")
         for i in self.population:
+            print(f"Individual {i.id}:")
             i.root.print()
             print()
         print()

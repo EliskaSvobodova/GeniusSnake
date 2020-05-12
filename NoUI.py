@@ -22,6 +22,9 @@ class NoUI(AbstractUI.AbstractUI):
     def prepare_game(self, snake: Snake.Snake):
         pass
 
+    def redraw(self, snake: Snake.Snake, score, identifier, num_runs, apple):
+        pass
+
     def draw_snake_eat(self, snake: Snake.Snake):
         pass
 

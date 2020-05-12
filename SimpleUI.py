@@ -92,12 +92,13 @@ class SimpleUI(AbstractUI.AbstractUI):
         self.draw_snake(snake)
         self.draw_boundary()
 
-    def redraw(self, snake: Snake.Snake, score, apple):
+    def redraw(self, snake: Snake.Snake, score, identifier, num_runs, apple):
         CommonHelpers.draw_colored_rectangle(self.x + self.square_size, self.y + self.square_size,
                                              self.game_width - 2 * self.square_size,
                                              self.game_height - 2 * self.square_size,
                                              0, 0, 0)
         self.draw_score(score)
+        self.draw_identifier(identifier, num_runs)
         self.draw_apple(apple[0], apple[1])
         self.draw_snake(snake)
 
@@ -160,11 +161,29 @@ class SimpleUI(AbstractUI.AbstractUI):
     def draw_score(self, score):
         x = self.x
         y = self.y + self.num_squares_height * self.square_size
-        width = self.num_squares_width * self.square_size - 1
+        width = (self.num_squares_width * self.square_size) / 2
         height = self.y + self.height - y
+
         CommonHelpers.draw_colored_rectangle(x, y, width, height, 0, 0, 0)
-        pyglet.text.Label(text=f"Score: {score}", x=(x + width / 2), y=(y + height / 2),
-                          anchor_x="center", anchor_y="center",
+
+        pyglet.text.Label(text=f"Score: {score}",
+                          x=(x + 5), y=(y + height / 2),
+                          anchor_y="center",
+                          font_name="Bangers", font_size=height // 2
+                          ).draw()
+        pyglet.gl.glFlush()
+
+    def draw_identifier(self, identifier, run):
+        x = self.x + self.num_squares_width * self.square_size - 1
+        y = self.y + self.num_squares_height * self.square_size
+        width = (self.num_squares_width * self.square_size) / 2
+        height = self.y + self.height - y
+
+        CommonHelpers.draw_colored_rectangle(x - width, y, width, height, 0, 0, 0)
+
+        pyglet.text.Label(text=f"ID: {identifier}, run: {run}",
+                          x=(x - 5), y=(y + height / 2),
+                          anchor_x="right", anchor_y="center",
                           font_name="Bangers", font_size=height // 2
                           ).draw()
         pyglet.gl.glFlush()
