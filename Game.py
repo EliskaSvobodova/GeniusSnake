@@ -26,7 +26,8 @@ class Game:
             self.game_field[y][0] = self.game_field[y][self.game_field_width - 1] = False
         for part in self.snake:
             self.game_field[part.y][part.x] = False
-        self.apple = tuple()
+        self.prev_apple = tuple([0, 0])
+        self.apple = tuple([0, 0])
         self.put_apple()
         self.game_state = Constants.PLAY
 
@@ -34,6 +35,7 @@ class Game:
         next_square = self.snake.next_square(next_move, 1)
         if self.game_field[next_square[1]][next_square[0]]:  # there is no obstacle
             if self.apple[0] == next_square[0] and self.apple[1] == next_square[1]:  # there is an apple
+                self.prev_apple = self.apple
                 self.eat_apple()
             else:
                 if not self.move_snake(next_square):
@@ -211,6 +213,23 @@ def if_body_left(game, yes, no):
 def if_body_right(game, yes, no):
     next_square = game.snake.next_square(Constants.SNAKE_MOVE_RIGHT, 1)
     if not game.game_field[next_square[1]][next_square[0]] and not is_wall(game, next_square):
+        return yes
+    else:
+        return no
+
+
+def if_just_eaten_apple(game, yes, no):
+    if game.snake.head.next_n.x == game.prev_apple[0] and game.snake.head.next_n.y == game.prev_apple[1]:
+        return yes
+    else:
+        return no
+
+
+def if_obstacle_two_forward(game, yes, no):
+    next_next_square = game.snake.next_square(Constants.SNAKE_MOVE_FORWARD, 2)
+    if next_next_square[0] < 0 or next_next_square[0] > game.game_field_width - 1 \
+            or next_next_square[1] < 0 or next_next_square[1] > game.game_field_height - 1 \
+            or not game.game_field[next_next_square[1]][next_next_square[0]]:
         return yes
     else:
         return no
