@@ -100,24 +100,24 @@ class Snake:
     def __iter__(self):
         return SnakeIterator(self)
 
-    def next_square(self, next_move):
+    def next_square(self, next_move, num_steps):
         direction = heads_direction(self.head)
         if (direction is Constants.UP and next_move is Constants.SNAKE_MOVE_FORWARD) \
                 or (direction is Constants.RIGHT and next_move is Constants.SNAKE_MOVE_LEFT) \
                 or (direction is Constants.LEFT and next_move is Constants.SNAKE_MOVE_RIGHT):
-            return tuple([self.head.x, self.head.y + 1])
+            return tuple([self.head.x, self.head.y + num_steps])
         if (direction is Constants.UP and next_move is Constants.SNAKE_MOVE_RIGHT) \
                 or (direction is Constants.RIGHT and next_move is Constants.SNAKE_MOVE_FORWARD) \
                 or (direction is Constants.DOWN and next_move is Constants.SNAKE_MOVE_LEFT):
-            return tuple([self.head.x + 1, self.head.y])
+            return tuple([self.head.x + num_steps, self.head.y])
         if (direction is Constants.RIGHT and next_move is Constants.SNAKE_MOVE_RIGHT) \
                 or (direction is Constants.DOWN and next_move is Constants.SNAKE_MOVE_FORWARD) \
                 or (direction is Constants.LEFT and next_move is Constants.SNAKE_MOVE_LEFT):
-            return tuple([self.head.x, self.head.y - 1])
+            return tuple([self.head.x, self.head.y - num_steps])
         if (direction is Constants.UP and next_move is Constants.SNAKE_MOVE_LEFT) \
                 or (direction is Constants.DOWN and next_move is Constants.SNAKE_MOVE_RIGHT) \
                 or (direction is Constants.LEFT and next_move is Constants.SNAKE_MOVE_FORWARD):
-            return tuple([self.head.x - 1, self.head.y])
+            return tuple([self.head.x - num_steps, self.head.y])
 
     def move(self, next_square):
         prev_head = self.head

@@ -19,7 +19,7 @@ class Game:
         if Settings.max_score != -1 and Settings.max_score < self.score_max:
             self.score_max = Settings.max_score
         self.speed_step = (self.speed - self.speed_max) / self.score_max
-        self.game_field = [[True for x in range(self.game_field_width)] for y in range(self.game_field_height)]
+        self.game_field = [[True for _ in range(self.game_field_width)] for _ in range(self.game_field_height)]
         # boundary
         for x in range(self.game_field_width):
             self.game_field[0][x] = self.game_field[self.game_field_height - 1][x] = False
@@ -27,11 +27,12 @@ class Game:
             self.game_field[y][0] = self.game_field[y][self.game_field_width - 1] = False
         for part in self.snake:
             self.game_field[part.y][part.x] = False
+        self.apple = tuple()
         self.put_apple()
         self.game_state = Constants.PLAY
 
     def make_next_move(self, next_move):
-        next_square = self.snake.next_square(next_move)
+        next_square = self.snake.next_square(next_move, 1)
         if self.game_field[next_square[1]][next_square[0]]:  # there is no obstacle
             if self.apple[0] == next_square[0] and self.apple[1] == next_square[1]:  # there is an apple
                 self.eat_apple()
@@ -95,6 +96,7 @@ class Game:
 
 """ Functions for genetic programming """
 
+
 def if_food_forward(game, yes, no):
     snake_heads = Snake.heads_direction(game.snake.head)
     if snake_heads is Constants.UP:
@@ -117,6 +119,7 @@ def if_food_forward(game, yes, no):
             return yes
         else:
             return no
+
 
 def if_food_left(game, yes, no):
     snake_heads = Snake.heads_direction(game.snake.head)
@@ -141,6 +144,7 @@ def if_food_left(game, yes, no):
         else:
             return no
 
+
 def if_food_right(game, yes, no):
     snake_heads = Snake.heads_direction(game.snake.head)
     if snake_heads is Constants.UP:
@@ -164,23 +168,85 @@ def if_food_right(game, yes, no):
         else:
             return no
 
-def if_obstacle_forward(game, yes, no):
-    next_square = game.snake.next_square(Constants.SNAKE_MOVE_FORWARD)
-    if game.game_field[next_square[1]][next_square[0]]:
-        return no
-    else:
-        return yes
 
-def if_obstacle_left(game, yes, no):
-    next_square = game.snake.next_square(Constants.SNAKE_MOVE_LEFT)
-    if game.game_field[next_square[1]][next_square[0]]:
-        return no
-    else:
+def if_wall_forward(game, yes, no):
+    next_square = game.snake.next_square(Constants.SNAKE_MOVE_FORWARD, 1)
+    if is_wall(game, next_square):
         return yes
+    else:
+        return no
 
-def if_obstacle_right(game, yes, no):
-    next_square = game.snake.next_square(Constants.SNAKE_MOVE_RIGHT)
-    if game.game_field[next_square[1]][next_square[0]]:
-        return no
-    else:
+
+def if_wall_left(game, yes, no):
+    next_square = game.snake.next_square(Constants.SNAKE_MOVE_LEFT, 1)
+    if is_wall(game, next_square):
         return yes
+    else:
+        return no
+
+
+def if_wall_right(game, yes, no):
+    next_square = game.snake.next_square(Constants.SNAKE_MOVE_RIGHT, 1)
+    if is_wall(game, next_square):
+        return yes
+    else:
+        return no
+
+
+def if_body_forward(game, yes, no):
+    next_square = game.snake.next_square(Constants.SNAKE_MOVE_FORWARD, 1)
+    if not game.game_field[next_square[1]][next_square[0]] and not is_wall(game, next_square):
+        return yes
+    else:
+        return no
+
+
+def if_body_left(game, yes, no):
+    next_square = game.snake.next_square(Constants.SNAKE_MOVE_LEFT, 1)
+    if not game.game_field[next_square[1]][next_square[0]] and not is_wall(game, next_square):
+        return yes
+    else:
+        return no
+
+
+def if_body_right(game, yes, no):
+    next_square = game.snake.next_square(Constants.SNAKE_MOVE_RIGHT, 1)
+    if not game.game_field[next_square[1]][next_square[0]] and not is_wall(game, next_square):
+        return yes
+    else:
+        return no
+
+
+def if_obstacle_two_forward(game, yes, no):
+    next_square = game.snake.next_square(Constants.SNAKE_MOVE_FORWARD, 2)
+    if next_square[0] >= game.game_field_width or next_square[1] >= game.game_field_height \
+            or not game.game_field[next_square[1]][next_square[0]]:
+        return yes
+    else:
+        return no
+
+
+def if_obstacle_two_left(game, yes, no):
+    next_square = game.snake.next_square(Constants.SNAKE_MOVE_LEFT, 2)
+    if next_square[0] >= game.game_field_width or next_square[1] >= game.game_field_height \
+            or not game.game_field[next_square[1]][next_square[0]]:
+        return yes
+    else:
+        return no
+
+
+def if_obstacle_two_right(game, yes, no):
+    next_square = game.snake.next_square(Constants.SNAKE_MOVE_RIGHT, 2)
+    if next_square[0] >= game.game_field_width or next_square[1] >= game.game_field_height \
+            or not game.game_field[next_square[1]][next_square[0]]:
+        return yes
+    else:
+        return no
+
+
+def is_wall(game, next_square):
+    if next_square[0] == 0 or next_square[0] == game.game_field_width - 1 \
+            or next_square[1] == 0 or next_square[1] == game.game_field_height - 1:
+        return True
+    else:
+        return False

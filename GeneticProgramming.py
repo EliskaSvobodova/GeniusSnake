@@ -133,7 +133,7 @@ class GeneticProgramming:
             self.max_num_generations_reached()
             return
         self.substitute_population()
-        self.population.sort(key=self.get_fitness)
+        self.population.sort(key=get_fitness)
         # first produce all new individuals, then add them
         mutants = self.produce_mutants()
         offsprings = self.produce_offsprings()
@@ -154,7 +154,7 @@ class GeneticProgramming:
         return rand_individuals
 
     def produce_offsprings(self):
-        fitness_sum = sum([self.get_fitness(i) for i in self.population])
+        fitness_sum = sum([get_fitness(i) for i in self.population])
         index_sum = ((Settings.size_of_population - 1) * Settings.size_of_population) // 2
         offsprings = []
         parent1 = parent2 = None
@@ -191,15 +191,12 @@ class GeneticProgramming:
         tmp = 0
         r = random.randint(0, fitness_sum)
         for individual in self.population:
-            tmp += self.get_fitness(individual)
+            tmp += get_fitness(individual)
             if r <= tmp:
                 return individual
 
-    def get_fitness(self, individual):
-        return individual.average_score
-
     def substitute_population(self):
-        self.population.sort(key=self.get_fitness, reverse=True)
+        self.population.sort(key=get_fitness, reverse=True)
         self.best_average_in_generations.append(self.population[0].average_score)
         self.ui.draw_graph(self.best_average_in_generations)
         if Settings.print_best:
@@ -256,7 +253,7 @@ class GeneticProgramming:
             self.state = Constants.WIN
 
     def max_num_generations_reached(self):
-        self.population.sort(key=self.get_fitness, reverse=True)
+        self.population.sort(key=get_fitness, reverse=True)
         self.still_running = self.population[:(self.layout[0] * self.layout[1] - 1)]
         self.winners = self.population[:(self.layout[0] * self.layout[1] - 1)]
         self.prepare_final_run()
@@ -278,3 +275,7 @@ class GeneticProgramming:
                 if index == len(self.still_running):
                     break
         pyglet.clock.schedule(self.final_generation_move)
+
+
+def get_fitness(individual):
+    return individual.average_score

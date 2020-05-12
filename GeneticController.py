@@ -148,7 +148,7 @@ def generate_tree(depth, min_depth, max_depth):
 
 
 def get_random_function():
-    choice = random.randint(0, 5)
+    choice = random.randint(0, 11)
     if choice == 0:
         return Game.if_food_forward
     elif choice == 1:
@@ -156,11 +156,23 @@ def get_random_function():
     elif choice == 2:
         return Game.if_food_right
     elif choice == 3:
-        return Game.if_obstacle_forward
+        return Game.if_wall_forward
     elif choice == 4:
-        return Game.if_obstacle_left
+        return Game.if_wall_left
+    elif choice == 5:
+        return Game.if_wall_right
+    elif choice == 6:
+        return Game.if_body_forward
+    elif choice == 7:
+        return Game.if_body_left
+    elif choice == 8:
+        return Game.if_body_right
+    elif choice == 9:
+        return Game.if_obstacle_two_forward
+    elif choice == 10:
+        return Game.if_obstacle_two_left
     else:
-        return Game.if_obstacle_right
+        return Game.if_obstacle_two_right
 
 
 def get_random_terminal():

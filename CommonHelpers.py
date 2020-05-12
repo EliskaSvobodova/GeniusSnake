@@ -25,3 +25,13 @@ def mouse_on_button(button: pyglet.sprite.Sprite, x, y):
             & (y < button.y + (button.height // 2))):
         return True
     return False
+
+
+def draw_colored_rectangle(x, y, width, height, r, g, b):
+    pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
+                         ("v2f", (x, y,
+                                  x, y + height,
+                                  x + width, y + height,
+                                  x + width, y)),
+                         ("c3B", ((r, g, b) * 4)))
+    pyglet.gl.glFlush()

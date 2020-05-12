@@ -22,6 +22,9 @@ class ControlPaneUI:
     def draw(self, generation):
         height = self.height - self.graph_height
         # plus five because of graph's last label
+        CommonHelpers.draw_colored_rectangle(self.x, self.graph_y + self.graph_height + 5,
+                                             self.width, self.height - self.graph_height,
+                                             0, 0, 0)
         pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
                              ("v2f", (self.x, self.graph_y + self.graph_height + 5,
                                       self.x, self.graph_y + self.graph_height + height + 5,
@@ -37,11 +40,12 @@ class ControlPaneUI:
         pyglet.gl.glFlush()
 
     def draw_graph(self, values):
+        height = self.graph_height + self.graph_y - self.x
         pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
-                             ("v2f", (self.graph_x, self.graph_y,
-                                      self.graph_x, self.graph_y + self.graph_height,
-                                      self.graph_x + self.graph_width, self.graph_y + self.graph_height,
-                                      self.graph_x + self.graph_width, self.graph_y)),
+                             ("v2f", (self.graph_x, self.y,
+                                      self.graph_x, self.y + height,
+                                      self.graph_x + self.graph_width, self.y + height,
+                                      self.graph_x + self.graph_width, self.y)),
                              ("c3B", ((0, 0, 0) * 4)))
         space = self.graph_width / (len(values) + 1)
         point_scale = self.graph_height / Settings.max_score
