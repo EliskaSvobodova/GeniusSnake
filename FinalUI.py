@@ -1,81 +1,9 @@
-import pyglet
-import Snake
 import AbstractUI
-import Settings
-import CommonHelpers
+import Snake
+import pyglet
 
 
-class ControlPaneUI:
-    def __init__(self, x, y, width, height):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.font_size = 50
-        space_between = 20
-        self.graph_x = self.x + space_between
-        self.graph_y = self.y + space_between
-        self.graph_width = self.width - 2 * space_between
-        self.graph_height = self.height - 1.5 * self.font_size - 2 * space_between
-        self.point = self.load_point()
-
-    def draw(self, generation):
-        height = self.height - self.graph_height
-        # plus five because of graph's last label
-        pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
-                             ("v2f", (self.x, self.graph_y + self.graph_height + 5,
-                                      self.x, self.graph_y + self.graph_height + height + 5,
-                                      self.x + self.width, self.graph_y + self.graph_height + height + 5,
-                                      self.x + self.width, self.graph_y + self.graph_height + 5)),
-                             ("c3B", ((0, 0, 0) * 4)))
-        pyglet.text.Label(text=f"Generation: {generation}",
-                          x=(self.x + self.width / 2), y=(self.y + self.height - self.font_size / 2),
-                          anchor_x="center", anchor_y="center",
-                          font_name="Bangers", font_size=self.font_size
-                          ).draw()
-        self.draw_graph_skeleton()
-        pyglet.gl.glFlush()
-
-    def draw_graph(self, values):
-        pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
-                             ("v2f", (self.graph_x, self.graph_y,
-                                      self.graph_x, self.graph_y + self.graph_height,
-                                      self.graph_x + self.graph_width, self.graph_y + self.graph_height,
-                                      self.graph_x + self.graph_width, self.graph_y)),
-                             ("c3B", ((0, 0, 0) * 4)))
-        space = self.graph_width / (len(values) + 1)
-        point_scale = self.graph_height / Settings.max_score
-        i = 0
-        for v in values:
-            self.point.x = self.graph_x + i * space + space
-            self.point.y = self.graph_y + v * point_scale
-            self.point.draw()
-            i += 1
-        pyglet.gl.glFlush()
-
-    def draw_graph_skeleton(self):
-        pyglet.graphics.draw(4, pyglet.gl.GL_LINES,
-                             ("v2f", (self.graph_x, self.graph_y,
-                                      self.graph_x, self.graph_y + self.graph_height,
-                                      self.graph_x, self.graph_y,
-                                      self.graph_x + self.graph_width, self.graph_y)),
-                             ("c3B", ((56, 88, 129) * 4)))
-        space_between = self.graph_height / (Settings.num_graph_labels - 1)
-        difference = Settings.max_score / (Settings.num_graph_labels - 1)
-        for i in range(Settings.num_graph_labels):
-            pyglet.text.Label(text=f"{round(i * difference)}",
-                              x=self.x, y=self.graph_y + i * space_between,
-                              anchor_x="center", anchor_y="center",
-                              font_size=10).draw()
-
-    def load_point(self):
-        point_image = pyglet.resource.image("SimpleUI/point.png")
-        CommonHelpers.scale_image(point_image, 10, 10)
-        CommonHelpers.center_image(point_image)
-        return pyglet.sprite.Sprite(img=point_image)
-
-
-class SimpleUI(AbstractUI.AbstractUI):
+class FinalUI(AbstractUI.AbstractUI):
     def __init__(self, x, y, width, height, square_size):
         super().__init__(x, y, width, height, square_size)
         self.num_squares_height = (self.height - self.square_size) // self.square_size
@@ -98,6 +26,7 @@ class SimpleUI(AbstractUI.AbstractUI):
                              ("c3B", ((0, 0, 0) * 4)))
         self.draw_score(0)
         self.draw_bushes()
+        self.draw_game_field()
         self.draw_snake(snake)
         self.draw_boundary()
         pyglet.gl.glFlush()
@@ -123,7 +52,7 @@ class SimpleUI(AbstractUI.AbstractUI):
         pyglet.gl.glFlush()
 
     def draw_snake_move(self, snake: Snake.Snake, prev_tail):
-        self.draw_colorful_square(prev_tail[0], prev_tail[1], 0, 0, 0)
+        self.draw_square(prev_tail[0], prev_tail[1])
         self.draw_colorful_square(snake.head.x, snake.head.y, 255, 255, 255)
         pyglet.gl.glFlush()
 
@@ -132,7 +61,7 @@ class SimpleUI(AbstractUI.AbstractUI):
         pyglet.gl.glFlush()
 
     def draw_apple(self, x, y):
-        self.draw_colorful_square(x, y, 192, 0, 0)
+        self.draw_colorful_square(x, y, 255, 106, 0)
         pyglet.gl.glFlush()
 
     def draw_snake(self, snake: Snake.Snake):
@@ -142,14 +71,23 @@ class SimpleUI(AbstractUI.AbstractUI):
 
     def draw_snake_dead(self, snake: Snake.Snake):
         for part in snake:
-            self.draw_colorful_square(part.x, part.y, 65, 51, 101)
+            self.draw_colorful_square(part.x, part.y, 15, 1, 51)
         pyglet.gl.glFlush()
 
     def draw_game_field(self):
-        pass  # no need to do anything, game field is supposed to be black
+        x = self.x + self.square_size
+        y = self.y + self.square_size
+        width = self.game_width - 2 * self.square_size
+        height = self.game_height - 2 * self.square_size
+        pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
+                             ("v2f", (x, y,
+                                      x, y + height,
+                                      x + width, y + height,
+                                      x + width, y)),
+                             ("c3B", ((116, 1, 113) * 4)))
 
     def draw_square(self, x, y):
-        self.draw_colorful_square(x, y, 0, 0, 0)
+        self.draw_colorful_square(x, y, 116, 1, 113)
 
     def draw_colorful_square(self, x, y, r, g, b):
         x2 = x1 = self.x + (x * self.square_size)
@@ -165,11 +103,11 @@ class SimpleUI(AbstractUI.AbstractUI):
 
     def draw_bushes(self):
         for i in range(self.num_squares_width):
-            self.draw_colorful_square(i, 0, 56, 88, 129)
-            self.draw_colorful_square(i, self.num_squares_height - 1, 56, 88, 129)
+            self.draw_colorful_square(i, 0, 7, 87, 152)
+            self.draw_colorful_square(i, self.num_squares_height - 1, 7, 87, 152)
         for i in range(self.num_squares_height):
-            self.draw_colorful_square(0, i, 56, 88, 129)
-            self.draw_colorful_square(self.num_squares_width - 1, i, 56, 88, 129)
+            self.draw_colorful_square(0, i, 7, 87, 152)
+            self.draw_colorful_square(self.num_squares_width - 1, i, 7, 87, 152)
         pyglet.gl.glFlush()
 
     def draw_score(self, score):
