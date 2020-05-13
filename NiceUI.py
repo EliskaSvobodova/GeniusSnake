@@ -8,6 +8,7 @@ import Constants
 class NiceUI(AbstractUI.AbstractUI):
     def __init__(self, x, y, width, height, square_size):
         super().__init__(x, y, width, height, square_size)
+        self.draw_loading_screen()
         self.load_images()
         self.num_squares_height = (self.height - self.score_background.height) // self.square_size
         self.num_squares_width = self.width // self.square_size
@@ -17,6 +18,14 @@ class NiceUI(AbstractUI.AbstractUI):
         # enable transparency
         pyglet.gl.glEnable(pyglet.gl.GL_BLEND)
         pyglet.gl.glBlendFunc(pyglet.gl.GL_SRC_ALPHA, pyglet.gl.GL_ONE_MINUS_SRC_ALPHA)
+
+    def draw_loading_screen(self):
+        CommonHelpers.draw_colored_rectangle(self.x, self.y, self.width, self.height, 65, 51, 101)
+        pyglet.text.Label(text="Loading...",
+                          x=(self.x + self.width / 2), y=(self.y + self.height / 2),
+                          anchor_x="center", anchor_y="center",
+                          font_name="Bangers", font_size=60).draw()
+        pyglet.gl.glFlush()
 
     """ IMAGE LOADING """
 
