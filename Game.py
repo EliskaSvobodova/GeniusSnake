@@ -28,7 +28,6 @@ class Game:
             self.game_field[part.y][part.x] = False
         self.prev_apple = tuple([0, 0])
         self.apple = tuple([0, 0])
-        self.put_apple()
         self.game_state = Constants.PLAY
 
     def make_next_move(self, next_move):

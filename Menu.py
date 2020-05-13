@@ -94,6 +94,8 @@ class Menu:
             self.window.clear()
             ui = NiceUI.NiceUI(10, 80, self.screen_width - 20, self.screen_height - 90, 50)
             game = Game.Game(ui)
+            game.ui.prepare_game(game.snake)
+            game.put_apple()
             self.controller = PlayerController.PlayerController(self.window, game)
         if CommonHelpers.mouse_on_button(self.button_genetic_background, x, y):
             self.window.pop_handlers()
