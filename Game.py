@@ -19,16 +19,19 @@ class Game:
             self.score_max = Settings.max_score
         self.speed_step = (self.speed - self.speed_max) / self.score_max
         self.game_field = [[True for _ in range(self.game_field_width)] for _ in range(self.game_field_height)]
-        # boundary
-        for x in range(self.game_field_width):
-            self.game_field[0][x] = self.game_field[self.game_field_height - 1][x] = False
-        for y in range(self.game_field_height):
-            self.game_field[y][0] = self.game_field[y][self.game_field_width - 1] = False
+        self.set_game_field_boundary()
         for part in self.snake:
             self.game_field[part.y][part.x] = False
         self.prev_apple = tuple([0, 0])
         self.apple = tuple([0, 0])
+        self.put_apple()
         self.game_state = Constants.PLAY
+
+    def set_game_field_boundary(self):
+        for x in range(self.game_field_width):
+            self.game_field[0][x] = self.game_field[self.game_field_height - 1][x] = False
+        for y in range(self.game_field_height):
+            self.game_field[y][0] = self.game_field[y][self.game_field_width - 1] = False
 
     def make_next_move(self, next_move):
         next_square = self.snake.next_square(next_move, 1)

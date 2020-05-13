@@ -114,7 +114,8 @@ class GeneticProgramming:
                     if individual.average_score == Settings.max_score:
                         self.winners.append(individual)
                     self.still_running.remove(individual)
-                    if len(self.still_running) >= 7 and isinstance(individual.game.ui, SimpleUI.SimpleUI):
+                    if len(self.still_running) >= (self.layout[0] * self.layout[1]) - 1 \
+                            and isinstance(individual.game.ui, SimpleUI.SimpleUI):
                         self.still_running[last_draw_index].game.ui = SimpleUI.SimpleUI(
                             individual.game.ui.x, individual.game.ui.y,
                             individual.game.ui.width, individual.game.ui.height,
