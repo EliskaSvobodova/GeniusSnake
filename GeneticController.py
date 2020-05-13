@@ -199,7 +199,9 @@ def get_random_function():
                           Game.if_body_forward,
                           Game.if_body_left,
                           Game.if_body_right,
-                          Game.if_obstacle_two_forward])
+                          Game.if_obstacle_two_forward,
+                          Game.if_is_moving_left,
+                          Game.if_is_moving_up])
 
 
 def get_random_terminal():

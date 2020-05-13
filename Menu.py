@@ -10,6 +10,11 @@ import SimpleUI
 import CommonHelpers
 
 
+"""
+Sets up the window, starts the program, displays menu, handles user's input
+"""
+
+
 class Menu:
     def __init__(self):
         self.set_window()
@@ -29,12 +34,12 @@ class Menu:
         config = pyglet.gl.Config(double_buffer=False)
         self.window = pyglet.window.Window(self.screen_width, self.screen_height, config=config)
         self.window.push_handlers(on_draw=self.on_menu_draw,
-                                 on_mouse_press=self.on_menu_mouse_press,
-                                 on_mouse_motion=self.on_menu_mouse_motion)
+                                  on_mouse_press=self.on_menu_mouse_press,
+                                  on_mouse_motion=self.on_menu_mouse_motion)
 
     def load_images(self):
-        snake_image = pyglet.resource.image("snake_background.jpg")
-        button_background_image = pyglet.resource.image("button_background.png")
+        snake_image = pyglet.resource.image("Menu/snake_background.jpg")
+        button_background_image = pyglet.resource.image("Menu/button_background.png")
         CommonHelpers.scale_image(button_background_image,
                                   self.genetic_label.content_width + 100, self.genetic_label.content_height + 30)
         CommonHelpers.center_image(snake_image)

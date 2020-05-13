@@ -281,6 +281,7 @@ class GeneticProgramming:
                     ui = FinalUI.FinalUI(self.x + j * self.game_width, self.y + i * self.game_height,
                                          self.game_width, self.game_height, self.square_size)
                     self.still_running[index].game = Game.Game(ui)
+                    self.still_running[index].game.ui.prepare_game(self.still_running[index].game.snake)
                     index += 1
                 if index == len(self.still_running):
                     break
