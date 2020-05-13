@@ -5,6 +5,8 @@ import Constants
 max_score = 100
 # how long is the snake on the beginning
 snake_start_length = 5
+# how long snake survives without food
+snake_stamina = 300
 
 
 """ PLAYER MODE """

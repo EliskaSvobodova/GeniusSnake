@@ -88,7 +88,7 @@ class Snake:
         self.tail = self.head = ListNode(self.length, 1)
         for i in range(self.length - 1):
             self.add_part(self.head.x - i - 1, 1)
-        self.stamina = 300  # how many times is snake able to move without shrinking
+        self.stamina = Settings.snake_stamina  # how many times is snake able to move without shrinking
         self.without_food = 0
 
     def add_part(self, x, y):
