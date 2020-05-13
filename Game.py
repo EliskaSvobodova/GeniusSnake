@@ -95,6 +95,14 @@ class Game:
             return Constants.SNAKE_MOVE_FORWARD
 
 
+def is_wall(game, next_square):
+    if next_square[0] == 0 or next_square[0] == game.game_field_width - 1 \
+            or next_square[1] == 0 or next_square[1] == game.game_field_height - 1:
+        return True
+    else:
+        return False
+
+
 """ Functions for genetic programming """
 
 
@@ -235,9 +243,15 @@ def if_obstacle_two_forward(game, yes, no):
         return no
 
 
-def is_wall(game, next_square):
-    if next_square[0] == 0 or next_square[0] == game.game_field_width - 1 \
-            or next_square[1] == 0 or next_square[1] == game.game_field_height - 1:
-        return True
+def if_is_moving_up(game, yes, no):
+    if Snake.heads_direction(game.snake.head) is Constants.UP:
+        return yes
     else:
-        return False
+        return no
+
+
+def if_is_moving_left(game, yes, no):
+    if Snake.heads_direction(game.snake.head) is Constants.UP:
+        return yes
+    else:
+        return no

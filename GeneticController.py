@@ -124,6 +124,21 @@ class GeneticController:
         res_right, node_current = self.replace_subtree(tree.right, new_subtree, node_current + 1, node_number)
         return TreeNode(tree.value, res_left, res_right), node_current
 
+    def replace_one_node_with_random(self, tree, current, node_number):
+        node = None
+        if current == node_number:
+            if tree.left is None:
+                node = TreeNode(get_random_terminal())
+            else:
+                node = TreeNode(get_random_function())
+        else:
+            node = TreeNode(tree.value)
+        if tree.left is None:
+            return node, current
+        node.left, current = self.replace_one_node_with_random(tree.left, current + 1, node_number)
+        node.right, current = self.replace_one_node_with_random(tree.right, current + 1, node_number)
+        return node, current
+
     def find_node(self, index, current, tree):
         if index == current:
             return tree, current
@@ -136,10 +151,15 @@ class GeneticController:
         return res, current
 
     def mutate(self):
-        mutant_genome, dummy = self.replace_subtree(self.root,
-                                                    generate_tree(0, 0, Settings.max_depth),
-                                                    0,
-                                                    random.randint)
+        mutant_genome = None
+        if random.random() < Settings.mutate_terminal:
+            mutant_genome, dummy = self.replace_one_node_with_random(self.root, 0, random.randint(0, self.num_nodes))
+        else:
+            new_subtree, dummy = generate_tree(0, 0, Settings.max_depth)
+            mutant_genome, dummy = self.replace_subtree(self.root,
+                                                        new_subtree,
+                                                        0,
+                                                        random.randint(0, self.num_nodes))
         mutant = GeneticController(
             Game.Game(
                 NoUI.NoUI(0, 0, self.game.ui.width, self.game.ui.height, self.game.ui.square_size)),
@@ -170,29 +190,16 @@ def generate_tree(depth, min_depth, max_depth):
 
 
 def get_random_function():
-    choice = random.randint(0, 9)
-    if choice == 0:
-        return Game.if_food_forward
-    elif choice == 1:
-        return Game.if_food_left
-    elif choice == 2:
-        return Game.if_food_right
-    elif choice == 3:
-        return Game.if_wall_forward
-    elif choice == 4:
-        return Game.if_wall_left
-    elif choice == 5:
-        return Game.if_wall_right
-    elif choice == 6:
-        return Game.if_body_forward
-    elif choice == 7:
-        return Game.if_body_left
-    elif choice == 8:
-        return Game.if_body_right
-    elif choice == 9:
-        return Game.if_just_eaten_apple
-    else:
-        return Game.if_obstacle_two_forward
+    return random.choice([Game.if_food_forward,
+                          Game.if_food_left,
+                          Game.if_food_right,
+                          Game.if_wall_forward,
+                          Game.if_wall_left,
+                          Game.if_wall_right,
+                          Game.if_body_forward,
+                          Game.if_body_left,
+                          Game.if_body_right,
+                          Game.if_obstacle_two_forward])
 
 
 def get_random_terminal():

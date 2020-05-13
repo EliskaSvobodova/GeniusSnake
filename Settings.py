@@ -2,6 +2,7 @@ import Constants
 
 
 """ COMMON SETTINGS """
+# score required to win the game
 max_score = 100
 # how long is the snake on the beginning
 snake_start_length = 5
@@ -26,11 +27,13 @@ num_of_offsprings = 85
 num_of_random = 10
 # chance that an individual will produce a mutant
 mutation_rate = 0.1
+# chance that mutation alters only one random node
+mutate_terminal = 0.2
 # chance of picking a terminal node for crossover
 crossover_terminal_rate = 0.2
 
 # limits number of generations
-max_generations = 50
+max_generations = 500
 
 # max depth of the decision tree in snake's "brain"
 max_depth = 6
@@ -41,7 +44,7 @@ max_nodes = sum([2**i for i in range(max_depth + 1)])
 chance_new_node_function = 0.6
 # how many attempts does an individual have in each generation
 # the fitness is calculated as average from all runs
-num_runs = 3
+num_runs = 1
 
 # printing functions, what information should be printed in the terminal
 # prints best individual in each generation, its decision tree, all scores and their average
