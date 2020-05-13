@@ -46,6 +46,7 @@ chance_new_node_function = 0.6
 # the fitness is calculated as average from all runs
 num_runs = 1
 
+
 # printing functions, what information should be printed in the terminal
 # prints best individual in each generation, its decision tree, all scores and their average
 print_best = True
