@@ -3,7 +3,7 @@ import Constants
 
 """ COMMON SETTINGS """
 # score required to win the game
-max_score = 100
+max_score = 200
 # how long is the snake on the beginning
 snake_start_length = 5
 # how long snake survives without food

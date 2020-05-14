@@ -3,35 +3,40 @@ import Snake
 import random
 import Constants
 import Settings
+import numpy as np
 
 
 class Game:
     def __init__(self, ui: AbstractUI.AbstractUI):
         self.ui = ui
-        self.score = 0
         self.game_field_height = self.ui.get_num_squares_height()
         self.game_field_width = self.ui.get_num_squares_width()
+        self.game_field = np.full([self.game_field_height - 2, self.game_field_width - 2], True)
+        self.game_field = np.concatenate((np.full([1, self.game_field_width - 2], False),
+                                          self.game_field,
+                                          np.full([1, self.game_field_width - 2], False)))
+        self.game_field = np.concatenate((np.full([self.game_field_height, 1], False),
+                                          self.game_field,
+                                          np.full([self.game_field_height, 1], False)),
+                                         axis=1)
+
         self.snake = Snake.Snake()
-        self.speed = Settings.player_snake_start_speed
-        self.speed_max = Settings.player_snake_max_speed
+        for part in self.snake:
+            self.game_field[part.y][part.x] = False
+
+        self.score = 0
         self.score_max = (self.game_field_width * self.game_field_height) - self.snake.length
         if Settings.max_score != -1 and Settings.max_score < self.score_max:
             self.score_max = Settings.max_score
+
+        self.speed = Settings.player_snake_start_speed
+        self.speed_max = Settings.player_snake_max_speed
         self.speed_step = (self.speed - self.speed_max) / self.score_max
-        self.game_field = [[True for _ in range(self.game_field_width)] for _ in range(self.game_field_height)]
-        self.set_game_field_boundary()
-        for part in self.snake:
-            self.game_field[part.y][part.x] = False
+
         self.prev_apple = tuple([0, 0])
         self.apple = tuple([0, 0])
         self.put_apple()
         self.game_state = Constants.PLAY
-
-    def set_game_field_boundary(self):
-        for x in range(self.game_field_width):
-            self.game_field[0][x] = self.game_field[self.game_field_height - 1][x] = False
-        for y in range(self.game_field_height):
-            self.game_field[y][0] = self.game_field[y][self.game_field_width - 1] = False
 
     def make_next_move(self, next_move):
         next_square = self.snake.next_square(next_move, 1)
