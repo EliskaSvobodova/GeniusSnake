@@ -298,6 +298,11 @@ class NiceUI(AbstractUI.AbstractUI):
 
     """ DRAW GAME STATES """
 
+    def redraw(self, snake: Snake.Snake, score, identification, num_runs, apple):
+        self.draw_snake(snake)
+        self.draw_score(score)
+        self.draw_apple(apple[0], apple[1])
+
     def draw_game_over(self):
         pyglet.text.Label(text="GAME OVER",
                           x=(self.width / 2),

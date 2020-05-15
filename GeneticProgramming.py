@@ -72,32 +72,32 @@ class GeneticProgramming:
             self.population.append(controller)
 
     def draw_initial(self):
-        index = 0
-        for i in range(self.layout[0]):
-            for j in range(self.layout[1]):
-                if i != (self.layout[0] - 1) or j != 0:
-                    ui = SimpleUI.SimpleUI(self.x + j * self.game_width, self.y + i * self.game_height,
-                                           self.game_width, self.game_height, self.square_size)
-                    individual = self.population[index]
-                    individual.game.ui = ui
-                    individual.game.ui.prepare_game(individual.game.snake)
-                    individual.game.ui.draw_identifier(individual.id, individual.num_runs + 1)
-                    index += 1
+        i = 0
+        graph_index = (self.layout[0] - 1) * self.layout[1]
+        for individual in self.population[:self.layout[0] * self.layout[1] - 1]:
+            if i == graph_index:
+                i += 1
+            individual.game.ui = SimpleUI.SimpleUI(self.x + (i % self.layout[1]) * self.game_width,
+                                                   self.y + (i // self.layout[1]) * self.game_height,
+                                                   self.game_width, self.game_height, self.square_size)
+            individual.game.ui.prepare_game(individual.game.snake)
+            individual.game.ui.draw_identifier(individual.id, individual.num_runs + 1)
+            i += 1
 
     def test_fitness(self):
-        for individual in self.population:
-            individual.game = Game.Game(NoUI.NoUI(0, 0, self.game_width, self.game_height, self.square_size))
-        index = 0
-        for i in range(self.layout[0]):
-            for j in range(self.layout[1]):
-                if i != (self.layout[0] - 1) or j != 0:
-                    ui = SimpleUI.SimpleUI(self.x + j * self.game_width, self.y + i * self.game_height,
-                                           self.game_width, self.game_height, self.square_size)
-                    individual = self.population[index]
-                    individual.game.ui = ui
-                    individual.game.ui.redraw(individual.game.snake, individual.game.score,
-                                              individual.id, individual.num_runs, individual.game.apple)
-                    index += 1
+        i = 0
+        graph_index = (self.layout[0] - 1) * self.layout[1]
+        for individual in self.population[:self.layout[0] * self.layout[1] - 1]:
+            if i == graph_index:
+                i += 1
+            individual.game.ui = SimpleUI.SimpleUI(self.x + (i % self.layout[1]) * self.game_width,
+                                                   self.y + (i // self.layout[1]) * self.game_height,
+                                                   self.game_width, self.game_height, self.square_size)
+            individual.game.redraw(individual.id, individual.num_runs)
+            i += 1
+        for individual in self.population[self.layout[0] * self.layout[1] - 1:]:
+            if isinstance(individual.game.ui, NoUI.NoUI):
+                individual.game = Game.Game(NoUI.NoUI(0, 0, self.game_width, self.game_height, self.square_size))
         self.still_running = self.population.copy()
         pyglet.clock.schedule(self.make_next_move_with_all)
 

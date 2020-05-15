@@ -30,6 +30,10 @@ class AbstractUI(metaclass=ABCMeta):
         raise NotImplementedError
 
     @abstractmethod
+    def redraw(self, snake: Snake.Snake, score, identification, num_runs, apple):
+        raise NotImplementedError
+
+    @abstractmethod
     def draw_snake_eat(self, snake: Snake.Snake):
         raise NotImplementedError
 

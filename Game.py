@@ -101,6 +101,10 @@ class Game:
         else:
             return Constants.SNAKE_MOVE_FORWARD
 
+    def redraw(self, identification, num_runs):
+        self.ui.redraw(self.snake, self.score,
+                       identification, num_runs, self.apple)
+
 
 def is_wall(game, next_square):
     if next_square[0] == 0 or next_square[0] == game.game_field_width - 1 \
