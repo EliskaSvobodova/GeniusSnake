@@ -1,5 +1,5 @@
-import Settings
 import Constants
+import Settings
 
 
 class ListNode:
@@ -26,6 +26,8 @@ class SnakeIterator:
 """
 For head and body
 """
+
+
 def heads_direction(node: ListNode):
     if node.next_n.x < node.x:
         return Constants.RIGHT
@@ -36,9 +38,12 @@ def heads_direction(node: ListNode):
     if node.y < node.next_n.y:
         return Constants.DOWN
 
+
 """
 For tail,  where rest of the body is
 """
+
+
 def rest_direction(node: ListNode):
     if node.prev_n.x < node.x:
         return Constants.LEFT
@@ -53,6 +58,8 @@ def rest_direction(node: ListNode):
 """
 For corner
 """
+
+
 def corner_type(node: ListNode) -> tuple:
     if (node.x < node.prev_n.x and node.y > node.next_n.y) or (node.x < node.next_n.x and node.y > node.prev_n.y):
         return tuple([Constants.DOWN, Constants.RIGHT])

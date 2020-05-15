@@ -1,7 +1,6 @@
 from abc import ABCMeta, abstractmethod
-import pyglet
-import CommonHelpers
 import Snake
+import CommonHelpers
 
 
 class AbstractUI(metaclass=ABCMeta):

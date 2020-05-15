@@ -1,8 +1,8 @@
-import AbstractUI
 import Snake
-import random
 import Constants
 import Settings
+from src.ui import AbstractUI
+import random
 import numpy as np
 
 
@@ -25,7 +25,7 @@ class Game:
             self.game_field[part.y][part.x] = False
 
         self.score = 0
-        self.score_max = (self.game_field_width * self.game_field_height) - self.snake.length
+        self.score_max = ((self.game_field_width - 2) * (self.game_field_height - 2)) - self.snake.length
         if Settings.max_score != -1 and Settings.max_score < self.score_max:
             self.score_max = Settings.max_score
 
@@ -34,7 +34,6 @@ class Game:
         self.speed_step = (self.speed - self.speed_max) / self.score_max
 
         self.prev_apple = tuple([0, 0])
-        self.apple = tuple([0, 0])
         self.put_apple()
         self.game_state = Constants.PLAY
 

@@ -1,6 +1,5 @@
 import Constants
 
-
 """ COMMON SETTINGS """
 # score required to win the game
 max_score = 200

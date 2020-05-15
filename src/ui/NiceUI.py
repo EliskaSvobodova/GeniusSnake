@@ -1,8 +1,8 @@
 import pyglet
-import CommonHelpers
 import Snake
-import AbstractUI
+import CommonHelpers
 import Constants
+from src.ui import AbstractUI
 
 
 class NiceUI(AbstractUI.AbstractUI):
@@ -90,7 +90,7 @@ class NiceUI(AbstractUI.AbstractUI):
     """ OTHER PREPARATIONS """
 
     def prepare_cover_squares(self):
-        grass = pyglet.image.load("resources/NiceUI/grass.png", decoder=pyglet.image.codecs.png.PNGImageDecoder())
+        grass = pyglet.image.load("../../resources/NiceUI/grass.png", decoder=pyglet.image.codecs.png.PNGImageDecoder())
         self.cover_squares = []
         for i in range(self.num_squares_height):
             row = []

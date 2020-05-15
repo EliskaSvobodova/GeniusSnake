@@ -1,13 +1,8 @@
-import Constants
-import SimpleUI
-import NoUI
-import Game
-import GeneticController
+from src.ui import FinalUI, SimpleUI, NoUI
+from src import GeneticController, Constants, Game, Settings
 import pyglet
 import random
-import Settings
 from statistics import mean
-import FinalUI
 
 
 class GeneticProgramming:

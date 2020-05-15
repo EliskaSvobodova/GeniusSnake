@@ -1,9 +1,9 @@
-import Game
 import Constants
+import Settings
+from src.ui import NoUI
+import Game
 import random
 import copy
-import NoUI
-import Settings
 
 
 class TreeNode:
