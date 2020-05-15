@@ -1,6 +1,5 @@
-import AbstractUI
-import Snake
-
+from src import Snake
+from src.ui import AbstractUI
 
 """
 UI that doesn't draw anything

@@ -1,5 +1,5 @@
-import AbstractUI
-import Snake
+from src import Snake
+from src.ui import AbstractUI
 import pyglet
 
 

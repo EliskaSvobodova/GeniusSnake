@@ -1,8 +1,6 @@
 import pyglet
-import Snake
-import AbstractUI
-import Settings
-import CommonHelpers
+from src import CommonHelpers, Snake, Settings
+from src.ui import AbstractUI
 
 
 class ControlPaneUI:
@@ -72,7 +70,7 @@ class ControlPaneUI:
 class SimpleUI(AbstractUI.AbstractUI):
     def __init__(self, x, y, width, height, square_size):
         super().__init__(x, y, width, height, square_size)
-        self.num_squares_height = (self.height - self.square_size) // self.square_size
+        self.num_squares_height = (self.height - 1) // self.square_size
         self.num_squares_width = self.width // self.square_size
         self.game_width = self.square_size * self.num_squares_width
         self.game_height = self.square_size * self.num_squares_height

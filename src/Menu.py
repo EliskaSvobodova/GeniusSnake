@@ -1,14 +1,6 @@
 import pyglet
-import resources
-import Game
-import PlayerController
-import GeneticProgramming
-import Constants
-import AbstractUI
-import NiceUI
-import SimpleUI
-import CommonHelpers
-
+from src.ui import NiceUI
+from src import PlayerController, Constants, Game, CommonHelpers, GeneticProgramming
 
 """
 Sets up the window, starts the program, displays menu, handles user's input

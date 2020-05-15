@@ -7,5 +7,5 @@ dependencies:
 - pandas
 - matplotlib
 - pillow
-- pytest
 - pyglet
+- pytest
