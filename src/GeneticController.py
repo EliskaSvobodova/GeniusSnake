@@ -16,6 +16,11 @@ class TreeNode:
         else:
             return self.value
 
+    def equal(self, other):
+        return self.value == other.value \
+               and (self.left is None or self.left.equal(other.left)) \
+               and (self.right is None or self.right.equal(other.right))
+
     def print(self):
         if callable(self.value):
             print("[", self.value.__name__, ":", end=" ")
@@ -68,33 +73,33 @@ class GeneticController:
 
     def crossover(self, other):
         r1 = random.randint(0, self.num_nodes - 1)
-        new_subtree1, dummy = self.find_node(r1, 0, self.root)
+        new_subtree1, dummy = find_node(self.root, 0, r1)
         while True:
             if new_subtree1.left is None:
                 if random.random() < Settings.crossover_terminal_rate:
                     break
                 else:
                     r1 = random.randint(0, self.num_nodes - 1)
-                    new_subtree1, dummy = self.find_node(r1, 0, self.root)
+                    new_subtree1, dummy = find_node(self.root, 0, r1)
                     break
             else:
                 break
 
         r2 = random.randint(0, other.num_nodes - 1)
-        new_subtree2, dummy = self.find_node(r2, 0, other.root)
+        new_subtree2, dummy = find_node(other.root, 0, r2)
         while True:
             if new_subtree2.left is None:
                 if random.random() < 0.2:
                     break
                 else:
                     r2 = random.randint(0, other.num_nodes - 1)
-                    new_subtree2, dummy = self.find_node(r2, 0, other.root)
+                    new_subtree2, dummy = find_node(other.root, 0, r2)
                     break
             else:
                 break
 
-        offs1, dummy = self.replace_subtree(self.root, copy.deepcopy(new_subtree2), 0, r1)
-        offs2, dummy = self.replace_subtree(other.root, copy.deepcopy(new_subtree1), 0, r2)
+        offs1, dummy = replace_subtree(self.root, copy.deepcopy(new_subtree2), 0, r1)
+        offs2, dummy = replace_subtree(other.root, copy.deepcopy(new_subtree1), 0, r2)
         num_nodes1 = count_nodes(new_subtree1)
         num_nodes2 = count_nodes(new_subtree2)
 
@@ -112,52 +117,16 @@ class GeneticController:
 
         return offspring1, offspring2
 
-    def replace_subtree(self, tree, new_subtree, node_current, node_number):
-        if node_current == node_number:
-            return new_subtree, node_current
-        if tree.left is None:   # it is terminal
-            return TreeNode(tree.value), node_current
-        # it is a function
-        res_left, node_current = self.replace_subtree(tree.left, new_subtree, node_current + 1, node_number)
-        res_right, node_current = self.replace_subtree(tree.right, new_subtree, node_current + 1, node_number)
-        return TreeNode(tree.value, res_left, res_right), node_current
-
-    def replace_one_node_with_random(self, tree, current, node_number):
-        node = None
-        if current == node_number:
-            if tree.left is None:
-                node = TreeNode(get_random_terminal())
-            else:
-                node = TreeNode(get_random_function())
-        else:
-            node = TreeNode(tree.value)
-        if tree.left is None:
-            return node, current
-        node.left, current = self.replace_one_node_with_random(tree.left, current + 1, node_number)
-        node.right, current = self.replace_one_node_with_random(tree.right, current + 1, node_number)
-        return node, current
-
-    def find_node(self, index, current, tree):
-        if index == current:
-            return tree, current
-        if tree.left is None:
-            return None, current
-        res, current = self.find_node(index, current + 1, tree.left)
-        if res is not None:
-            return res, current
-        res, current = self.find_node(index, current + 1, tree.right)
-        return res, current
-
     def mutate(self):
         mutant_genome = None
         if random.random() < Settings.mutate_terminal:
-            mutant_genome, dummy = self.replace_one_node_with_random(self.root, 0, random.randint(0, self.num_nodes))
+            mutant_genome, dummy = replace_one_node_with_random(self.root, 0, random.randint(0, self.num_nodes))
         else:
             new_subtree, dummy = generate_tree(0, 0, Settings.max_depth)
-            mutant_genome, dummy = self.replace_subtree(self.root,
-                                                        new_subtree,
-                                                        0,
-                                                        random.randint(0, self.num_nodes))
+            mutant_genome, dummy = replace_subtree(self.root,
+                                                   new_subtree,
+                                                   0,
+                                                   random.randint(0, self.num_nodes))
         mutant = GeneticController(
             Game.Game(
                 NoUI.NoUI(0, 0, self.game.ui.width, self.game.ui.height, self.game.ui.square_size)),
@@ -207,9 +176,9 @@ def get_random_terminal():
 
 
 def count_nodes(tree):
+    if tree is None:
+        return 0
     count = 1
-    if tree.left is None:
-        return count
     count += count_nodes(tree.left)
     count += count_nodes(tree.right)
     return count
@@ -235,3 +204,47 @@ def cut_tree(depth, tree):
     nodes += cut_tree(depth + 1, tree.left)
     nodes += cut_tree(depth + 1, tree.right)
     return nodes
+
+
+def find_node(tree, node_current, node_number):
+    if node_number == node_current:
+        return tree, node_current
+    if tree.left is None:
+        return None, node_current
+    res, node_current = find_node(tree.left, node_current + 1, node_number)
+    if res is not None:
+        return res, node_current
+    res, node_current = find_node(tree.right, node_current + 1, node_number)
+    return res, node_current
+
+
+def replace_subtree(tree, new_subtree, node_current, node_number):
+    """
+    Produces new tree, same as tree with node_number node replaced with new_subtree
+    If node_number is bigger than total number of nodes, new is the same as tree
+    """
+    if node_current == node_number:
+        return new_subtree, node_current
+    if tree.left is None:  # it is terminal
+        return TreeNode(tree.value), node_current
+    # it is a function
+    res_left, node_current = replace_subtree(tree.left, new_subtree, node_current + 1, node_number)
+    res_right, node_current = replace_subtree(tree.right, new_subtree, node_current + 1, node_number)
+    return TreeNode(tree.value, res_left, res_right), node_current
+
+
+def replace_one_node_with_random(tree, current, node_number):
+    node = TreeNode(tree.value)
+    if current == node_number:
+        orig = tree
+        if tree.left is None:
+            while node.value == orig.value:
+                node = TreeNode(get_random_terminal())
+        else:
+            while node.value == orig.value:
+                node = TreeNode(get_random_function())
+    if tree.left is None:
+        return node, current
+    node.left, current = replace_one_node_with_random(tree.left, current + 1, node_number)
+    node.right, current = replace_one_node_with_random(tree.right, current + 1, node_number)
+    return node, current
