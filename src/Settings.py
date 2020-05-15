@@ -1,4 +1,4 @@
-import Constants
+from src import Constants
 
 """ COMMON SETTINGS """
 # score required to win the game

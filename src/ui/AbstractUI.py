@@ -1,6 +1,5 @@
 from abc import ABCMeta, abstractmethod
-import Snake
-import CommonHelpers
+from src import CommonHelpers, Snake
 
 
 class AbstractUI(metaclass=ABCMeta):

@@ -1,7 +1,5 @@
 import pyglet
-import Snake
-import CommonHelpers
-import Constants
+from src import Constants, CommonHelpers, Snake
 from src.ui import AbstractUI
 
 

@@ -1,4 +1,4 @@
-import Snake
+from src import Snake
 from src.ui import AbstractUI
 
 """

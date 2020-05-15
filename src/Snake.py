@@ -1,5 +1,4 @@
-import Constants
-import Settings
+from src import Constants, Settings
 
 
 class ListNode:

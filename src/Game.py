@@ -1,6 +1,4 @@
-import Snake
-import Constants
-import Settings
+from src import Constants, Snake, Settings
 from src.ui import AbstractUI
 import random
 import numpy as np

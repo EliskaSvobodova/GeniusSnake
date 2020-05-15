@@ -1,7 +1,5 @@
-import Constants
-import Settings
+from src import Constants, Game, Settings
 from src.ui import NoUI
-import Game
 import random
 import copy
 
