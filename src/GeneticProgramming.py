@@ -1,4 +1,4 @@
-from src.ui import FinalUI, SimpleUI, NoUI
+from src.ui import SimpleUI, NoUI
 from src import GeneticController, Constants, Game, Settings
 import pyglet
 import random
@@ -91,7 +91,7 @@ class GeneticProgramming:
             individual.game.redraw(individual.id, individual.num_runs)
             i += 1
         for individual in self.population[self.layout[0] * self.layout[1] - 1:]:
-            if isinstance(individual.game.ui, NoUI.NoUI):
+            if isinstance(individual.game.ui, SimpleUI.SimpleUI):
                 individual.game = Game.Game(NoUI.NoUI(0, 0, self.game_width, self.game_height, self.square_size))
         self.still_running = self.population.copy()
         pyglet.clock.schedule(self.make_next_move_with_all)
@@ -274,8 +274,13 @@ class GeneticProgramming:
         for i in range(self.layout[0]):
             for j in range(self.layout[1]):
                 if i != (self.layout[0] - 1) or j != 0:
-                    ui = FinalUI.FinalUI(self.x + j * self.game_width, self.y + i * self.game_height,
-                                         self.game_width, self.game_height, self.square_size)
+                    ui = SimpleUI.SimpleUI(self.x + j * self.game_width, self.y + i * self.game_height,
+                                           self.game_width, self.game_height, self.square_size)
+                    ui.bushes_color = tuple([7, 87, 152])
+                    ui.field_color = tuple([116, 1, 113])
+                    ui.snake_color = tuple([255, 255, 255])
+                    ui.dead_snake_color = tuple([15, 1, 51])
+                    ui.apple_color = tuple([255, 106, 0])
                     self.still_running[index].game = Game.Game(ui)
                     self.still_running[index].game.ui.prepare_game(self.still_running[index].game.snake)
                     index += 1

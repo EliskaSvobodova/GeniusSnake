@@ -1,7 +1,7 @@
 from src import Constants
 
 """ COMMON SETTINGS """
-# score required to win the game
+# score required to win the game, will be adjusted if too high (and impossible to reach)
 max_score = 1000
 # how long is the snake on the beginning
 snake_start_length = 5
@@ -36,7 +36,7 @@ mutate_terminal = 0.2
 crossover_terminal_rate = 0.2
 
 # limits number of generations
-max_generations = 500
+max_generations = 5
 
 # max depth of the decision tree in snake's "brain"
 max_depth = 6

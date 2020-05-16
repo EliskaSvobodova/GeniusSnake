@@ -70,10 +70,15 @@ class ControlPaneUI:
 class SimpleUI(AbstractUI.AbstractUI):
     def __init__(self, x, y, width, height, square_size):
         super().__init__(x, y, width, height, square_size)
-        self.num_squares_height = (self.height - 1) // self.square_size
+        self.num_squares_height = (self.height - self.square_size) // self.square_size
         self.num_squares_width = self.width // self.square_size
         self.game_width = self.square_size * self.num_squares_width
         self.game_height = self.square_size * self.num_squares_height
+        self.bushes_color = tuple([56, 88, 129])
+        self.field_color = tuple([0, 0, 0])
+        self.snake_color = tuple([255, 255, 255])
+        self.dead_snake_color = tuple([65, 51, 101])
+        self.apple_color = tuple([192, 0, 0])
 
     def get_num_squares_height(self):
         return self.num_squares_height
@@ -85,16 +90,14 @@ class SimpleUI(AbstractUI.AbstractUI):
         CommonHelpers.draw_colored_rectangle(self.x, self.y,
                                              self.num_squares_width * self.square_size, self.height,
                                              0, 0, 0)
+        self.draw_game_field()
         self.draw_score(0)
         self.draw_bushes()
         self.draw_snake(snake)
         self.draw_boundary()
 
     def redraw(self, snake: Snake.Snake, score, identifier, num_runs, apple):
-        CommonHelpers.draw_colored_rectangle(self.x + self.square_size, self.y + self.square_size,
-                                             self.game_width - 2 * self.square_size,
-                                             self.game_height - 2 * self.square_size,
-                                             0, 0, 0)
+        self.draw_game_field()
         self.draw_score(score)
         self.draw_identifier(identifier, num_runs)
         self.draw_apple(apple[0], apple[1])
@@ -104,57 +107,68 @@ class SimpleUI(AbstractUI.AbstractUI):
         CommonHelpers.draw_colored_rectangle(self.x + snake.head.x * self.square_size,
                                              self.y + snake.head.y * self.square_size,
                                              self.square_size, self.square_size,
-                                             255, 255, 255)
+                                             self.snake_color[0], self.snake_color[1], self.snake_color[2])
 
     def draw_snake_move(self, snake: Snake.Snake, prev_tail):
         CommonHelpers.draw_colored_rectangle(self.x + prev_tail[0] * self.square_size,
                                              self.y + prev_tail[1] * self.square_size,
                                              self.square_size, self.square_size,
-                                             0, 0, 0)
+                                             self.field_color[0], self.field_color[1], self.field_color[2])
         CommonHelpers.draw_colored_rectangle(self.x + snake.head.x * self.square_size,
                                              self.y + snake.head.y * self.square_size,
                                              self.square_size, self.square_size,
-                                             255, 255, 255)
+                                             self.snake_color[0], self.snake_color[1], self.snake_color[2])
 
     def draw_apple(self, x, y):
         CommonHelpers.draw_colored_rectangle(self.x + x * self.square_size, self.y + y * self.square_size,
                                              self.square_size, self.square_size,
-                                             192, 0, 0)
+                                             self.apple_color[0], self.apple_color[1], self.apple_color[2])
 
     def draw_snake(self, snake: Snake.Snake):
         for part in snake:
             CommonHelpers.draw_colored_rectangle(self.x + part.x * self.square_size, self.y + part.y * self.square_size,
                                                  self.square_size, self.square_size,
-                                                 255, 255, 255)
+                                                 self.snake_color[0], self.snake_color[1], self.snake_color[2])
 
     def draw_snake_dead(self, snake: Snake.Snake):
         for part in snake:
             CommonHelpers.draw_colored_rectangle(self.x + part.x * self.square_size, self.y + part.y * self.square_size,
                                                  self.square_size, self.square_size,
-                                                 65, 51, 101)
+                                                 self.dead_snake_color[0],
+                                                 self.dead_snake_color[1],
+                                                 self.dead_snake_color[2])
 
     def draw_game_field(self):
-        pass  # no need to do anything, game field is supposed to be black
+        x = self.x + self.square_size
+        y = self.y + self.square_size
+        width = self.game_width - 2 * self.square_size
+        height = self.game_height - 2 * self.square_size
+        pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
+                             ("v2f", (x, y,
+                                      x, y + height,
+                                      x + width, y + height,
+                                      x + width, y)),
+                             ("c3B", ((self.field_color[0], self.field_color[1], self.field_color[2]) * 4)))
 
     def draw_bushes(self):
         for i in range(self.num_squares_width):
             CommonHelpers.draw_colored_rectangle(self.x + i * self.square_size,
                                                  self.y,
                                                  self.square_size, self.square_size,
-                                                 56, 88, 129)
+                                                 self.bushes_color[0], self.bushes_color[1], self.bushes_color[2])
             CommonHelpers.draw_colored_rectangle(self.x + i * self.square_size,
                                                  self.y + (self.num_squares_height - 1) * self.square_size,
                                                  self.square_size, self.square_size,
-                                                 56, 88, 129)
+                                                 self.bushes_color[0], self.bushes_color[1], self.bushes_color[2])
         for i in range(self.num_squares_height):
             CommonHelpers.draw_colored_rectangle(self.x,
                                                  self.y + i * self.square_size,
                                                  self.square_size, self.square_size,
-                                                 56, 88, 129)
+                                                 self.bushes_color[0], self.bushes_color[1], self.bushes_color[2])
             CommonHelpers.draw_colored_rectangle(self.x + (self.num_squares_width - 1) * self.square_size,
                                                  self.y + i * self.square_size,
                                                  self.square_size, self.square_size,
-                                                 56, 88, 129)
+                                                 self.bushes_color[0], self.bushes_color[1], self.bushes_color[2])
 
     def draw_score(self, score):
         x = self.x
