@@ -27,11 +27,8 @@ class Game:
         if Settings.max_score != -1 and Settings.max_score < self.score_max:
             self.score_max = Settings.max_score
 
-        self.speed = Settings.player_snake_start_speed
-        self.speed_max = Settings.player_snake_max_speed
-        self.speed_step = (self.speed - self.speed_max) / self.score_max
-
         self.prev_apple = tuple([0, 0])
+        self.apple = None
         self.put_apple()
         self.game_state = Constants.PLAY
 
@@ -80,8 +77,10 @@ class Game:
             self.ui.draw_game_won()
             self.game_state = Constants.WIN
         else:
-            self.speed -= self.speed_step
             self.put_apple()
+
+    def just_eaten_apple(self):
+        return self.snake.head.next_n.x == self.prev_apple[0] and self.snake.head.next_n.y == self.prev_apple[1]
 
     def get_move_from_direction(self, direction):
         snake_heads = Snake.heads_direction(self.snake.head)
@@ -97,6 +96,17 @@ class Game:
             return Constants.SNAKE_MOVE_RIGHT
         else:
             return Constants.SNAKE_MOVE_FORWARD
+
+    def get_move_from_next_square(self, next_square):
+        if next_square[0] < self.snake.head.x:
+            return self.get_move_from_direction(Constants.LEFT)
+        if next_square[0] > self.snake.head.x:
+            return self.get_move_from_direction(Constants.RIGHT)
+        if next_square[1] < self.snake.head.y:
+            return self.get_move_from_direction(Constants.DOWN)
+        if next_square[1] > self.snake.head.y:
+            return self.get_move_from_direction(Constants.UP)
+        raise ValueError("Cannot get move from snake's head")
 
     def redraw(self, identification, num_runs):
         self.ui.redraw(self.snake, self.score,
@@ -229,13 +239,6 @@ def if_body_left(game, yes, no):
 def if_body_right(game, yes, no):
     next_square = game.snake.next_square(Constants.SNAKE_MOVE_RIGHT, 1)
     if not game.game_field[next_square[1]][next_square[0]] and not is_wall(game, next_square):
-        return yes
-    else:
-        return no
-
-
-def if_just_eaten_apple(game, yes, no):
-    if game.snake.head.next_n.x == game.prev_apple[0] and game.snake.head.next_n.y == game.prev_apple[1]:
         return yes
     else:
         return no

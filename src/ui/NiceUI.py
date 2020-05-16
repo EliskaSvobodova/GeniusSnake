@@ -88,7 +88,7 @@ class NiceUI(AbstractUI.AbstractUI):
     """ OTHER PREPARATIONS """
 
     def prepare_cover_squares(self):
-        grass = pyglet.image.load("../../resources/NiceUI/grass.png", decoder=pyglet.image.codecs.png.PNGImageDecoder())
+        grass = pyglet.resource.image("NiceUI/grass.png")
         self.cover_squares = []
         for i in range(self.num_squares_height):
             row = []

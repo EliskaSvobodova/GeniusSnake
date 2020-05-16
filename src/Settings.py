@@ -2,7 +2,7 @@ from src import Constants
 
 """ COMMON SETTINGS """
 # score required to win the game
-max_score = 200
+max_score = 1000
 # how long is the snake on the beginning
 snake_start_length = 5
 # how long snake survives without food
@@ -15,6 +15,10 @@ player_snake_start_speed = 1/3
 # what is the maximum speed for the player (so that the game is playable)
 player_snake_max_speed = 1/15
 # what score snake must reach to win the game
+
+
+""" A* MODE """
+a_star_snake_speed = 1/100
 
 
 """ GENETIC PROGRAMMING MODE """
