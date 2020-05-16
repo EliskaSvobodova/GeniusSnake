@@ -8,6 +8,10 @@ snake_start_length = 5
 # how long snake survives without food,
 # accept for Hamilton mode (snake there runs in a huge cycle and needs higher stamina)
 snake_stamina = 300
+# maximal width and height of the game (so that modes can be compared on same-size fields)
+# if there is not enough space, the max width and height will be used
+max_game_width = 500
+max_game_height = 400
 
 
 """ PLAYER MODE """
@@ -43,7 +47,7 @@ mutate_terminal = 0.2
 crossover_terminal_rate = 0.2
 
 # limits number of generations
-max_generations = 5
+max_generations = 500
 
 # max depth of the decision tree in snake's "brain"
 max_depth = 6

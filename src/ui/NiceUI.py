@@ -8,8 +8,8 @@ class NiceUI(AbstractUI.AbstractUI):
         super().__init__(x, y, width, height, square_size)
         self.draw_loading_screen()
         self.load_images()
-        self.num_squares_height = (self.height - self.score_background.height) // self.square_size
-        self.num_squares_width = self.width // self.square_size
+        if ((self.height - self.score_background.height) // self.square_size) < self.num_squares_height:
+            self.num_squares_height = (self.height - self.score_background.height) // self.square_size
         self.game_width = self.square_size * self.num_squares_width
         self.game_height = self.square_size * self.num_squares_height
         self.prepare_cover_squares()

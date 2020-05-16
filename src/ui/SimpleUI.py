@@ -70,8 +70,6 @@ class ControlPaneUI:
 class SimpleUI(AbstractUI.AbstractUI):
     def __init__(self, x, y, width, height, square_size):
         super().__init__(x, y, width, height, square_size)
-        self.num_squares_height = (self.height - self.square_size) // self.square_size
-        self.num_squares_width = self.width // self.square_size
         self.game_width = self.square_size * self.num_squares_width
         self.game_height = self.square_size * self.num_squares_height
         self.bushes_color = tuple([56, 88, 129])
@@ -79,6 +77,7 @@ class SimpleUI(AbstractUI.AbstractUI):
         self.snake_color = tuple([255, 255, 255])
         self.dead_snake_color = tuple([65, 51, 101])
         self.apple_color = tuple([192, 0, 0])
+        self.font_size = 50
 
     def get_num_squares_height(self):
         return self.num_squares_height
@@ -178,11 +177,14 @@ class SimpleUI(AbstractUI.AbstractUI):
 
         CommonHelpers.draw_colored_rectangle(x, y, width, height, 0, 0, 0)
 
-        pyglet.text.Label(text=f"Score: {score}",
-                          x=(x + 5), y=(y + height / 2),
-                          anchor_y="center",
-                          font_name="Bangers", font_size=height // 2
-                          ).draw()
+        score_label = pyglet.text.Label(text=f"Score: {score}",
+                                        x=(x + 5), y=(y + height / 2),
+                                        anchor_y="center",
+                                        font_name="Bangers", font_size=height // 2)
+        while score_label.content_width >= width // 2:
+            score_label.font_size /= 2
+        score_label.draw()
+        self.font_size = score_label.font_size
         pyglet.gl.glFlush()
 
     def draw_identifier(self, identifier, run):
@@ -196,7 +198,7 @@ class SimpleUI(AbstractUI.AbstractUI):
         pyglet.text.Label(text=f"ID: {identifier}, run: {run}",
                           x=(x - 5), y=(y + height / 2),
                           anchor_x="right", anchor_y="center",
-                          font_name="Bangers", font_size=height // 2
+                          font_name="Bangers", font_size=self.font_size
                           ).draw()
         pyglet.gl.glFlush()
 
