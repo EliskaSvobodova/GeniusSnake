@@ -5,7 +5,8 @@ from src import Constants
 max_score = 1000
 # how long is the snake on the beginning
 snake_start_length = 5
-# how long snake survives without food
+# how long snake survives without food,
+# accept for Hamilton mode (snake there runs in a huge cycle and needs higher stamina)
 snake_stamina = 300
 
 
@@ -18,7 +19,13 @@ player_snake_max_speed = 1/15
 
 
 """ A* MODE """
+# speed of snake in A* mode
 a_star_snake_speed = 1/100
+
+
+""" HAMILTON MODE """
+# speed of snake in Hamilton mode
+hamilton_snake_speed = 1/100
 
 
 """ GENETIC PROGRAMMING MODE """

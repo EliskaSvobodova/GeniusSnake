@@ -1,6 +1,7 @@
 import pyglet
 from src.ui import NiceUI
-from src import PlayerController, AStarController, Constants, Game, CommonHelpers, GeneticProgramming
+from src import PlayerController, AStarController, HamiltonController
+from src import Constants, Game, CommonHelpers, GeneticProgramming
 
 
 class Menu:
@@ -13,9 +14,10 @@ class Menu:
         self.controller = None
         self.screen_width = self.screen_height = self.window = None
         self.snake_background = None
-        self.button_play_background = self.button_genetic_background = self.button_a_star_background = None
+        self.button_play_background = self.button_genetic_background = None
+        self.button_a_star_background = self.button_hamilton_background = None
         self.game_name_label = self.game_name_shadow_label = None
-        self.play_label = self.genetic_label = self.a_star_label = None
+        self.play_label = self.genetic_label = self.a_star_label = self.hamilton_label = None
 
         self.set_window()
         CommonHelpers.configure_resources()
@@ -52,9 +54,12 @@ class Menu:
                                                               x=self.genetic_label.x, y=self.genetic_label.y)
         self.button_a_star_background = pyglet.sprite.Sprite(img=button_background_image,
                                                              x=self.a_star_label.x, y=self.a_star_label.y)
+        self.button_hamilton_background = pyglet.sprite.Sprite(img=button_background_image,
+                                                               x=self.hamilton_label.x, y=self.hamilton_label.y)
         self.button_play_background.opacity = 100
         self.button_genetic_background.opacity = 100
         self.button_a_star_background.opacity = 100
+        self.button_hamilton_background.opacity = 100
 
     def load_labels(self):
         pyglet.font.add_file("resources/Bangers/Bangers-Regular.ttf")
@@ -70,19 +75,24 @@ class Menu:
                                                         font_name="Bangers", font_size=80)
         self.play_label = pyglet.text.Label(text="Play",
                                             x=(self.screen_width // 2),
-                                            y=((self.screen_height // 6) * 3),
+                                            y=((self.screen_height // 8) * 4),
                                             anchor_x="center", anchor_y="center",
                                             font_name="Bangers", font_size=50)
         self.genetic_label = pyglet.text.Label(text="Genetic programming",
                                                x=(self.screen_width // 2),
-                                               y=((self.screen_height // 6) * 2),
+                                               y=((self.screen_height // 8) * 3),
                                                anchor_x="center", anchor_y="center",
                                                font_name="Bangers", font_size=50)
         self.a_star_label = pyglet.text.Label(text="A* Algorithm",
                                               x=(self.screen_width // 2),
-                                              y=(self.screen_height // 6),
+                                              y=((self.screen_height // 8) * 2),
                                               anchor_x="center", anchor_y="center",
                                               font_name="Bangers", font_size=50)
+        self.hamilton_label = pyglet.text.Label(text="Hamiltonian cycle",
+                                                x=(self.screen_width // 2),
+                                                y=(self.screen_height // 8),
+                                                anchor_x="center", anchor_y="center",
+                                                font_name="Bangers", font_size=50)
 
     def on_menu_draw(self):
         self.snake_background.draw()
@@ -91,9 +101,11 @@ class Menu:
         self.button_play_background.draw()
         self.button_genetic_background.draw()
         self.button_a_star_background.draw()
+        self.button_hamilton_background.draw()
         self.play_label.draw()
         self.genetic_label.draw()
         self.a_star_label.draw()
+        self.hamilton_label.draw()
         pyglet.gl.glFlush()
 
     def on_menu_mouse_press(self, x, y, button, modifiers):
@@ -110,13 +122,13 @@ class Menu:
             self.controller = PlayerController.PlayerController(self.window, game)
         if CommonHelpers.mouse_on_button(self.button_genetic_background, x, y):
             self.window.pop_handlers()
-            self.button_play_background.opacity = 100
+            self.button_genetic_background.opacity = 100
             self.window.push_handlers(on_mouse_press=self.on_back_mouse_press)
             self.window.clear()
             self.controller = GeneticProgramming.GeneticProgramming(self.window, self.screen_width, self.screen_height)
         if CommonHelpers.mouse_on_button(self.button_a_star_background, x, y):
             self.window.pop_handlers()
-            self.button_play_background.opacity = 100
+            self.button_a_star_background.opacity = 100
             self.window.push_handlers(on_mouse_press=self.on_back_mouse_press)
             self.window.clear()
             ui = NiceUI.NiceUI(10, 80, self.screen_width - 20, self.screen_height - 90, 50)
@@ -124,6 +136,16 @@ class Menu:
             game.ui.prepare_game(game.snake)
             game.put_apple()
             self.controller = AStarController.AStarController(game)
+        if CommonHelpers.mouse_on_button(self.button_hamilton_background, x, y):
+            self.window.pop_handlers()
+            self.button_hamilton_background.opacity = 100
+            self.window.push_handlers(on_mouse_press=self.on_back_mouse_press)
+            self.window.clear()
+            ui = NiceUI.NiceUI(10, 80, self.screen_width - 20, self.screen_height - 90, 50)
+            game = Game.Game(ui)
+            game.ui.prepare_game(game.snake)
+            game.put_apple()
+            self.controller = HamiltonController.HamiltonController(game)
 
     def on_back_mouse_press(self, x, y, button, modifiers):
         if self.controller.state is not Constants.PLAY:
@@ -147,3 +169,7 @@ class Menu:
             self.button_a_star_background.opacity = 255
         else:
             self.button_a_star_background.opacity = 100
+        if CommonHelpers.mouse_on_button(self.button_hamilton_background, x, y):
+            self.button_hamilton_background.opacity = 255
+        else:
+            self.button_hamilton_background.opacity = 100
