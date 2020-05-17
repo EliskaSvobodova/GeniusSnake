@@ -110,3 +110,7 @@ class HamiltonController:
                     cur_y -= 1
                     continue
                 cur_x += 1
+
+    def stop(self):
+        if self.state == Constants.PLAY:
+            pyglet.clock.unschedule(self.control)

@@ -40,3 +40,7 @@ class PlayerController:
             self.next_move = self.game.get_move_from_direction(Constants.DOWN)
         elif symbol == pyglet.window.key.LEFT:
             self.next_move = self.game.get_move_from_direction(Constants.LEFT)
+
+    def stop(self):
+        if self.state == Constants.PLAY:
+            pyglet.clock.unschedule(self.control)

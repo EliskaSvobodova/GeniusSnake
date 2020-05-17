@@ -288,6 +288,11 @@ class GeneticProgramming:
                     break
         pyglet.clock.schedule(self.final_generation_move)
 
+    def stop(self):
+        if self.state == Constants.PLAY:
+            pyglet.clock.unschedule(self.make_next_move_with_all)
+            GeneticController.GeneticController.reset_id()
+
 
 def get_fitness(individual):
     return individual.average_score

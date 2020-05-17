@@ -48,6 +48,10 @@ class GeneticController:
         cls.id += 1
         return cls.id
 
+    @classmethod
+    def reset_id(cls):
+        cls.id = -1
+
     def __init__(self, game: Game.Game, root=None, num_nodes=None):
         self.game = game
         if root is None:

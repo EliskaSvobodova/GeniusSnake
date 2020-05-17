@@ -113,3 +113,7 @@ class AStarController:
         b_y = y if y <= self.game.apple[1] else self.game.apple[1]
 
         return (a_x - b_x) + (a_y - b_y)
+
+    def stop(self):
+        if self.state == Constants.PLAY:
+            pyglet.clock.unschedule(self.control)
