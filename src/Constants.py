@@ -33,6 +33,12 @@ GROW_INIT = 40
 FULL_INIT = 41
 RAMPED_HALF_AND_HALF_INIT = 42
 
+"""
+Types of files in Hamilton
+"""
+BUSH = 50
+FREE = 51
+
 
 def print_constant(constant):
     if constant is SNAKE_MOVE_LEFT:

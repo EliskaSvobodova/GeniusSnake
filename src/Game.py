@@ -27,11 +27,8 @@ class Game:
         if Settings.max_score != -1 and Settings.max_score < self.score_max:
             self.score_max = Settings.max_score
 
-        self.speed = Settings.player_snake_start_speed
-        self.speed_max = Settings.player_snake_max_speed
-        self.speed_step = (self.speed - self.speed_max) / self.score_max
-
         self.prev_apple = tuple([0, 0])
+        self.apple = None
         self.put_apple()
         self.game_state = Constants.PLAY
 
@@ -80,23 +77,36 @@ class Game:
             self.ui.draw_game_won()
             self.game_state = Constants.WIN
         else:
-            self.speed -= self.speed_step
             self.put_apple()
+
+    def just_eaten_apple(self):
+        return self.snake.head.next_n.x == self.prev_apple[0] and self.snake.head.next_n.y == self.prev_apple[1]
 
     def get_move_from_direction(self, direction):
         snake_heads = Snake.heads_direction(self.snake.head)
-        if (snake_heads is Constants.UP and direction is Constants.LEFT) \
-                or (snake_heads is Constants.RIGHT and direction is Constants.UP) \
-                or (snake_heads is Constants.DOWN and direction is Constants.RIGHT) \
-                or (snake_heads is Constants.LEFT and direction is Constants.DOWN):
+        if (snake_heads == Constants.UP and direction == Constants.LEFT) \
+                or (snake_heads == Constants.RIGHT and direction == Constants.UP) \
+                or (snake_heads == Constants.DOWN and direction == Constants.RIGHT) \
+                or (snake_heads == Constants.LEFT and direction == Constants.DOWN):
             return Constants.SNAKE_MOVE_LEFT
-        elif (snake_heads is Constants.UP and direction is Constants.RIGHT) \
-                or (snake_heads is Constants.RIGHT and direction is Constants.DOWN) \
-                or (snake_heads is Constants.DOWN and direction is Constants.LEFT) \
-                or (snake_heads is Constants.LEFT and direction is Constants.UP):
+        elif (snake_heads == Constants.UP and direction == Constants.RIGHT) \
+                or (snake_heads == Constants.RIGHT and direction == Constants.DOWN) \
+                or (snake_heads == Constants.DOWN and direction == Constants.LEFT) \
+                or (snake_heads == Constants.LEFT and direction == Constants.UP):
             return Constants.SNAKE_MOVE_RIGHT
         else:
             return Constants.SNAKE_MOVE_FORWARD
+
+    def get_move_from_next_square(self, next_square):
+        if next_square[0] < self.snake.head.x:
+            return self.get_move_from_direction(Constants.LEFT)
+        if next_square[0] > self.snake.head.x:
+            return self.get_move_from_direction(Constants.RIGHT)
+        if next_square[1] < self.snake.head.y:
+            return self.get_move_from_direction(Constants.DOWN)
+        if next_square[1] > self.snake.head.y:
+            return self.get_move_from_direction(Constants.UP)
+        raise ValueError("Cannot get move from snake's head")
 
     def redraw(self, identification, num_runs):
         self.ui.redraw(self.snake, self.score,
@@ -116,22 +126,22 @@ def is_wall(game, next_square):
 
 def if_food_forward(game, yes, no):
     snake_heads = Snake.heads_direction(game.snake.head)
-    if snake_heads is Constants.UP:
+    if snake_heads == Constants.UP:
         if game.apple[1] > game.snake.head.y:
             return yes
         else:
             return no
-    if snake_heads is Constants.RIGHT:
+    if snake_heads == Constants.RIGHT:
         if game.apple[0] > game.snake.head.x:
             return yes
         else:
             return no
-    if snake_heads is Constants.DOWN:
+    if snake_heads == Constants.DOWN:
         if game.apple[1] < game.snake.head.y:
             return yes
         else:
             return no
-    if snake_heads is Constants.LEFT:
+    if snake_heads == Constants.LEFT:
         if game.apple[0] < game.snake.head.x:
             return yes
         else:
@@ -140,22 +150,22 @@ def if_food_forward(game, yes, no):
 
 def if_food_left(game, yes, no):
     snake_heads = Snake.heads_direction(game.snake.head)
-    if snake_heads is Constants.UP:
+    if snake_heads == Constants.UP:
         if game.apple[1] == game.snake.head.y and game.apple[0] < game.snake.head.x:
             return yes
         else:
             return no
-    if snake_heads is Constants.RIGHT:
+    if snake_heads == Constants.RIGHT:
         if game.apple[0] == game.snake.head.x and game.apple[1] > game.snake.head.y:
             return yes
         else:
             return no
-    if snake_heads is Constants.DOWN:
+    if snake_heads == Constants.DOWN:
         if game.apple[1] == game.snake.head.y and game.apple[0] > game.snake.head.x:
             return yes
         else:
             return no
-    if snake_heads is Constants.LEFT:
+    if snake_heads == Constants.LEFT:
         if game.apple[0] == game.snake.head.x and game.apple[1] < game.snake.head.y:
             return yes
         else:
@@ -164,22 +174,22 @@ def if_food_left(game, yes, no):
 
 def if_food_right(game, yes, no):
     snake_heads = Snake.heads_direction(game.snake.head)
-    if snake_heads is Constants.UP:
+    if snake_heads == Constants.UP:
         if game.apple[1] == game.snake.head.y and game.apple[0] > game.snake.head.x:
             return yes
         else:
             return no
-    if snake_heads is Constants.RIGHT:
+    if snake_heads == Constants.RIGHT:
         if game.apple[0] == game.snake.head.x and game.apple[1] < game.snake.head.y:
             return yes
         else:
             return no
-    if snake_heads is Constants.DOWN:
+    if snake_heads == Constants.DOWN:
         if game.apple[1] == game.snake.head.y and game.apple[0] < game.snake.head.x:
             return yes
         else:
             return no
-    if snake_heads is Constants.LEFT:
+    if snake_heads == Constants.LEFT:
         if game.apple[0] == game.snake.head.x and game.apple[1] > game.snake.head.y:
             return yes
         else:
@@ -229,13 +239,6 @@ def if_body_left(game, yes, no):
 def if_body_right(game, yes, no):
     next_square = game.snake.next_square(Constants.SNAKE_MOVE_RIGHT, 1)
     if not game.game_field[next_square[1]][next_square[0]] and not is_wall(game, next_square):
-        return yes
-    else:
-        return no
-
-
-def if_just_eaten_apple(game, yes, no):
-    if game.snake.head.next_n.x == game.prev_apple[0] and game.snake.head.next_n.y == game.prev_apple[1]:
         return yes
     else:
         return no

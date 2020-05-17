@@ -1,12 +1,17 @@
 from src import Constants
 
 """ COMMON SETTINGS """
-# score required to win the game
-max_score = 200
+# score required to win the game, will be adjusted if too high (and impossible to reach)
+max_score = 1000
 # how long is the snake on the beginning
 snake_start_length = 5
-# how long snake survives without food
+# how long snake survives without food,
+# accept for Hamilton mode (snake there runs in a huge cycle and needs higher stamina)
 snake_stamina = 300
+# maximal width and height of the game (so that modes can be compared on same-size fields)
+# if there is not enough space, the max width and height will be used
+max_game_width = 490
+max_game_height = 470
 
 
 """ PLAYER MODE """
@@ -15,6 +20,16 @@ player_snake_start_speed = 1/3
 # what is the maximum speed for the player (so that the game is playable)
 player_snake_max_speed = 1/15
 # what score snake must reach to win the game
+
+
+""" A* MODE """
+# speed of snake in A* mode
+a_star_snake_speed = 1/100
+
+
+""" HAMILTON MODE """
+# speed of snake in Hamilton mode
+hamilton_snake_speed = 1/100
 
 
 """ GENETIC PROGRAMMING MODE """

@@ -1,22 +1,23 @@
-from src import Constants
+from src import Constants, Settings
 import pyglet
 
 
 class PlayerController:
     def __init__(self, window, game):
-        super().__init__()
         self.window = window
         self.window.push_handlers(on_key_press=self.on_key_press)
         self.game = game
-        self.speed = self.game.speed
+        self.speed = Settings.player_snake_start_speed
+        self.speed_max = Settings.player_snake_max_speed
+        self.speed_step = (self.speed - self.speed_max) / game.score_max
         self.next_move = Constants.SNAKE_MOVE_FORWARD
         self.state = Constants.PLAY
         pyglet.clock.schedule_interval(self.control, self.speed)
 
     def control(self, dt):
         self.game.make_next_move(self.next_move)
-        if self.speed != self.game.speed:
-            self.speed = self.game.speed
+        if self.game.just_eaten_apple():
+            self.speed -= self.speed_step
             pyglet.clock.unschedule(self.control)
             pyglet.clock.schedule_interval(self.control, self.speed)
         if self.game.game_state is Constants.WIN:
