@@ -2,7 +2,7 @@ from src import Constants
 
 """ COMMON SETTINGS """
 # score required to win the game, will be adjusted if too high (and impossible to reach)
-max_score = 1000
+max_score = 418
 # how long is the snake on the beginning
 snake_start_length = 5
 # how long snake survives without food,
@@ -12,6 +12,8 @@ snake_stamina = 300
 # if there is not enough space, the max width and height will be used
 max_game_width = 490
 max_game_height = 470
+# size of one square in snake's game field, apart from player mode
+square_size = 20
 
 
 """ PLAYER MODE """
@@ -29,14 +31,14 @@ a_star_snake_speed = 1/100
 
 """ HAMILTON MODE """
 # speed of snake in Hamilton mode
-hamilton_snake_speed = 1/100
+hamilton_snake_speed = 1/500
 
 
 """ GENETIC PROGRAMMING MODE """
 # number of individuals in each generation before breeding
 size_of_population = 100
 # number of offsprings produced in each generation
-num_of_offsprings = 85
+num_of_offsprings = 80
 # number of additional randomly generated individuals (for diversity of genome)
 num_of_random = 10
 # chance that an individual will produce a mutant
@@ -76,7 +78,5 @@ initialization_operator = Constants.RAMPED_HALF_AND_HALF_INIT
 
 # number and layout of visible individuals on the screen
 genetic_layout = tuple([2, 4])
-# size of one square in snake's game field, with genetic_layout determines the size of game_field
-genetic_square_size = 20
 # how many labels should be on the y axis of the gen. programming graph
 num_graph_labels = 10

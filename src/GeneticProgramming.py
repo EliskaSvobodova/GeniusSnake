@@ -16,7 +16,7 @@ class GeneticProgramming:
         self.layout = Settings.genetic_layout
         self.game_width = self.screen_width // self.layout[1]
         self.game_height = self.screen_height // self.layout[0]
-        self.square_size = Settings.genetic_square_size
+        self.square_size = Settings.square_size
         self.ui = ControlPaneUI.ControlPaneUI(self.x + 10, self.y + (self.layout[0] - 1) * self.game_height + 20,
                                               self.game_width - 20, self.game_height - 20)
         self.generation = 0

@@ -1,7 +1,7 @@
 import pyglet
 from src.ui import NiceUI
 from src import PlayerController, AStarController, HamiltonController
-from src import Constants, Game, CommonHelpers, GeneticProgramming
+from src import Constants, Game, CommonHelpers, GeneticProgramming, Settings
 
 
 class Menu:
@@ -131,7 +131,7 @@ class Menu:
         self.button_a_star_background.opacity = 100
         self.window.push_handlers(on_mouse_press=self.on_back_mouse_press, on_key_press=self.on_back_key_press)
         self.window.clear()
-        ui = NiceUI.NiceUI(10, 80, self.screen_width - 20, self.screen_height - 90, 50)
+        ui = NiceUI.NiceUI(10, 80, self.screen_width - 20, self.screen_height - 90, Settings.square_size)
         game = Game.Game(ui)
         game.ui.prepare_game(game.snake)
         game.put_apple()
@@ -142,7 +142,7 @@ class Menu:
         self.button_hamilton_background.opacity = 100
         self.window.push_handlers(on_mouse_press=self.on_back_mouse_press, on_key_press=self.on_back_key_press)
         self.window.clear()
-        ui = NiceUI.NiceUI(10, 80, self.screen_width - 20, self.screen_height - 90, 50)
+        ui = NiceUI.NiceUI(10, 80, self.screen_width - 20, self.screen_height - 90, Settings.square_size)
         game = Game.Game(ui)
         game.ui.prepare_game(game.snake)
         game.put_apple()

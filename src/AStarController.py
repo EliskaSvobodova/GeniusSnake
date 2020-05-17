@@ -1,7 +1,6 @@
 from src import Constants, Settings
 import pyglet
 import heapq
-import math
 import random
 import numpy as np
 
@@ -34,6 +33,7 @@ class AStarController:
         self.speed = Settings.a_star_snake_speed
         self.state = Constants.PLAY
         self.queue = []
+        self.path = []
         self.field = None
         pyglet.clock.schedule_interval(self.control, self.speed)
 
@@ -48,6 +48,8 @@ class AStarController:
             self.state = Constants.LOOSE
 
     def decide_next_move(self):
+        if len(self.path) != 0:
+            return self.get_move_from_next_square(self.path.pop())
         self.queue = []
         dist_to_apple = self.calculate_distance(self.game.snake.head.x, self.game.snake.head.y)
         head_tile = Tile(0, dist_to_apple, self.game.snake.head.x, self.game.snake.head.y)
@@ -60,9 +62,8 @@ class AStarController:
             if isinstance(self.field[el.y][el.x], Tile) and self.field[el.y][el.x].state == CLOSED:
                 continue
             if el.x == self.game.apple[0] and el.y == self.game.apple[1]:
-                next_square = self.backtrack_to_head_next()
-                move = self.game.get_move_from_next_square(next_square)
-                return move
+                self.backtrack_path()
+                return self.get_move_from_next_square(self.path.pop())
             self.check(el, +1, 0)
             self.check(el, -1, 0)
             self.check(el, 0, +1)
@@ -99,11 +100,23 @@ class AStarController:
                             + self.field[el.y + pl_y][el.x + pl_x].distance,
                             QueueElement(el.x + pl_x, el.y + pl_y)))
 
-    def backtrack_to_head_next(self):
+    def backtrack_path(self):
         current = self.field[self.game.apple[1]][self.game.apple[0]]
+        self.path.append(current)
         while current.parent.x != self.game.snake.head.x or current.parent.y != self.game.snake.head.y:
             current = self.field[current.parent.y][current.parent.x]
-        return tuple([current.x, current.y])
+            self.path.append(current)
+
+    def get_move_from_next_square(self, next_tile):
+        if next_tile.x < self.game.snake.head.x:
+            return self.game.get_move_from_direction(Constants.LEFT)
+        if next_tile.x > self.game.snake.head.x:
+            return self.game.get_move_from_direction(Constants.RIGHT)
+        if next_tile.y < self.game.snake.head.y:
+            return self.game.get_move_from_direction(Constants.DOWN)
+        if next_tile.y > self.game.snake.head.y:
+            return self.game.get_move_from_direction(Constants.UP)
+        raise ValueError("Cannot get move from snake's head")
 
     def calculate_distance(self, x, y):
         """ Manhattan distance """
