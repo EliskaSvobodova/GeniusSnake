@@ -22,8 +22,8 @@ class SimpleUI(AbstractUI.AbstractUI):
         return self.num_squares_width
 
     def prepare_game(self, snake: Snake.Snake):
-        CommonHelpers.draw_colored_rectangle(self.screen_x, self.screen_y,
-                                             self.width, self.height,
+        CommonHelpers.draw_colored_rectangle(self.game_x, self.game_y,
+                                             self.game_width, self.game_height + self.score_squares * self.square_size,
                                              0, 0, 0)
         self.draw_game_field()
         self.draw_score(0)

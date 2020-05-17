@@ -2,7 +2,7 @@ from src import Constants
 
 """ COMMON SETTINGS """
 # score required to win the game, will be adjusted if too high (and impossible to reach)
-max_score = 5
+max_score = 1000
 # how long is the snake on the beginning
 snake_start_length = 5
 # how long snake survives without food,
@@ -10,8 +10,8 @@ snake_start_length = 5
 snake_stamina = 300
 # maximal width and height of the game (so that modes can be compared on same-size fields)
 # if there is not enough space, the max width and height will be used
-max_game_width = 500
-max_game_height = 400
+max_game_width = 490
+max_game_height = 470
 
 
 """ PLAYER MODE """
