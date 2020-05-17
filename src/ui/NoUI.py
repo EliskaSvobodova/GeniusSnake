@@ -8,7 +8,7 @@ UI that doesn't draw anything
 
 class NoUI(AbstractUI.AbstractUI):
     def __init__(self, x, y, width, height, square_size):
-        super().__init__(x, y, width, height, square_size)
+        super().__init__(x, y, width, height, square_size, 2)
 
     def get_num_squares_height(self):
         return self.num_squares_height

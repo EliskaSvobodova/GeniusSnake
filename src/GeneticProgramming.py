@@ -1,4 +1,4 @@
-from src.ui import SimpleUI, NoUI
+from src.ui import SimpleUI, NoUI, ControlPaneUI
 from src import GeneticController, Constants, Game, Settings
 import pyglet
 import random
@@ -17,8 +17,8 @@ class GeneticProgramming:
         self.game_width = self.screen_width // self.layout[1]
         self.game_height = self.screen_height // self.layout[0]
         self.square_size = Settings.genetic_square_size
-        self.ui = SimpleUI.ControlPaneUI(self.x + 10, self.y + (self.layout[0] - 1) * self.game_height + 10,
-                                         self.game_width - 20, self.game_height - 20)
+        self.ui = ControlPaneUI.ControlPaneUI(self.x + 10, self.y + (self.layout[0] - 1) * self.game_height + 10,
+                                              self.game_width - 20, self.game_height - 20)
         self.generation = 0
         self.best_average_in_generations = []
         self.ui.draw(self.generation)
@@ -112,7 +112,7 @@ class GeneticProgramming:
                     if len(self.still_running) >= (self.layout[0] * self.layout[1]) - 1 \
                             and isinstance(individual.game.ui, SimpleUI.SimpleUI):
                         self.still_running[last_draw_index].game.ui = SimpleUI.SimpleUI(
-                            individual.game.ui.x, individual.game.ui.y,
+                            individual.game.ui.screen_x, individual.game.ui.screen_y,
                             individual.game.ui.width, individual.game.ui.height,
                             individual.game.ui.square_size)
                         game = self.still_running[last_draw_index].game

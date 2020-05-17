@@ -5,22 +5,20 @@ from src.ui import AbstractUI
 
 class NiceUI(AbstractUI.AbstractUI):
     def __init__(self, x, y, width, height, square_size):
-        super().__init__(x, y, width, height, square_size)
+        super().__init__(x, y, width, height, square_size, 2)
         self.draw_loading_screen()
-        self.load_images()
-        if ((self.height - self.score_background.height) // self.square_size) < self.num_squares_height:
-            self.num_squares_height = (self.height - self.score_background.height) // self.square_size
         self.game_width = self.square_size * self.num_squares_width
         self.game_height = self.square_size * self.num_squares_height
+        self.load_images()
         self.prepare_cover_squares()
         # enable transparency
         pyglet.gl.glEnable(pyglet.gl.GL_BLEND)
         pyglet.gl.glBlendFunc(pyglet.gl.GL_SRC_ALPHA, pyglet.gl.GL_ONE_MINUS_SRC_ALPHA)
 
     def draw_loading_screen(self):
-        CommonHelpers.draw_colored_rectangle(self.x, self.y, self.width, self.height, 65, 51, 101)
+        CommonHelpers.draw_colored_rectangle(self.screen_x, self.screen_y, self.width, self.height, 65, 51, 101)
         pyglet.text.Label(text="Loading...",
-                          x=(self.x + self.width / 2), y=(self.y + self.height / 2),
+                          x=(self.screen_x + self.width / 2), y=(self.screen_y + self.height / 2),
                           anchor_x="center", anchor_y="center",
                           font_name="Bangers", font_size=60).draw()
         pyglet.gl.glFlush()
@@ -39,14 +37,16 @@ class NiceUI(AbstractUI.AbstractUI):
         CommonHelpers.scale_image(grass_image, self.width - 2,
                                   self.height - 2)  # minus few pixels so the boundary is visible
         CommonHelpers.center_image(grass_image)
-        self.grass = pyglet.sprite.Sprite(img=grass_image, x=self.x + (self.width / 2), y=self.y + (self.height / 2))
+        self.grass = pyglet.sprite.Sprite(img=grass_image,
+                                          x=self.screen_x + (self.width / 2), y=self.screen_y + (self.height / 2))
 
     def load_score_background(self):
         score_background_image = pyglet.resource.image("NiceUI/score_background.png")
+        CommonHelpers.scale_image(score_background_image, self.game_width, self.square_size * self.score_squares)
         CommonHelpers.center_image(score_background_image)
         self.score_background = pyglet.sprite.Sprite(img=score_background_image,
-                                                     x=self.x + (self.width / 2),
-                                                     y=self.y + self.height - (score_background_image.height / 2))
+                                                     x=self.game_x + self.game_width / 2,
+                                                     y=self.game_y + self.game_height + (score_background_image.height / 2))
 
     def load_snake(self):
         snake_head_image = pyglet.resource.image("NiceUI/snake_head.png")
@@ -93,11 +93,12 @@ class NiceUI(AbstractUI.AbstractUI):
         for i in range(self.num_squares_height):
             row = []
             for j in range(self.num_squares_width):
-                square = grass.get_region(x=(self.x + j * self.square_size), y=(self.y + i * self.square_size),
+                square = grass.get_region(x=(self.game_x + j * self.square_size),
+                                          y=(self.game_y + i * self.square_size),
                                           width=self.square_size, height=self.square_size)
                 row.append(pyglet.sprite.Sprite(square,
-                                                x=(self.x + j * self.square_size),
-                                                y=(self.y + i * self.square_size)))
+                                                x=(self.game_x + j * self.square_size),
+                                                y=(self.game_y + i * self.square_size)))
             self.cover_squares.append(row)
 
     """ GETTERS """
@@ -134,8 +135,8 @@ class NiceUI(AbstractUI.AbstractUI):
         pyglet.gl.glFlush()
 
     def draw_apple(self, x, y):
-        self.apple.x = self.x + x * self.square_size + self.square_size / 2
-        self.apple.y = self.y + y * self.square_size + self.square_size / 2
+        self.apple.x = self.game_x + x * self.square_size + self.square_size / 2
+        self.apple.y = self.game_y + y * self.square_size + self.square_size / 2
         self.apple.draw()
         pyglet.gl.glFlush()
 
@@ -160,8 +161,8 @@ class NiceUI(AbstractUI.AbstractUI):
         pyglet.gl.glFlush()
 
     def draw_snake_head(self, part: Snake.ListNode):
-        self.snake_head.x = self.x + (part.x * self.square_size) + (self.square_size / 2)
-        self.snake_head.y = self.y + (part.y * self.square_size) + (self.square_size / 2)
+        self.snake_head.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
+        self.snake_head.y = self.game_y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.heads_direction(part)
         if direction is Constants.UP:
             self.snake_head.rotation = 0
@@ -175,8 +176,8 @@ class NiceUI(AbstractUI.AbstractUI):
         pyglet.gl.glFlush()
 
     def draw_snake_head_dead(self, part: Snake.ListNode):
-        self.snake_head_dead.x = self.x + (part.x * self.square_size) + (self.square_size / 2)
-        self.snake_head_dead.y = self.y + (part.y * self.square_size) + (self.square_size / 2)
+        self.snake_head_dead.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
+        self.snake_head_dead.y = self.game_y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.heads_direction(part)
         if direction is Constants.UP:
             self.snake_head_dead.rotation = 0
@@ -190,8 +191,8 @@ class NiceUI(AbstractUI.AbstractUI):
         pyglet.gl.glFlush()
 
     def draw_snake_tail(self, part: Snake.ListNode):
-        self.snake_tail.x = self.x + (part.x * self.square_size) + (self.square_size / 2)
-        self.snake_tail.y = self.y + (part.y * self.square_size) + (self.square_size / 2)
+        self.snake_tail.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
+        self.snake_tail.y = self.game_y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.rest_direction(part)
         if direction is Constants.UP:
             self.snake_tail.rotation = 0
@@ -205,8 +206,8 @@ class NiceUI(AbstractUI.AbstractUI):
         pyglet.gl.glFlush()
 
     def draw_snake_body(self, part: Snake.ListNode):
-        self.snake_body.x = self.x + (part.x * self.square_size) + (self.square_size / 2)
-        self.snake_body.y = self.y + (part.y * self.square_size) + (self.square_size / 2)
+        self.snake_body.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
+        self.snake_body.y = self.game_y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.heads_direction(part)
         if direction is Constants.UP or direction is Constants.DOWN:
             self.snake_body.rotation = 0
@@ -216,8 +217,8 @@ class NiceUI(AbstractUI.AbstractUI):
         pyglet.gl.glFlush()
 
     def draw_snake_corner(self, part: Snake.ListNode):
-        self.snake_corner.x = self.x + (part.x * self.square_size) + (self.square_size / 2)
-        self.snake_corner.y = self.y + (part.y * self.square_size) + (self.square_size / 2)
+        self.snake_corner.x = self.game_x + (part.x * self.square_size) + (self.square_size / 2)
+        self.snake_corner.y = self.game_y + (part.y * self.square_size) + (self.square_size / 2)
         direction = Snake.corner_type(part)
         if direction[0] is Constants.UP and direction[1] is Constants.RIGHT:
             self.snake_corner.rotation = 270
@@ -239,8 +240,8 @@ class NiceUI(AbstractUI.AbstractUI):
 
     def draw_square(self, x, y):
         self.cover_squares[y][x].draw()
-        x1 = self.x + (x * self.square_size)
-        y1 = self.y + (y * self.square_size)
+        x1 = self.game_x + (x * self.square_size)
+        y1 = self.game_y + (y * self.square_size)
         x2 = x1
         y2 = y1 + self.square_size
         x3 = x1 + self.square_size
@@ -269,16 +270,16 @@ class NiceUI(AbstractUI.AbstractUI):
 
     def draw_bushes(self):
         for i in range(self.num_squares_width):
-            self.bush.x = self.x + i * self.square_size + self.square_size / 2
-            self.bush.y = self.y + self.square_size / 2
+            self.bush.x = self.game_x + i * self.square_size + self.square_size / 2
+            self.bush.y = self.game_y + self.square_size / 2
             self.bush.draw()
-            self.bush.y = self.y + (self.num_squares_height - 1) * self.square_size + self.square_size / 2
+            self.bush.y = self.game_y + (self.num_squares_height - 1) * self.square_size + self.square_size / 2
             self.bush.draw()
         for i in range(self.num_squares_height):
-            self.bush.x = self.x + self.square_size / 2
-            self.bush.y = self.y + i * self.square_size + self.square_size / 2
+            self.bush.x = self.game_x + self.square_size / 2
+            self.bush.y = self.game_y + i * self.square_size + self.square_size / 2
             self.bush.draw()
-            self.bush.x = self.x + (self.num_squares_width - 1) * self.square_size + self.square_size / 2
+            self.bush.x = self.game_x + (self.num_squares_width - 1) * self.square_size + self.square_size / 2
             self.bush.draw()
         pyglet.gl.glFlush()
 
@@ -303,33 +304,37 @@ class NiceUI(AbstractUI.AbstractUI):
 
     def draw_game_over(self):
         pyglet.text.Label(text="GAME OVER",
-                          x=(self.width / 2),
-                          y=(self.height / 3) * 2,
+                          x=(self.game_x + self.game_width / 2),
+                          y=(self.game_y + ((self.game_height / 3) * 2)),
                           anchor_x="center", anchor_y="center",
-                          font_name="Bangers", font_size=60).draw()
+                          font_name="Bangers", font_size=self.game_height // 10).draw()
         pyglet.text.Label(text="[click to go back to menu]",
-                          x=(self.width / 2),
-                          y=(self.height / 3),
+                          x=(self.game_x + self.game_width / 2),
+                          y=(self.game_y + self.game_height / 3),
                           anchor_x="center", anchor_y="center",
-                          font_name="Bangers", font_size=40).draw()
+                          font_name="Bangers", font_size=self.game_height // 20).draw()
         pyglet.gl.glFlush()
 
     def draw_game_won(self):
         pyglet.text.Label(text="YOU WIN! CONGRATULATION!",
-                          x=(self.width / 2),
-                          y=(self.height / 3) * 2,
+                          x=(self.game_x + self.game_width / 2),
+                          y=(self.game_y + ((self.game_height / 3) * 2)),
                           anchor_x="center", anchor_y="center",
-                          font_name="Bangers", font_size=60).draw()
+                          font_name="Bangers", font_size=self.game_height // 10).draw()
         pyglet.text.Label(text="[click to go back to menu]",
-                          x=(self.width / 2),
-                          y=(self.height / 3),
+                          x=(self.game_x + self.game_width / 2),
+                          y=(self.game_y + self.game_height / 3),
                           anchor_x="center", anchor_y="center",
-                          font_name="Bangers", font_size=40).draw()
+                          font_name="Bangers", font_size=self.game_height // 20).draw()
         pyglet.gl.glFlush()
 
     def draw_boundary(self):
         pyglet.graphics.draw(8, pyglet.gl.GL_LINES,
-                             ("v2f", (self.x, self.y, self.x, self.y + self.height,
-                                      self.x, self.y + self.height, self.x + self.width, self.y + self.height,
-                                      self.x + self.width, self.y + self.height, self.x + self.width, self.y,
-                                      self.x + self.width, self.y, self.x, self.y)))
+                             ("v2f", (self.screen_x, self.screen_y,
+                                      self.screen_x, self.screen_y + self.height,
+                                      self.screen_x, self.screen_y + self.height,
+                                      self.screen_x + self.width, self.screen_y + self.height,
+                                      self.screen_x + self.width, self.screen_y + self.height,
+                                      self.screen_x + self.width, self.screen_y,
+                                      self.screen_x + self.width, self.screen_y,
+                                      self.screen_x, self.screen_y)))
